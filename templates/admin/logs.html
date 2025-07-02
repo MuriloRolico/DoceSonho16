@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doce Sonho - Logs do Sistema</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --primary-color: #d23f72;        /* Mais escuro e elegante */
+            --primary-dark: #b22d5d;         /* Tom mais profundo */
+            --secondary-color: #ffd6e0;      /* Mantendo o rosa claro suave */
+            --accent-color: #ffb3c6;         /* Tom complementar */
+            --text-color: #2d2d2d;           /* Texto mais escuro e sofisticado */
+            --light-text: #ffffff;           /* Branco puro para contraste */
+            --background-color: #fff8fa;     /* Fundo com tom rosa sutil */
+            --container-bg: #ffffff;         /* Containers brancos */
+            --border-color: #f1c2ce;         /* Bordas mais sutis */
+            --shadow: 0 8px 20px rgba(210, 63, 114, 0.08); /* Sombra mais suave com tom rosa */
+            --radius: 10px;                  /* Bordas mais arredondadas */
+        }
+
+        body, html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.8;
+            background-color: var(--background-color);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--primary-color) !important;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-color) !important;
+            margin: 0 12px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            background: transparent;
+            border: none;
+        }
+
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: var(--primary-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover:after {
+            width: 70%;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+            transform: translateY(-2px);
+            background-color: transparent;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+        }
+
+        .navbar-nav .badge {
+            background-color: var(--primary-color) !important;
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform: translate(25%, -25%);
+        }
+
+        /* Main content */
+        .main-content {
+            padding: 60px 0;
+        }
+
+        .card {
+            border-radius: var(--radius);
+            border: none;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            border: none;
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+
+        .card-header h2 {
+            margin-bottom: 0;
+            font-size: 1.25rem;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            border-radius: var(--radius);
+            padding: 10px 15px;
+            border: 1px solid #e5e5e5;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(210, 63, 114, 0.25);
+        }
+
+        .btn {
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(210, 63, 114, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.2);
+        }
+
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table th {
+            background-color: rgba(210, 63, 114, 0.1);
+            color: var(--text-color);
+            font-weight: 600;
+            border: none;
+            padding: 15px;
+        }
+
+        .table td {
+            padding: 15px;
+            vertical-align: middle;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .badge {
+            padding: 6px 12px;
+            font-weight: 500;
+            border-radius: 30px;
+        }
+
+        .badge.bg-success {
+            background-color: #28a745 !important;
+        }
+
+        .badge.bg-info {
+            background-color: #17a2b8 !important;
+        }
+
+        .badge.bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        .badge.bg-secondary {
+            background-color: #6c757d !important;
+        }
+
+        .badge.bg-warning {
+            background-color: #ffc107 !important;
+            color: #212529 !important;
+        }
+
+        .badge.bg-dark {
+            background-color: #343a40 !important;
+        }
+
+        /* Pagination */
+        .pagination {
+            margin-top: 30px;
+        }
+
+        .page-link {
+            color: var(--primary-color);
+            border: 1px solid #dee2e6;
+            margin: 0 3px;
+            border-radius: 5px;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .page-link:hover {
+            background-color: var(--secondary-color);
+            color: var(--primary-dark);
+            border-color: var(--secondary-color);
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #fff;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #2d2d2d !important;
+            color: #f8f8f8 !important;
+            padding: 80px 0 30px;
+            position: relative;
+        }
+
+        footer:before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-color: var(--background-color);
+            clip-path: ellipse(50% 50px at 50% 50px);
+        }
+
+        .footer-heading {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-heading:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 0;
+        }
+
+        .footer-text {
+            color: #aaa;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .social-icons a {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Flash messages */
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            border-radius: var(--radius);
+            border: none;
+            padding: 15px 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert-dismissible .btn-close {
+            padding: 20px;
+        }
+
+        /* Whatsapp Float */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 99;
+        }
+
+        .whatsapp-float a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #25D366;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-float a:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Media queries */
+        @media (max-width: 992px) {
+            .navbar-collapse {
+                background-color: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                margin-top: 15px;
+            }
+            
+            .nav-link {
+                margin: 5px 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .footer-heading {
+                margin-top: 30px;
+            }
+            
+            .footer-policy {
+                text-align: center !important;
+                margin-top: 15px;
+            }
+            
+            .footer-copyright {
+                text-align: center !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegação -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Doce Sonho</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if 'usuario_id' in session %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('order.pedidos') }}">Meus Pedidos</a>
+                    </li>
+                    {% if is_admin() %}
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('admin.admin_produtos') }}">Admin</a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cart.carrinho') }}">
+                            Carrinho
+                            {% if 'carrinho' in session and session['carrinho'] %}
+                            <span class="badge bg-danger">{{ session['carrinho']|length }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% if 'usuario_id' in session %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Sair</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.registro') }}">Registrar</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mensagens Flash -->
+    <div class="container mt-3">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div class="main-content">
+        <div class="container">
+            <h1 class="mb-4">Logs do Sistema</h1>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">Filtros</h2>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('admin.filtrar_logs') }}" method="GET" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="tipo" class="form-label">Tipo</label>
+                            <select name="tipo" id="tipo" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="novo_pedido" {% if filtros and filtros.tipo == 'novo_pedido' %}selected{% endif %}>Novos Pedidos</option>
+                                <option value="pedido_atualizado" {% if filtros and filtros.tipo == 'pedido_atualizado' %}selected{% endif %}>Pedidos Atualizados</option>
+                                <option value="login" {% if filtros and filtros.tipo == 'login' %}selected{% endif %}>Login</option>
+                                <option value="logout" {% if filtros and filtros.tipo == 'logout' %}selected{% endif %}>Logout</option>
+                                <option value="cadastro" {% if filtros and filtros.tipo == 'cadastro' %}selected{% endif %}>Cadastro</option>
+                                <option value="produto" {% if filtros and filtros.tipo == 'produto' %}selected{% endif %}>Produto</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="data_inicio" class="form-label">Data Início</label>
+                            <input type="date" name="data_inicio" id="data_inicio" class="form-control" value="{{ filtros.data_inicio if filtros and filtros.data_inicio }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="data_fim" class="form-label">Data Fim</label>
+                            <input type="date" name="data_fim" id="data_fim" class="form-control" value="{{ filtros.data_fim if filtros and filtros.data_fim }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="usuario_id" class="form-label">ID do Usuário</label>
+                            <input type="number" name="usuario_id" id="usuario_id" class="form-control" value="{{ filtros.usuario_id if filtros and filtros.usuario_id }}">
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Filtrar</button>
+                            <a href="{{ url_for('admin.admin_logs') }}" class="btn btn-secondary">Limpar Filtros</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">Registros</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Data</th>
+                                    <th>Tipo</th>
+                                    <th>Descrição</th>
+                                    <th>Usuário</th>
+                                    <th>IP</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in logs.items %}
+                                <tr>
+                                    <td>{{ log.id }}</td>
+                                    <td>{{ log.data.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                                    <td>
+                                        {% if log.tipo == 'novo_pedido' %}
+                                            <span class="badge bg-success">Novo Pedido</span>
+                                        {% elif log.tipo == 'pedido_atualizado' %}
+                                            <span class="badge bg-info">Pedido Atualizado</span>
+                                        {% elif log.tipo == 'login' %}
+                                            <span class="badge bg-primary">Login</span>
+                                        {% elif log.tipo == 'logout' %}
+                                            <span class="badge bg-secondary">Logout</span>
+                                        {% elif log.tipo == 'cadastro' %}
+                                            <span class="badge bg-warning">Cadastro</span>
+                                        {% elif log.tipo == 'produto' %}
+                                            <span class="badge bg-dark">Produto</span>
+                                        {% else %}
+                                            <span class="badge bg-dark">{{ log.tipo }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.descricao }}</td>
+                                    <td>
+                                        {% if log.usuario %}
+                                            {{ log.usuario.nome }} (ID: {{ log.usuario.id }})
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.ip }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginação -->
+                    <nav aria-label="Navegação de logs">
+                        <ul class="pagination justify-content-center">
+                            {% if logs.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.admin_logs', page=logs.prev_num) }}">Anterior</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Anterior</span>
+                            </li>
+                            {% endif %}
+
+                            {% for page_num in logs.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2) %}
+                                {% if page_num %}
+                                    {% if page_num == logs.page %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ page_num }}</span>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('admin.admin_logs', page=page_num) }}">{{ page_num }}</a>
+                                    </li>
+                                    {% endif %}
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if logs.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.admin_logs', page=logs.next_num) }}">Próxima</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Próxima</span>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé com área de contato -->
+    <footer class="bg-dark text-white pt-5 pb-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h4 class="footer-heading">Doce Sonho Confeitaria</h4>
+                    <p class="footer-text">Transformando ingredientes selecionados em momentos doces e inesquecíveis desde 2015.</p>
+                    <div class="social-icons mt-3">
+                        <a href="#" class="text-white me-3"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white me-3"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-white me-3"><i class="bi bi-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4 class="footer-heading">Horário de Funcionamento</h4>
+                    <ul class="list-unstyled">
+                        <li class="footer-text">Segunda a Sexta: 9h às 18h</li>
+                        <li class="footer-text">Sábados: 9h às 14h</li>
+                        <li class="footer-text">Domingos e Feriados: Fechado</li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4 class="footer-heading">Entre em Contato</h4>
+                    <form id="contato-form">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Seu nome" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Seu e-mail" required>
+                        </div>
+                        <div class="mb-3">
+                            <textarea class="form-control" rows="3" placeholder="Sua mensagem" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+                    </form>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="footer-text"><i class="bi bi-geo-alt-fill me-2"></i>Rua das Flores, 123 - Centro</p>
+                    <p class="footer-text"><i class="bi bi-telephone-fill me-2"></i>(11) 9999-9999</p>
+                    <p class="footer-text"><i class="bi bi-envelope-fill me-2"></i>contato@docesonho.com.br</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="footer-copyright">&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
+                    <p class="footer-policy">
+                        <a href="#" class="text-white text-decoration-none me-3">Política de Privacidade</a>
+                        <a href="#" class="text-white text-decoration-none">Termos de Uso</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botão de WhatsApp flutuante -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/5511999999999" target="_blank" class="btn btn-success rounded-circle">
+            <i class="bi bi-whatsapp fs-4"></i>
+        </a>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script para o formulário de contato -->
+    <script>
+        document.getElementById('contato-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Obrigado pelo contato! Responderemos em breve.');
+            this.reset();
+        });
+    </script>
+</body>
+</html>

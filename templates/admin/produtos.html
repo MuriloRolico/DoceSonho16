@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Doce Sonho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --primary-color: #d23f72;
+            --primary-dark: #b22d5d;
+            --secondary-color: #ffd6e0;
+            --accent-color: #ffb3c6;
+            --text-color: #2d2d2d;
+            --light-text: #ffffff;
+            --background-color: #fff8fa;
+            --container-bg: #ffffff;
+            --border-color: #f1c2ce;
+            --shadow: 0 8px 20px rgba(210, 63, 114, 0.08);
+            --radius: 10px;
+        }
+
+        body, html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.8;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--primary-color) !important;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-color) !important;
+            margin: 0 12px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            background: transparent;
+            border: none;
+        }
+
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: var(--primary-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover:after {
+            width: 70%;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+            transform: translateY(-2px);
+            background-color: transparent;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+        }
+
+        .navbar-nav .badge {
+            background-color: var(--primary-color) !important;
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform: translate(25%, -25%);
+        }
+
+        /* Admin específico */
+        .card {
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--text-color);
+            border-color: var(--text-color);
+        }
+
+        .table img {
+            border-radius: 5px;
+        }
+
+        /* Flash messages */
+        .alert {
+            border-radius: var(--radius);
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #2d2d2d !important;
+            color: #f8f8f8 !important;
+            padding: 80px 0 30px;
+            position: relative;
+        }
+
+        .footer-heading {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-heading:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 0;
+        }
+
+        .footer-text {
+            color: #aaa;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .footer-social a {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .footer-links {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #aaa;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-bottom {
+            padding-top: 30px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-copyright {
+            color: #aaa;
+        }
+
+        .footer-policy a {
+            color: #aaa;
+            margin-left: 20px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .footer-policy a:hover {
+            color: white;
+        }
+
+        /* WhatsApp float */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 99;
+        }
+
+        .whatsapp-float a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #25D366;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-float a:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegação -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Doce Sonho</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if 'usuario_id' in session %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('order.pedidos') }}">Meus Pedidos</a>
+                    </li>
+                    {% if is_admin() %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.admin_produtos') }}">Admin</a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cart.carrinho') }}">
+                            Carrinho
+                            {% if 'carrinho' in session and session['carrinho'] %}
+                            <span class="badge bg-danger">{{ session['carrinho']|length }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% if 'usuario_id' in session %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.registro') }}">Registrar</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mensagens Flash -->
+    <div class="container mt-3">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <!-- Conteúdo principal -->
+        <div class="container my-5">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h1>Painel Administrativo - Doce Sonho</h1>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-house-door"></i> Voltar à Loja
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Cards de acesso rápido -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="h5 mb-0"><i class="bi bi-box-seam"></i> Produtos</h2>
+                        </div>
+                        <div class="card-body">
+                            <p>Gerenciamento completo do catálogo de produtos.</p>
+                            <a href="#produtos-section" class="btn btn-primary w-100">Gerenciar Produtos</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 border-info">
+                        <div class="card-header bg-info text-white">
+                            <h2 class="h5 mb-0"><i class="bi bi-bag"></i> Pedidos</h2>
+                        </div>
+                        <div class="card-body">
+                            <p>Acompanhe e atualize o status dos pedidos.</p>
+                            <a href="{{ url_for('admin.admin_pedidos') }}" class="btn btn-info w-100">Gerenciar Pedidos</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 border-secondary">
+                        <div class="card-header bg-secondary text-white">
+                            <h2 class="h5 mb-0"><i class="bi bi-journal-text"></i> Logs do Sistema</h2>
+                        </div>
+                        <div class="card-body">
+                            <p>Consulte registros de atividades do sistema.</p>
+                            <a href="{{ url_for('admin.admin_logs') }}" class="btn btn-secondary w-100">Visualizar Logs</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dashboard principal -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card border-success">
+                        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                            <h2 class="h5 mb-0">Resumo de Atividades</h2>
+                            <a href="{{ url_for('admin.admin_logs') }}" class="btn btn-sm btn-light">Ver Detalhes</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-light text-center py-3">
+                                        <h3 class="h2 mb-0 text-warning">{{ pedidos_pendentes if pedidos_pendentes is defined else "..." }}</h3>
+                                        <p class="mb-0">Pedidos Pendentes</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-light text-center py-3">
+                                        <h3 class="h2 mb-0 text-primary">{{ total_produtos if total_produtos is defined else produtos|length }}</h3>
+                                        <p class="mb-0">Produtos Cadastrados</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-light text-center py-3">
+                                        <h3 class="h2 mb-0 text-success">{{ pedidos_entregues if pedidos_entregues is defined else "..." }}</h3>
+                                        <p class="mb-0">Pedidos Entregues</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-light text-center py-3">
+                                        <h3 class="h2 mb-0 text-info">{{ pedidos_hoje if pedidos_hoje is defined else "..." }}</h3>
+                                        <p class="mb-0">Pedidos de Hoje</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Seção de Produtos -->
+            <div id="produtos-section" class="card mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h2 class="h5 mb-0">Gerenciamento de Produtos</h2>
+                    <a href="{{ url_for('admin.admin_novo_produto') }}" class="btn btn-light btn-sm">
+                        <i class="bi bi-plus-circle"></i> Novo Produto
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Imagem</th>
+                                    <th>Nome</th>
+                                    <th>Preço</th>
+                                    <th>Categoria</th>
+                                    <th>Peso</th>
+                                    <th>Validade</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for produto in produtos %}
+                                <tr>
+                                    <td>{{ produto.id }}</td>
+                                    <td>
+                                        {% if produto.imagem %}
+                                        <img src="{{ produto.imagem }}" alt="{{ produto.nome }}" style="width: 50px; height: 50px; object-fit: cover;">
+                                        {% else %}
+                                        <span class="text-muted">Sem imagem</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ produto.nome }}</td>
+                                    <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
+                                    <td>{{ produto.categoria }}</td>
+                                    <td>{% if produto.peso %}{{ "%.2f"|format(produto.peso) }} kg{% else %}-{% endif %}</td>
+                                    <td>{% if produto.data_validade %}{{ produto.data_validade.strftime('%d/%m/%Y') }}{% else %}-{% endif %}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('admin.admin_editar_produto', produto_id=produto.id) }}" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <form action="{{ url_for('admin.admin_deletar_produto', produto_id=produto.id) }}" method="POST" style="display: inline-block;">
+                                                <button type="button" class="btn btn-sm btn-danger" onclick="confirmarExclusao(this)">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('admin.admin_novo_produto') }}" class="btn btn-success">
+                        <i class="bi bi-plus-circle"></i> Adicionar Novo Produto
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Links rápidos para outras funções administrativas -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-header bg-info text-white">
+                            <h2 class="h5 mb-0">Gerenciamento de Pedidos</h2>
+                        </div>
+                        <div class="card-body">
+                            <p>Acesse o gerenciamento completo de pedidos, onde você pode:</p>
+                            <ul>
+                                <li>Visualizar todos os pedidos</li>
+                                <li>Filtrar por status (pendentes, em preparo, etc.)</li>
+                                <li>Atualizar status dos pedidos</li>
+                                <li>Ver detalhes completos de cada pedido</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ url_for('admin.admin_pedidos') }}" class="btn btn-info w-100">Ir para Pedidos</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-header bg-secondary text-white">
+                            <h2 class="h5 mb-0">Logs e Registros do Sistema</h2>
+                        </div>
+                        <div class="card-body">
+                            <p>Acesse o sistema de logs para:</p>
+                            <ul>
+                                <li>Visualizar atividades do sistema</li>
+                                <li>Monitorar logins e acessos</li>
+                                <li>Acompanhar alterações em pedidos</li>
+                                <li>Filtrar logs por data, tipo e usuário</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ url_for('admin.admin_logs') }}" class="btn btn-secondary w-100">Ir para Logs</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé com área de contato -->
+    <footer class="bg-dark text-white pt-5 pb-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h4>Doce Sonho Confeitaria</h4>
+                    <p>Transformando ingredientes selecionados em momentos doces e inesquecíveis desde 2015.</p>
+                    <div class="social-icons mt-3">
+                        <a href="#" class="text-white me-3"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white me-3"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-white me-3"><i class="bi bi-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4>Horário de Funcionamento</h4>
+                    <ul class="list-unstyled">
+                        <li>Segunda a Sexta: 9h às 18h</li>
+                        <li>Sábados: 9h às 14h</li>
+                        <li>Domingos e Feriados: Fechado</li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4>Entre em Contato</h4>
+                    <form id="contato-form">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Seu nome" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Seu e-mail" required>
+                        </div>
+                        <div class="mb-3">
+                            <textarea class="form-control" rows="3" placeholder="Sua mensagem" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+                    </form>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><i class="bi bi-geo-alt-fill me-2"></i>Rua das Flores, 123 - Centro</p>
+                    <p><i class="bi bi-telephone-fill me-2"></i>(11) 9999-9999</p>
+                    <p><i class="bi bi-envelope-fill me-2"></i>contato@docesonho.com.br</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
+                    <p>
+                        <a href="#" class="text-white text-decoration-none me-3">Política de Privacidade</a>
+                        <a href="#" class="text-white text-decoration-none">Termos de Uso</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botão de WhatsApp flutuante -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/5511999999999" target="_blank" class="btn btn-success rounded-circle position-fixed bottom-0 end-0 m-4 p-3">
+            <i class="bi bi-whatsapp fs-4"></i>
+        </a>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script para o formulário de contato -->
+    <script>
+        document.getElementById('contato-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Obrigado pelo contato! Responderemos em breve.');
+            this.reset();
+        });
+    </script>
+
+    <!-- Script para confirmação de exclusão -->
+    <script>
+        function confirmarExclusao(botao) {
+            if (confirm('Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita.')) {
+                botao.closest('form').submit();
+            }
+        }
+    </script>
+</body>
+</html>

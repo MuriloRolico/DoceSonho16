@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doce Sonho - Editar Produto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/base.css') }}">
+</head>
+<body>
+    <!-- Barra de navegação -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Doce Sonho</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if 'usuario_id' in session %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('order.pedidos') }}">Meus Pedidos</a>
+                    </li>
+                    {% if is_admin() %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.admin_produtos') }}">Admin</a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cart.carrinho') }}">
+                            Carrinho
+                            {% if 'carrinho' in session and session['carrinho'] %}
+                            <span class="badge bg-danger">{{ session['carrinho']|length }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% if 'usuario_id' in session %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.registro') }}">Registrar</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mensagens Flash -->
+    <div class="container mt-3">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <!-- Conteúdo Principal - Formulário de Edição de Produto -->
+        <div class="container mt-4">
+            <h1>Editar Produto</h1>
+            
+            <form method="POST" enctype="multipart/form-data">
+                <div class="form-group mb-3">
+                    <label for="nome">Nome do Produto</label>
+                    <input type="text" class="form-control" id="nome" name="nome" value="{{ produto.nome }}" required>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="descricao">Descrição</label>
+                    <textarea class="form-control" id="descricao" name="descricao" rows="3">{{ produto.descricao }}</textarea>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="preco">Preço (R$)</label>
+                    <input type="number" step="0.01" class="form-control" id="preco" name="preco" value="{{ produto.preco }}" required>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="categoria">Categoria</label>
+                    <input type="text" class="form-control" id="categoria" name="categoria" value="{{ produto.categoria }}" required>
+                </div>
+                
+                <!-- Novos campos -->
+                <div class="form-group mb-3">
+                    <label for="peso">Peso (kg)</label>
+                    <input type="number" step="0.01" class="form-control" id="peso" name="peso" value="{{ produto.peso or '' }}">
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="ingredientes">Ingredientes</label>
+                    <textarea class="form-control" id="ingredientes" name="ingredientes" rows="3">{{ produto.ingredientes or '' }}</textarea>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="data_validade">Data de Validade</label>
+                    <input type="date" class="form-control" id="data_validade" name="data_validade" 
+                           value="{{ produto.data_validade.strftime('%Y-%m-%d') if produto.data_validade else '' }}">
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="informacoes_nutricionais">Informações Nutricionais</label>
+                    <textarea class="form-control" id="informacoes_nutricionais" name="informacoes_nutricionais" rows="3">{{ produto.informacoes_nutricionais or '' }}</textarea>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="imagem-atual">Imagem Atual</label>
+                    <div>
+                        {% if produto.imagem %}
+                        <img src="{{ produto.imagem }}" alt="{{ produto.nome }}" style="max-width: 200px; margin-bottom: 10px;">
+                        {% else %}
+                        <p class="text-muted">Este produto não possui imagem.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="imagem">Nova Imagem</label>
+                    <input type="file" class="form-control" id="imagem" name="imagem">
+                    <small class="text-muted">Deixe em branco para manter a imagem atual.</small>
+                </div>
+                
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">Atualizar Produto</button>
+                    <a href="{{ url_for('admin.admin_produtos') }}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rodapé com área de contato -->
+    <footer class="bg-dark text-white pt-5 pb-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h4>Doce Sonho Confeitaria</h4>
+                    <p>Transformando ingredientes selecionados em momentos doces e inesquecíveis desde 2015.</p>
+                    <div class="social-icons mt-3">
+                        <a href="#" class="text-white me-3"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white me-3"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-white me-3"><i class="bi bi-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4>Horário de Funcionamento</h4>
+                    <ul class="list-unstyled">
+                        <li>Segunda a Sexta: 9h às 18h</li>
+                        <li>Sábados: 9h às 14h</li>
+                        <li>Domingos e Feriados: Fechado</li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4>Entre em Contato</h4>
+                    <form id="contato-form">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Seu nome" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Seu e-mail" required>
+                        </div>
+                        <div class="mb-3">
+                            <textarea class="form-control" rows="3" placeholder="Sua mensagem" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+                    </form>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><i class="bi bi-geo-alt-fill me-2"></i>Rua das Flores, 123 - Centro</p>
+                    <p><i class="bi bi-telephone-fill me-2"></i>(11) 9999-9999</p>
+                    <p><i class="bi bi-envelope-fill me-2"></i>contato@docesonho.com.br</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
+                    <p>
+                        <a href="#" class="text-white text-decoration-none me-3">Política de Privacidade</a>
+                        <a href="#" class="text-white text-decoration-none">Termos de Uso</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botão de WhatsApp flutuante -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/5511999999999" target="_blank" class="btn btn-success rounded-circle position-fixed bottom-0 end-0 m-4 p-3">
+            <i class="bi bi-whatsapp fs-4"></i>
+        </a>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script para o formulário de contato -->
+    <script>
+        document.getElementById('contato-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Obrigado pelo contato! Responderemos em breve.');
+            this.reset();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('admin.admin_pedidos') }}">Pedidos</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Pedido #{{ pedido.id }}</li>
+        </ol>
+    </nav>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h1 class="h4 mb-0">Detalhes do Pedido #{{ pedido.id }}</h1>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Informações do Cliente</h5>
+                    <p><strong>Nome:</strong> {{ usuario.nome }}</p>
+                    <p><strong>Email:</strong> {{ usuario.email }}</p>
+                    <p><strong>ID do cliente:</strong> {{ usuario.id }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Informações do Pedido</h5>
+                    <p><strong>Data:</strong> {{ pedido.data.strftime('%d/%m/%Y %H:%M:%S') }}</p>
+                    <p><strong>Total:</strong> R$ {{ "%.2f"|format(pedido.total) }}</p>
+                    <p>
+                        <strong>Status atual:</strong>
+                        {% if pedido.status == 'Pendente' %}
+                            <span class="badge bg-warning text-dark">Pendente</span>
+                        {% elif pedido.status == 'Em Preparo' %}
+                            <span class="badge bg-info">Em Preparo</span>
+                        {% elif pedido.status == 'Pronto para Entrega' %}
+                            <span class="badge bg-success">Pronto para Entrega</span>
+                        {% elif pedido.status == 'Entregue' %}
+                            <span class="badge bg-dark">Entregue</span>
+                        {% elif pedido.status == 'Cancelado' %}
+                            <span class="badge bg-danger">Cancelado</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ pedido.status }}</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <h5>Itens do Pedido</h5>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Tipo</th>
+                            <th>Quantidade</th>
+                            <th>Preço Unitário</th>
+                            <th class="text-end">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in itens %}
+                        <tr>
+                            <td>{{ item.nome }}</td>
+                            <td>
+                                {% if item.tipo == 'regular' %}
+                                    <span class="badge bg-primary">Produto Regular</span>
+                                {% else %}
+                                    <span class="badge bg-success">Bolo Personalizado</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ item.quantidade }}</td>
+                            <td>R$ {{ "%.2f"|format(item.preco_unitario) }}</td>
+                            <td class="text-end">R$ {{ "%.2f"|format(item.subtotal) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" class="text-end"><strong>Total</strong></td>
+                            <td class="text-end"><strong>R$ {{ "%.2f"|format(pedido.total) }}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Atualizar Status</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('order.admin_atualizar_pedido', pedido_id=pedido.id) }}" method="POST">
+                        <div class="form-group mb-3">
+                            <label for="status" class="form-label">Novo Status</label>
+                            <select name="status" id="status" class="form-select">
+                                <option value="Pendente" {% if pedido.status == 'Pendente' %}selected{% endif %}>Pendente</option>
+                                <option value="Em Preparo" {% if pedido.status == 'Em Preparo' %}selected{% endif %}>Em Preparo</option>
+                                <option value="Pronto para Entrega" {% if pedido.status == 'Pronto para Entrega' %}selected{% endif %}>Pronto para Entrega</option>
+                                <option value="Entregue" {% if pedido.status == 'Entregue' %}selected{% endif %}>Entregue</option>
+                                <option value="Cancelado" {% if pedido.status == 'Cancelado' %}selected{% endif %}>Cancelado</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Atualizar Status</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <a href="{{ url_for('admin.admin_pedidos') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar para Pedidos
+        </a>
+    </div>
+</div>
+{% endblock %}
