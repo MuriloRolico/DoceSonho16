@@ -3,456 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monte seu Bolo - Doce Sonho</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Doce Sonho - Confeitaria | Monte seu Bolo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/base.css') }}">
     <style>
         :root {
-            --primary-color: #d23f72;        /* Mais escuro e elegante */
-            --primary-dark: #b22d5d;         /* Tom mais profundo */
-            --secondary-color: #ffd6e0;      /* Mantendo o rosa claro suave */
-            --accent-color: #ffb3c6;         /* Tom complementar */
-            --text-color: #2d2d2d;           /* Texto mais escuro e sofisticado */
-            --light-text: #ffffff;           /* Branco puro para contraste */
-            --background-color: #fff8fa;     /* Fundo com tom rosa sutil */
-            --container-bg: #ffffff;         /* Containers brancos */
-            --border-color: #f1c2ce;         /* Bordas mais sutis */
-            --shadow: 0 8px 20px rgba(210, 63, 114, 0.08); /* Sombra mais suave com tom rosa */
-            --radius: 10px;                  /* Bordas mais arredondadas */
-        }
-
-        body, html {
-            scroll-behavior: smooth;
+            --primary-color: #d23f72;
+            --primary-dark: #b22d5d;
+            --secondary-color: #ffd6e0;
+            --accent-color: #ffb3c6;
+            --text-color: #2d2d2d;
+            --light-text: #ffffff;
+            --background-color: #fff8fa;
+            --container-bg: #ffffff;
+            --border-color: #f1c2ce;
+            --shadow: 0 8px 20px rgba(210, 63, 114, 0.08);
+            --radius: 10px;
         }
 
         body {
             font-family: 'Montserrat', sans-serif;
             line-height: 1.8;
             background-color: var(--background-color);
-            color: var(--text-color);
         }
 
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Playfair Display', serif;
-            letter-spacing: 0.5px;
-        }
-
+        /* Navbar Styles */
         .navbar {
-            background-color: rgba(255, 255, 255, 0.95) !important;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            background-color: var(--container-bg);
+            box-shadow: var(--shadow);
             padding: 15px 0;
         }
 
         .navbar-brand {
             font-family: 'Playfair Display', serif;
             font-weight: 700;
-            color: var(--primary-color) !important;
-            font-size: 1.8rem;
-            letter-spacing: 1px;
-        }
-
-        .nav-link {
-            font-weight: 500;
-            color: var(--text-color) !important;
-            margin: 0 12px;
-            padding: 8px 16px;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            position: relative;
-            background: transparent;
-            border: none;
-        }
-
-        .nav-link:after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: 0;
-            left: 50%;
-            background-color: var(--primary-color);
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
-        }
-
-        .nav-link:hover:after {
-            width: 70%;
-        }
-
-        .nav-link:hover {
-            color: var(--primary-color) !important;
-            transform: translateY(-2px);
-            background-color: transparent;
-        }
-
-        .nav-link.active {
-            color: var(--primary-color) !important;
-            font-weight: 600;
-        }
-
-        .navbar-nav .badge {
-            background-color: var(--primary-color) !important;
-            position: absolute;
-            top: 0;
-            right: 0;
-            transform: translate(25%, -25%);
-        }
-
-        footer {
-            background-color: #2d2d2d !important;
-            color: #f8f8f8 !important;
-            padding: 80px 0 30px;
-            position: relative;
-        }
-
-        footer:before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            left: 0;
-            width: 100%;
-            height: 100px;
-            background-color: white;
-            clip-path: ellipse(50% 50px at 50% 50px);
-        }
-
-        .footer-heading {
-            font-size: 1.5rem;
-            color: white;
-            margin-bottom: 25px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .footer-heading:after {
-            content: '';
-            position: absolute;
-            width: 40px;
-            height: 2px;
-            background-color: var(--primary-color);
-            bottom: -10px;
-            left: 0;
-        }
-
-        .footer-text {
-            color: #aaa;
-            margin-bottom: 20px;
-            line-height: 1.8;
-        }
-
-        .footer-social {
-            margin-top: 25px;
-        }
-
-        .footer-social a {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: rgba(255,255,255,0.1);
-            color: white;
-            margin-right: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .footer-social a:hover {
-            background-color: var(--primary-color);
-            transform: translateY(-3px);
-        }
-
-        .footer-links {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-
-        .footer-links a {
-            color: #aaa;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .footer-links a:hover {
-            color: white;
-            transform: translateX(5px);
-        }
-
-        .footer-contact li {
-            color: #aaa;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-
-        .footer-contact-icon {
-            margin-right: 15px;
             color: var(--primary-color);
-            font-size: 1.2rem;
+            font-size: 1.8rem;
         }
 
-        .footer-form .form-control {
-            background-color: rgba(255,255,255,0.08);
+        .navbar-nav .nav-link {
+            color: var(--text-color);
+            font-weight: 500;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--primary-color);
+        }
+
+        .navbar-toggler {
             border: none;
-            color: white;
-            border-radius: 5px;
-            margin-bottom: 15px;
+            outline: none;
         }
 
-        .footer-form .form-control::placeholder {
-            color: #aaa;
-        }
-
-        .footer-form .form-control:focus {
-            background-color: rgba(255,255,255,0.12);
-            box-shadow: none;
-        }
-
-        .footer-form .btn {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 10px 25px;
-            border-radius: 5px;
-            font-weight: 600;
-            border: none;
-            transition: all 0.3s ease;
-        }
-
-        .footer-form .btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-3px);
-        }
-
-        .footer-bottom {
-            padding-top: 30px;
-            margin-top: 40px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .footer-copyright {
-            color: #aaa;
-        }
-
-        .footer-policy a {
-            color: #aaa;
-            margin-left: 20px;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .footer-policy a:hover {
-            color: white;
-        }
-
-        /* Estilos específicos da página Monte seu Bolo */
+        /* Page Styles */
         .page-title {
             font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            color: var(--primary-dark);
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* Cake Builder Styles */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
             margin-bottom: 40px;
             position: relative;
-            display: inline-block;
-            padding-bottom: 15px;
         }
 
-        .page-title:after {
+        .step-indicator::before {
             content: '';
             position: absolute;
-            width: 80px;
-            height: 3px;
-            background-color: var(--primary-color);
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 25px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--border-color);
+            z-index: 1;
         }
 
-        .selector-item {
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius);
-            padding: 20px;
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            background-color: var(--container-bg);
-            box-shadow: var(--shadow);
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             position: relative;
-            overflow: hidden;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background-color: var(--container-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-number {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .step-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        .step.active .step-title {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Selector Styles */
+        .selector-item {
+            background-color: var(--container-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 100%;
+            text-align: center;
+            border: 2px solid transparent;
         }
 
         .selector-item:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(210, 63, 114, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(210, 63, 114, 0.15);
         }
 
         .selector-item.selected {
             border-color: var(--primary-color);
-            background-color: rgba(255, 214, 224, 0.2);
+            background-color: rgba(255, 214, 224, 0.3);
         }
 
         .selector-item img {
             width: 100%;
-            height: 180px;
+            height: 150px;
             object-fit: cover;
-            border-radius: calc(var(--radius) - 2px);
+            border-radius: calc(var(--radius) - 5px);
             margin-bottom: 15px;
-            transition: all 0.5s ease;
-        }
-
-        .selector-item:hover img {
-            transform: scale(1.05);
         }
 
         .selector-item h5 {
-            font-family: 'Playfair Display', serif;
+            margin-bottom: 5px;
             font-weight: 600;
-            margin-bottom: 10px;
             color: var(--text-color);
-            transition: color 0.3s ease;
-        }
-
-        .selector-item:hover h5 {
-            color: var(--primary-color);
         }
 
         .selector-item p {
             color: #6c757d;
             font-size: 0.9rem;
-            margin-bottom: 5px;
+            margin-bottom: 0;
         }
 
         .price-tag {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 10px;
+            right: 10px;
             background-color: var(--primary-color);
             color: white;
-            padding: 5px 12px;
-            border-radius: 30px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
             font-weight: 600;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 10px rgba(210, 63, 114, 0.3);
             z-index: 1;
-            transition: all 0.3s ease;
         }
 
-        .selector-item:hover .price-tag {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(210, 63, 114, 0.4);
-        }
-
-        .step-indicator {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 50px;
-            position: relative;
-        }
-
-        .step-indicator:after {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 10%;
-            width: 80%;
-            height: 2px;
-            background-color: #e9ecef;
-            z-index: -1;
-        }
-
-        .step {
-            text-align: center;
-            flex: 1;
-            z-index: 1;
-            transition: all 0.3s ease;
-        }
-
-        .step-number {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background-color: #e9ecef;
-            color: #6c757d;
-            font-weight: 600;
-            margin-bottom: 12px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .step.active .step-number {
-            background-color: var(--primary-color);
-            color: white;
-            transform: scale(1.1);
-            box-shadow: 0 6px 15px rgba(210, 63, 114, 0.25);
-        }
-
-        .step-title {
-            font-size: 0.9rem;
-            color: #6c757d;
-            margin-top: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .step.active .step-title {
-            color: var(--primary-dark);
-            font-weight: 600;
-        }
-
-        .step.completed .step-number {
-            background-color: #28a745;
-            color: white;
-        }
-
+        /* Preview Styles */
         .preview-container {
-            background-color: white;
+            background-color: var(--container-bg);
             border-radius: var(--radius);
-            padding: 30px;
-            position: sticky;
-            top: 30px;
             box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-            border: 2px solid var(--border-color);
-        }
-
-        .preview-container:hover {
-            box-shadow: 0 15px 35px rgba(210, 63, 114, 0.12);
+            padding: 20px;
+            height: 100%;
+            position: sticky;
+            top: 20px;
         }
 
         .preview-title {
-            font-family: 'Playfair Display', serif;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
             font-weight: 600;
-            margin-bottom: 25px;
-            color: var(--primary-dark);
-            position: relative;
-            padding-bottom: 10px;
         }
 
-        .preview-title:after {
+        .cake-preview-container {
+            text-align: center;
+            padding: 20px 0;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cake {
+            position: relative;
+            width: 180px;
+            height: 220px;
+            margin: 0 auto;
+        }
+
+        .cake-plate {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .cake-stand {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 10px;
+            background-color: #bdbdbd;
+            border-radius: 10px;
+            z-index: 2;
+        }
+
+        .cake-base {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 40px;
+            background-color: #f5e9be;
+            border-radius: 5px 5px 0 0;
+            z-index: 3;
+        }
+
+        .cake-filling-bottom {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 10px;
+            background-color: #d4a76a;
+            z-index: 4;
+        }
+
+        .cake-middle {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 40px;
+            background-color: #f5e9be;
+            z-index: 5;
+        }
+
+        .cake-filling-top {
+            position: absolute;
+            bottom: 110px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 10px;
+            background-color: #d4a76a;
+            z-index: 6;
+        }
+
+        .cake-top {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 40px;
+            background-color: #f5e9be;
+            border-radius: 5px 5px 0 0;
+            z-index: 7;
+        }
+
+        .cake-frosting {
+            position: absolute;
+            bottom: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 170px;
+            height: 25px;
+            background-color: #f8bbd0;
+            border-radius: 5px 5px 0 0;
+            z-index: 8;
+        }
+
+        .frosting-drip {
+            position: absolute;
+            bottom: 145px;
+            width: 15px;
+            height: 20px;
+            background-color: #f8bbd0;
+            border-radius: 0 0 50% 50%;
+            z-index: 9;
+        }
+
+        .cake-decoration {
+            position: absolute;
+            bottom: 165px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            z-index: 10;
+        }
+
+        .cake-candle {
+            position: absolute;
+            bottom: 165px;
+            width: 4px;
+            height: 25px;
+            background: linear-gradient(#fff, #ffeb3b);
+            z-index: 11;
+            border-radius: 2px;
+        }
+
+        .cake-candle::before {
             content: '';
             position: absolute;
-            width: 40px;
-            height: 2px;
-            background-color: var(--primary-color);
-            bottom: 0;
+            top: -8px;
             left: 0;
+            width: 4px;
+            height: 8px;
+            background: #ff5722;
+            border-radius: 50% 50% 0 0;
+        }
+
+        /* Summary Styles */
+        .summary-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--secondary-color);
+            border-radius: var(--radius);
         }
 
         .summary-item {
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             display: flex;
             justify-content: space-between;
-        }
-
-        .summary-item:last-child {
-            border-bottom: none;
+            margin-bottom: 10px;
         }
 
         .summary-label {
@@ -461,634 +372,186 @@
         }
 
         .summary-value {
-            color: var(--primary-color);
-            font-weight: 500;
+            color: var(--primary-dark);
         }
 
         .total-price {
-            background-color: rgba(255, 214, 224, 0.3);
-            border-radius: var(--radius);
-            padding: 15px 20px;
-            margin-top: 20px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border-color);
             text-align: center;
         }
 
         .total-price-label {
-            font-size: 1.1rem;
             font-weight: 600;
             color: var(--text-color);
             margin-bottom: 5px;
         }
 
         .total-price-value {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary-color);
+            margin-bottom: 5px;
         }
 
         .total-price-note {
             font-size: 0.8rem;
             color: #6c757d;
-            margin-top: 5px;
         }
 
+        /* Button Styles */
         .btn-controller {
-            margin-top: 30px;
             display: flex;
             justify-content: space-between;
+            margin-top: 30px;
         }
 
-        .btn-prev, .btn-next, .btn-submit {
-            padding: 12px 25px;
-            border-radius: 30px;
+        .btn {
             font-weight: 600;
+            padding: 10px 25px;
+            border-radius: 30px;
             transition: all 0.3s ease;
         }
 
         .btn-prev {
-            background-color: #f8f9fa;
+            background-color: var(--container-bg);
+            border: 2px solid var(--border-color);
             color: var(--text-color);
-            border: 1px solid #dee2e6;
         }
 
         .btn-prev:hover {
-            background-color: #e9ecef;
-            transform: translateY(-3px);
+            background-color: var(--border-color);
+            color: var(--text-color);
         }
 
-        .btn-next {
+        .btn-next, .btn-submit {
             background-color: var(--primary-color);
+            border: 2px solid var(--primary-color);
             color: white;
-            border: none;
         }
 
         .btn-next:hover, .btn-submit:hover {
             background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
             transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(210, 63, 114, 0.2);
+            box-shadow: 0 5px 15px rgba(210, 63, 114, 0.2);
         }
 
-        .btn-submit {
-            background-color: #28a745;
-            color: white;
-            border: none;
-        }
-
-        .btn-submit:hover {
-            background-color: #218838;
-        }
-
+        /* Section Styles */
         .section-title {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            margin-bottom: 30px;
             color: var(--primary-dark);
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-        .section-title:after {
-            content: '';
-            position: absolute;
-            width: 60px;
-            height: 3px;
-            background-color: var(--primary-color);
-            bottom: 0;
-            left: 0;
-        }
-
-        .form-label {
+            margin-bottom: 25px;
             font-weight: 600;
-            color: var(--text-color);
-            margin-bottom: 10px;
         }
 
-        .form-control {
-            padding: 12px 15px;
-            border-radius: 8px;
-            border: 1px solid #dee2e6;
+        .step-content {
+            margin-bottom: 30px;
+        }
+
+        /* Footer Styles */
+        footer {
+            margin-top: 50px;
+            padding-top: 50px;
+            background-color: #2d2d2d;
+            color: white;
+        }
+
+        .footer-heading {
+            font-family: 'Playfair Display', serif;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .footer-text {
+            color: #adb5bd;
+            margin-bottom: 20px;
+        }
+
+        .footer-social a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            margin-right: 10px;
+            color: white;
             transition: all 0.3s ease;
         }
 
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(210, 63, 114, 0.25);
+        .footer-social a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-5px);
         }
 
-        /* Estilos do Bolo Preview - REDESENHADO */
-        .cake-preview-container {
-            height: 350px;
-            position: relative;
-            margin-bottom: 25px;
-            perspective: 1000px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .footer-links li {
+            margin-bottom: 10px;
+            color: #adb5bd;
         }
 
-        .cake {
-            position: relative;
-            width: 200px;
-            height: 250px;
-            margin: 0 auto;
-            transform-style: preserve-3d;
-            transform: rotateX(5deg) rotateY(0deg);
-            transition: all 0.5s ease;
-            cursor: pointer;
-        }
-
-        .cake:hover {
-            transform: rotateX(0deg) rotateY(10deg) translateY(-5px);
-        }
-
-        /* Novo prato de bolo mais realista */
-        .cake-plate {
-            position: absolute;
-            width: 240px;
-            height: 12px;
-            bottom: -25px;
-            left: -20px;
-            background: linear-gradient(to bottom, #f5f5f5, #e0e0e0);
-            border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1), inset 0 -3px 5px rgba(0, 0, 0, 0.05);
-            z-index: -1;
-        }
-
-        .cake-plate::after {
-            content: '';
-            position: absolute;
-            width: 200px;
-            height: 8px;
-            bottom: -8px;
-            left: 20px;
-            background: #f0f0f0;
-            border-radius: 50%;
-            filter: blur(5px);
-            opacity: 0.7;
-        }
-
-        .cake-stand {
-            position: absolute;
-            width: 80px;
-            height: 15px;
-            bottom: -40px;
-            left: 60px;
-            background: linear-gradient(to bottom, #e6e6e6, #cccccc);
-            border-radius: 5px;
-            z-index: -2;
-        }
-
-        /* Camadas do bolo redesenhadas para parecer mais realista */
-        .cake-layer {
-            position: absolute;
-            width: 100%;
-            left: 0;
-            border-radius: 8px;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-            transition: all 0.5s ease;
-        }
-
-        .cake-base {
-            position: absolute;
-            width: 200px;
-            height: 70px;
-            background: #f9f9f9; /* Massa padrão */
-            border-radius: 8px;
-            bottom: 0;
-            transition: all 0.5s ease;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05), inset 0 -5px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .cake-base::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 10px;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), transparent);
-            border-radius: 8px 8px 0 0;
-        }
-
-        .cake-middle {
-            position: absolute;
-            width: 190px;
-            height: 65px;
-            background: #f9f9f9; /* Massa padrão */
-            border-radius: 8px;
-            bottom: 75px;
-            left: 5px;
-            transition: all 0.5s ease;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05), inset 0 -5px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .cake-middle::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 10px;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), transparent);
-            border-radius: 8px 8px 0 0;
-        }
-
-        .cake-top {
-            position: absolute;
-            width: 175px;
-            height: 60px;
-            background: #f9f9f9; /* Massa padrão */
-            border-radius: 8px;
-            bottom: 145px;
-            left: 12.5px;
-            transition: all 0.5s ease;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05), inset 0 -5px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .cake-top::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 10px;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), transparent);
-            border-radius: 8px 8px 0 0;
-        }
-
-        /* Recheios mais detalhados */
-        .cake-filling-bottom {
-            position: absolute;
-            width: 190px;
-            height: 5px;
-            background: transparent; /* Recheio padrão */
-            bottom: 70px;
-            left: 5px;
-            transition: all 0.5s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 2;
-        }
-
-        .cake-filling-top {
-            position: absolute;
-            width: 175px;
-            height: 5px;
-            background: transparent; /* Recheio padrão */
-            bottom: 140px;
-            left: 12.5px;
-            transition: all 0.5s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 2;
-        }
-
-        /* Cobertura mais realista */
-        .cake-frosting {
-            position: absolute;
-            width: 185px;
-            height: 20px;
-            background: #ffffff; /* Cobertura padrão */
-            border-radius: 12px 12px 0 0;
-            bottom: 205px;
-            left: 7.5px;
-            transition: all 0.5s ease;
-            box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.08);
-            z-index: 3;
-            overflow: hidden;
-        }
-
-        .cake-frosting::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 50%;
-            top: 0;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), transparent);
-            border-radius: 10px 10px 0 0;
-        }
-
-        .cake-frosting::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 5px;
-            bottom: -2px;
-            left: 0;
-            background: rgba(0, 0, 0, 0.04);
-            border-radius: 50%;
-        }
-
-        /* Drips de cobertura */
-        .frosting-drip {
-            position: absolute;
-            width: 15px;
-            height: 25px;
-            background: inherit;
-            top: 20px;
-            border-radius: 0 0 10px 10px;
-            z-index: 3;
-            display: none; /* Mostrado apenas para algumas coberturas */
-        }
-
-        /* Área para decorações */
-        .cake-decoration {
-            position: absolute;
-            width: 175px;
-            height: 40px;
-            bottom: 205px;
-            left: 12.5px;
-            display: flex;
-            justify-content: center;
-            transition: all 0.5s ease;
-            z-index: 4;
-        }
-
-        /* Velas de aniversário (opcional) */
-        .cake-candle {
-            position: absolute;
-            width: 5px;
-            height: 40px;
-            background: linear-gradient(to bottom, #ff9500, #ffcc00, #ff9500);
-            top: -50px;
-            border-radius: 2px;
-            transform-origin: bottom center;
-            z-index: 5;
-            display: none;
-        }
-
-        .cake-candle::after {
-            content: '';
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: #ff5e3a;
-            top: -5px;
-            left: -1.5px;
-            border-radius: 50% 50% 0 50%;
-            transform: rotate(45deg);
-            filter: blur(1px);
-            box-shadow: 0 0 10px #ff9d6f, 0 0 15px #ffae3a;
-            animation: flicker 0.8s infinite alternate;
-        }
-
-        @keyframes flicker {
-            0% { transform: rotate(45deg) scale(1); }
-            100% { transform: rotate(45deg) scale(1.1); }
-        }
-
-        /* Estilos específicos para cada tipo de massa */
-        .massa-chocolate .cake-base,
-        .massa-chocolate .cake-middle,
-        .massa-chocolate .cake-top {
-            background: linear-gradient(to bottom, #5c3a21, #4a2e1b);
-        }
-
-        .massa-chocolate .cake-base::before,
-        .massa-chocolate .cake-middle::before,
-        .massa-chocolate .cake-top::before {
-            background: linear-gradient(to bottom, rgba(92, 58, 33, 0.5), transparent);
-        }
-
-        .massa-baunilha .cake-base,
-        .massa-baunilha .cake-middle,
-        .massa-baunilha .cake-top {
-            background: linear-gradient(to bottom, #f5ecd6, #eadcb8);
-        }
-
-        .massa-red_velvet .cake-base,
-        .massa-red_velvet .cake-middle,
-        .massa-red_velvet .cake-top {
-            background: linear-gradient(to bottom, #a92e38, #8e2730);
-        }
-
-        .massa-limao .cake-base,
-        .massa-limao .cake-middle,
-        .massa-limao .cake-top {
-            background: linear-gradient(to bottom, #e8f4d9, #d8ecc0);
-        }
-
-        /* Estilos específicos para cada tipo de recheio */
-        .recheio-brigadeiro .cake-filling-bottom,
-        .recheio-brigadeiro .cake-filling-top {
-            background: linear-gradient(to bottom, #3a2014, #25140d);
-            height: 7px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .recheio-morango .cake-filling-bottom,
-        .recheio-morango .cake-filling-top {
-            background: linear-gradient(to bottom, #ff758c, #e6677e);
-            height: 7px;
-            box-shadow: 0 2px 4px rgba(255, 117, 140, 0.3);
-        }
-
-        .recheio-doce_de_leite .cake-filling-bottom,
-        .recheio-doce_de_leite .cake-filling-top {
-            background: linear-gradient(to bottom, #c68e3c, #b37d2d);
-            height: 7px;
-            box-shadow: 0 2px 4px rgba(198, 142, 60, 0.3);
-        }
-
-        .recheio-chocolate_branco .cake-filling-bottom,
-        .recheio-chocolate_branco .cake-filling-top {
-            background: linear-gradient(to bottom, #f2e8cf, #e5d6b1);
-            height: 7px;
-            box-shadow: 0 2px 4px rgba(242, 232, 207, 0.3);
-        }
-
-        /* Estilos específicos para cada tipo de cobertura */
-        .cobertura-chantilly .cake-frosting {
-            background: linear-gradient(to bottom, #ffffff, #f5f5f5);
-            height: 25px;
-            border-radius: 15px 15px 0 0;
-        }
-
-        .cobertura-chantilly .cake-frosting::before {
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.2));
-        }
-
-        .cobertura-ganache .cake-frosting {
-            background: linear-gradient(to bottom, #3a2014, #25140d);
-            height: 22px;
-        }
-
-        .cobertura-ganache .frosting-drip {
-            display: block;
-            background: linear-gradient(to bottom, #3a2014, #25140d);
-        }
-
-        .cobertura-ganache .cake-frosting::before {
-            background: linear-gradient(to bottom, rgba(80, 50, 35, 0.7), transparent);
-        }
-
-        .cobertura-pasta_americana .cake-frosting {
-            background: linear-gradient(to bottom, #f9f0f2, #f0dde2);
-            height: 30px;
-            border-radius: 15px 15px 0 0;
-        }
-
-        .cobertura-cream_cheese .cake-frosting {
-            background: linear-gradient(to bottom, #fdfaf5, #f8f1e5);
-            height: 25px;
-            box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Estilos para as decorações - REDESENHADOS */
-        .morango-decoration {
-            position: absolute;
-            width: 18px;
-            height: 20px;
-            background: #e74c3c;
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            z-index: 5;
-        }
-
-        .morango-decoration::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: 7px;
-            width: 4px;
-            height: 6px;
-            background: #27ae60;
-            border-radius: 2px;
-            transform: rotate(-20deg);
-        }
-
-        .morango-decoration::after {
-            content: '';
-            position: absolute;
-            top: 5px;
-            left: 3px;
-            width: 12px;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            filter: blur(2px);
-        }
-
-        .chocolate-decoration {
-            position: absolute;
-            width: 10px;
-            height: 25px;
-            background: linear-gradient(45deg, #3a2014, #5c3a21);
-            z-index: 5;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-            transform-origin: bottom center;
-        }
-
-        .chocolate-decoration::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 30%;
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .mm-decoration {
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            z-index: 5;
-            box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .mm-decoration::after {
-            content: 'M';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        .footer-form .form-control {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
             color: white;
-            font-size: 8px;
-            font-weight: bold;
-            opacity: 0.8;
+            padding: 12px 15px;
         }
 
-        .confete-decoration {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            z-index: 5;
-            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+        .footer-form .form-control::placeholder {
+            color: #adb5bd;
         }
 
-        /* Responsividade */
-        @media (max-width: 992px) {
+        .footer-form .btn {
+            background-color: var(--primary-color);
+            border: none;
+            color: white;
+            width: 100%;
+        }
+
+        .footer-bottom {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom p {
+            color: #adb5bd;
+            margin-bottom: 5px;
+        }
+
+        .footer-policy a {
+            color: #adb5bd;
+            margin-left: 15px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-policy a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 991px) {
             .preview-container {
-                position: relative;
-                top: 0;
-                margin-bottom: 40px;
+                position: static;
+                margin-top: 30px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .step-indicator {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .step {
+                margin: 0 15px 20px;
             }
             
             .selector-item {
-                padding: 15px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .cake {
-                width: 180px;
-                transform: scale(0.85);
-            }
-            
-            .cake-base {
-                width: 180px;
-            }
-            
-            .cake-middle {
-                width: 170px;
-                left: 5px;
-            }
-            
-            .cake-top {
-                width: 155px;
-                left: 12.5px;
-            }
-            
-            .cake-filling-bottom {
-                width: 170px;
-            }
-            
-            .cake-filling-top {
-                width: 155px;
-            }
-            
-            .cake-frosting {
-                width: 165px;
-                left: 7.5px;
-            }
-            
-            .cake-decoration {
-                width: 155px;
-                left: 12.5px;
-            }
-            
-            .step-indicator:after {
-                display: none;
-            }
-            
-            .step-number {
-                width: 40px;
-                height: 40px;
-                font-size: 0.9rem;
-            }
-            
-            .step-title {
-                font-size: 0.8rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .cake {
-                transform: scale(0.8);
-            }
-            
-            .cake-preview-container {
-                height: 300px;
+                margin-bottom: 20px;
             }
             
             .btn-controller {
@@ -1096,12 +559,8 @@
                 gap: 15px;
             }
             
-            .btn-prev {
-                order: 2;
-            }
-            
-            .btn-next, .btn-submit {
-                order: 1;
+            .btn {
+                width: 100%;
             }
         }
     </style>
@@ -1116,9 +575,24 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('product.todos_produtos') }}">Produtos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('product.montar_bolo') }}">Monte seu Bolo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#sobre">Sobre Nós</a>
+                    </li>
                     {% if 'usuario_id' in session %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('order.pedidos') }}">Meus Pedidos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('product.meus_bolos') }}">Meus Bolos</a>
                     </li>
                     {% if is_admin() %}
                     <li class="nav-item">
@@ -1137,6 +611,9 @@
                         </a>
                     </li>
                     {% if 'usuario_id' in session %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('user.perfil') }}"><i class="bi bi-person"></i> Perfil</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
                     </li>
@@ -1500,417 +977,273 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS Bundle with Popper -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Script para personalização do bolo -->
+    <!-- Script personalizado -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const precoBase = 50.00;
-            let precoTotal = precoBase;
+            // Variáveis de preço
             const precos = {
+                base: 50,
                 massa: {
-                    chocolate: 25.00,
-                    baunilha: 20.00,
-                    red_velvet: 30.00,
-                    limao: 22.00
+                    'chocolate': 25,
+                    'baunilha': 20,
+                    'red_velvet': 30,
+                    'limao': 22
                 },
                 recheio: {
-                    brigadeiro: 15.00,
-                    morango: 18.00,
-                    doce_de_leite: 12.00,
-                    chocolate_branco: 16.00
+                    'brigadeiro': 15,
+                    'morango': 18,
+                    'doce_de_leite': 12,
+                    'chocolate_branco': 16
                 },
                 cobertura: {
-                    chantilly: 18.00,
-                    ganache: 20.00,
-                    pasta_americana: 25.00,
-                    cream_cheese: 22.00
+                    'chantilly': 18,
+                    'ganache': 20,
+                    'pasta_americana': 25,
+                    'cream_cheese': 22
                 },
                 finalizacao: {
-                    morangos: 12.00,
-                    chocolate_raspas: 8.00,
-                    mm: 10.00,
-                    confete: 5.00
+                    'morangos': 12,
+                    'chocolate_raspas': 8,
+                    'mm': 10,
+                    'confete': 5
                 }
             };
             
-            const selecionados = {
-                massa: null,
-                recheios: [],
-                cobertura: null,
-                finalizacao: []
-            };
+            // Elementos do DOM
+            const steps = document.querySelectorAll('.step');
+            const stepContents = document.querySelectorAll('.step-content');
+            const nextButtons = document.querySelectorAll('.btn-next');
+            const prevButtons = document.querySelectorAll('.btn-prev');
+            const selectorItems = document.querySelectorAll('.selector-item');
             
-            // Referências para elementos do bolo visual
-            const cakePreview = document.getElementById('cake-preview');
+            const massaSelText = document.getElementById('massa-selecionada');
+            const recheiosSelText = document.getElementById('recheios-selecionados');
+            const coberturaSelText = document.getElementById('cobertura-selecionada');
+            const finalizacaoSelText = document.getElementById('finalizacao-selecionada');
+            const precoTotal = document.getElementById('preco-total');
+            
+            // Elementos do bolo
+            const cakeBase = document.querySelector('.cake-base');
+            const cakeMiddle = document.querySelector('.cake-middle');
+            const cakeTop = document.querySelector('.cake-top');
+            const cakeFillingBottom = document.querySelector('.cake-filling-bottom');
+            const cakeFillingTop = document.querySelector('.cake-filling-top');
+            const cakeFrosting = document.querySelector('.cake-frosting');
             const cakeDecoration = document.getElementById('cake-decoration');
             const frostingDrips = document.querySelectorAll('.frosting-drip');
             
-            // Gerenciar a seleção de itens
-            const seletores = document.querySelectorAll('.selector-item');
-            seletores.forEach(item => {
-                item.addEventListener('click', function() {
-                    const tipo = this.dataset.type;
-                    const valor = this.dataset.value;
+            // Cores e estilos
+            const massaCores = {
+                'chocolate': '#5d4037',
+                'baunilha': '#f5e9be',
+                'red_velvet': '#c62828',
+                'limao': '#fff176'
+            };
+            
+            const recheioCores = {
+                'brigadeiro': '#3e2723',
+                'morango': '#e57373',
+                'doce_de_leite': '#d4a76a',
+                'chocolate_branco': '#f5f5dc'
+            };
+            
+            const coberturaCores = {
+                'chantilly': '#ffffff',
+                'ganache': '#3e2723',
+                'pasta_americana': '#f8bbd0',
+                'cream_cheese': '#f5f5f5'
+            };
+            
+            const finalizacaoIcones = {
+                'morangos': '🍓',
+                'chocolate_raspas': '🍫',
+                'mm': '🍬',
+                'confete': '✨'
+            };
+            
+            // Funções de navegação entre etapas
+            function goToStep(stepNumber) {
+                steps.forEach((step, index) => {
+                    if (index + 1 <= stepNumber) {
+                        step.classList.add('active');
+                    } else {
+                        step.classList.remove('active');
+                    }
+                });
+                
+                stepContents.forEach((content, index) => {
+                    if (index + 1 === stepNumber) {
+                        content.style.display = 'block';
+                    } else {
+                        content.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Adicionar eventos para navegação
+            nextButtons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    goToStep(index + 2);
+                });
+            });
+            
+            prevButtons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    goToStep(index + 1);
+                });
+            });
+            
+            // Função para atualizar o resumo e o preço
+            function updateSummaryAndPrice() {
+                let total = precos.base;
+                
+                // Massa
+                const massaSelecionada = document.querySelector('input[name="massa"]:checked');
+                if (massaSelecionada) {
+                    const massaValor = massaSelecionada.value;
+                    massaSelText.textContent = massaValor.charAt(0).toUpperCase() + massaValor.slice(1);
+                    total += precos.massa[massaValor];
                     
-                    // Massa e cobertura (radio - apenas uma opção)
-                    if (tipo === 'massa' || tipo === 'cobertura') {
-                        // Desmarcar todos os itens do mesmo tipo
-                        document.querySelectorAll(`.selector-item[data-type="${tipo}"]`).forEach(el => {
-                            el.classList.remove('selected');
-                            el.querySelector('input').checked = false;
+                    // Atualizar visualização do bolo
+                    const massaCor = massaCores[massaValor];
+                    cakeBase.style.backgroundColor = massaCor;
+                    cakeMiddle.style.backgroundColor = massaCor;
+                    cakeTop.style.backgroundColor = massaCor;
+                } else {
+                    massaSelText.textContent = '-';
+                }
+                
+                // Recheios
+                const recheiosSelecionados = document.querySelectorAll('input[name="recheios"]:checked');
+                if (recheiosSelecionados.length > 0) {
+                    const recheiosTexto = Array.from(recheiosSelecionados).map(recheio => {
+                        total += precos.recheio[recheio.value];
+                        return recheio.value.charAt(0).toUpperCase() + recheio.value.slice(1);
+                    }).join(', ');
+                    
+                    recheiosSelText.textContent = recheiosTexto;
+                    
+                    // Atualizar visualização do bolo (usar o primeiro recheio)
+                    if (recheiosSelecionados.length > 0) {
+                        const recheioCor = recheioCores[recheiosSelecionados[0].value];
+                        cakeFillingBottom.style.backgroundColor = recheioCor;
+                        cakeFillingTop.style.backgroundColor = recheioCor;
+                    }
+                } else {
+                    recheiosSelText.textContent = '-';
+                    cakeFillingBottom.style.backgroundColor = '#ffffff';
+                    cakeFillingTop.style.backgroundColor = '#ffffff';
+                }
+                
+                // Cobertura
+                const coberturaSelecionada = document.querySelector('input[name="cobertura"]:checked');
+                if (coberturaSelecionada) {
+                    const coberturaValor = coberturaSelecionada.value;
+                    coberturaSelText.textContent = coberturaValor.charAt(0).toUpperCase() + coberturaValor.slice(1);
+                    total += precos.cobertura[coberturaValor];
+                    
+                    // Atualizar visualização do bolo
+                    const coberturaCor = coberturaCores[coberturaValor];
+                    cakeFrosting.style.backgroundColor = coberturaCor;
+                    frostingDrips.forEach(drip => {
+                        drip.style.backgroundColor = coberturaCor;
+                    });
+                } else {
+                    coberturaSelText.textContent = '-';
+                }
+                
+                // Finalização
+                const finalizacoesSelecionadas = document.querySelectorAll('input[name="finalizacao"]:checked');
+                if (finalizacoesSelecionadas.length > 0) {
+                    const finalizacoesTexto = Array.from(finalizacoesSelecionadas).map(finalizacao => {
+                        total += precos.finalizacao[finalizacao.value];
+                        return finalizacao.value.charAt(0).toUpperCase() + finalizacao.value.slice(1);
+                    }).join(', ');
+                    
+                    finalizacaoSelText.textContent = finalizacoesTexto;
+                    
+                    // Atualizar visualização do bolo
+                    cakeDecoration.innerHTML = '';
+                    finalizacoesSelecionadas.forEach(finalizacao => {
+                        cakeDecoration.innerHTML += finalizacaoIcones[finalizacao.value];
+                    });
+                } else {
+                    finalizacaoSelText.textContent = '-';
+                    cakeDecoration.innerHTML = '';
+                }
+                
+                // Atualizar preço total
+                precoTotal.textContent = 'R$ ' + total.toFixed(2);
+            }
+            
+            // Adicionar eventos de seleção
+            selectorItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const inputType = this.querySelector('input').type;
+                    const inputName = this.querySelector('input').name;
+                    
+                    if (inputType === 'radio') {
+                        // Desmarcar outras opções do mesmo grupo
+                        document.querySelectorAll(`.selector-item[data-type="${this.dataset.type}"]`).forEach(otherItem => {
+                            otherItem.classList.remove('selected');
                         });
                         
-                        // Marcar o item selecionado
+                        // Marcar este item
                         this.classList.add('selected');
                         this.querySelector('input').checked = true;
-                        selecionados[tipo] = valor;
-
-                        // Remover classes anteriores
-                        if (tipo === 'massa') {
-                            cakePreview.classList.remove('massa-chocolate', 'massa-baunilha', 'massa-red_velvet', 'massa-limao');
-                            cakePreview.classList.add(`massa-${valor}`);
-                        } else if (tipo === 'cobertura') {
-                            cakePreview.classList.remove('cobertura-chantilly', 'cobertura-ganache', 'cobertura-pasta_americana', 'cobertura-cream_cheese');
-                            cakePreview.classList.add(`cobertura-${valor}`);
-                            
-                            // Mostrar/ocultar os drips conforme o tipo de cobertura
-                            frostingDrips.forEach(drip => {
-                                if (valor === 'ganache') {
-                                    drip.style.display = 'block';
-                                } else {
-                                    drip.style.display = 'none';
-                                }
-                            });
-                        }
-                    } 
-                    // Recheios (checkbox - até 2 opções)
-                    else if (tipo === 'recheio') {
-                        if (this.classList.contains('selected')) {
-                            // Desmarcar
-                            this.classList.remove('selected');
-                            this.querySelector('input').checked = false;
-                            const index = selecionados.recheios.indexOf(valor);
-                            if (index > -1) {
-                                selecionados.recheios.splice(index, 1);
-                            }
-                            
-                            // Remover classe do recheio
-                            cakePreview.classList.remove(`recheio-${valor}`);
-                        } else {
-                            // Verificar se já tem 2 recheios selecionados
-                            if (selecionados.recheios.length < 2) {
-                                // Marcar
-                                this.classList.add('selected');
-                                this.querySelector('input').checked = true;
-                                selecionados.recheios.push(valor);
-                                
-                                // Adicionar classe do recheio
-                                cakePreview.classList.add(`recheio-${valor}`);
-                            } else {
-                                alert('Você já selecionou o máximo de 2 recheios!');
+                    } else if (inputType === 'checkbox') {
+                        if (inputName === 'recheios') {
+                            // Limitar a 2 recheios
+                            const recheiosSelecionados = document.querySelectorAll('input[name="recheios"]:checked').length;
+                            if (recheiosSelecionados >= 2 && !this.querySelector('input').checked) {
+                                alert('Você pode selecionar no máximo 2 recheios.');
+                                return;
                             }
                         }
-                    }
-                    // Finalização (checkbox - múltiplas opções)
-                    else if (tipo === 'finalizacao') {
-                        if (this.classList.contains('selected')) {
-                            // Desmarcar
-                            this.classList.remove('selected');
-                            this.querySelector('input').checked = false;
-                            const index = selecionados.finalizacao.indexOf(valor);
-                            if (index > -1) {
-                                selecionados.finalizacao.splice(index, 1);
-                            }
-                            
-                            // Remover decorações
-                            removeDecorations(valor);
-                        } else {
-                            // Marcar
-                            this.classList.add('selected');
-                            this.querySelector('input').checked = true;
-                            selecionados.finalizacao.push(valor);
-                            
-                            // Adicionar decorações
-                            addDecorations(valor);
-                        }
+                        
+                        this.classList.toggle('selected');
+                        this.querySelector('input').checked = !this.querySelector('input').checked;
                     }
                     
-                    // Atualizar resumo e preço
-                    atualizarResumo();
+                    updateSummaryAndPrice();
                 });
             });
             
-            // Adicionar decorações ao bolo
-            function addDecorations(tipo) {
-                if (tipo === 'morangos') {
-                    for (let i = 0; i < 5; i++) {
-                        const morango = document.createElement('div');
-                        morango.className = 'morango-decoration';
-                        morango.style.left = (15 + i * 30) + 'px';
-                        morango.style.top = (Math.random() * 10 - 5) + 'px';
-                        morango.dataset.type = 'morangos';
-                        cakeDecoration.appendChild(morango);
-                    }
-                } else if (tipo === 'chocolate_raspas') {
-                    for (let i = 0; i < 10; i++) {
-                        const raspa = document.createElement('div');
-                        raspa.className = 'chocolate-decoration';
-                        raspa.style.left = (10 + Math.random() * 155) + 'px';
-                        raspa.style.top = (Math.random() * 15 - 10) + 'px';
-                        raspa.style.transform = `rotate(${Math.random() * 180}deg)`;
-                        raspa.dataset.type = 'chocolate_raspas';
-                        cakeDecoration.appendChild(raspa);
-                    }
-                } else if (tipo === 'mm') {
-                    const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6'];
-                    for (let i = 0; i < 12; i++) {
-                        const mm = document.createElement('div');
-                        mm.className = 'mm-decoration';
-                        mm.style.left = (10 + Math.random() * 155) + 'px';
-                        mm.style.top = (Math.random() * 15 - 10) + 'px';
-                        mm.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                        mm.dataset.type = 'mm';
-                        cakeDecoration.appendChild(mm);
-                    }
-                } else if (tipo === 'confete') {
-                    const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6', '#e67e22', '#1abc9c'];
-                    for (let i = 0; i < 25; i++) {
-                        const confete = document.createElement('div');
-                        confete.className = 'confete-decoration';
-                        confete.style.left = (5 + Math.random() * 165) + 'px';
-                        confete.style.top = (Math.random() * 20 - 12) + 'px';
-                        confete.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                        confete.dataset.type = 'confete';
-                        cakeDecoration.appendChild(confete);
-                    }
+            // Verificar formulário antes de enviar
+            document.getElementById('montagem-bolo-form').addEventListener('submit', function(event) {
+                // Verificar se pelo menos uma massa foi selecionada
+                const massa = document.querySelector('input[name="massa"]:checked');
+                if (!massa) {
+                    event.preventDefault();
+                    alert('Por favor, selecione uma massa para o bolo');
+                    goToStep(1);
+                    return;
                 }
-            }
-            
-            // Remover decorações do bolo
-            function removeDecorations(tipo) {
-                const decoracoes = cakeDecoration.querySelectorAll(`[data-type="${tipo}"]`);
-                decoracoes.forEach(dec => dec.remove());
-            }
-            
-            // Navegação entre etapas
-            const btnNext = document.querySelectorAll('.btn-next');
-            const btnPrev = document.querySelectorAll('.btn-prev');
-            const steps = document.querySelectorAll('.step-content');
-            const stepIndicators = document.querySelectorAll('.step');
-            
-            btnNext.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const currentStep = parseInt(this.closest('.step-content').id.split('-')[1]);
-                    const nextStep = currentStep + 1;
-                    
-                    // Validações específicas por etapa
-                    if (currentStep === 1 && !selecionados.massa) {
-                        alert('Por favor, selecione um tipo de massa para continuar.');
-                        return;
-                    }
-                    if (currentStep === 2 && selecionados.recheios.length === 0) {
-                        alert('Por favor, selecione pelo menos um recheio para continuar.');
-                        return;
-                    }
-                    if (currentStep === 3 && !selecionados.cobertura) {
-                        alert('Por favor, selecione uma cobertura para continuar.');
-                        return;
-                    }
-                    
-                    // Esconder passo atual e mostrar próximo
-                    document.getElementById(`step-${currentStep}`).style.display = 'none';
-                    document.getElementById(`step-${nextStep}`).style.display = 'block';
-                    
-                    // Atualizar indicadores
-                    stepIndicators.forEach(step => {
-                        step.classList.remove('active');
-                    });
-                    stepIndicators[nextStep-1].classList.add('active');
-                    
-                    // Adicionar classe de completado no passo anterior
-                    stepIndicators[currentStep-1].classList.add('completed');
-                    
-                    // Rolar para o topo da seção
-                    window.scrollTo({
-                        top: document.querySelector('.step-indicator').offsetTop - 100,
-                        behavior: 'smooth'
-                    });
-                });
+                
+                // Verificar se pelo menos um recheio foi selecionado
+                const recheios = document.querySelectorAll('input[name="recheios"]:checked');
+                if (recheios.length === 0) {
+                    event.preventDefault();
+                    alert('Por favor, selecione pelo menos um recheio para o bolo');
+                    goToStep(2);
+                    return;
+                }
+                
+                // Verificar se uma cobertura foi selecionada
+                const cobertura = document.querySelector('input[name="cobertura"]:checked');
+                if (!cobertura) {
+                    event.preventDefault();
+                    alert('Por favor, selecione uma cobertura para o bolo');
+                    goToStep(3);
+                    return;
+                }
             });
             
-            btnPrev.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const currentStep = parseInt(this.closest('.step-content').id.split('-')[1]);
-                    const prevStep = currentStep - 1;
-                    
-                    // Esconder passo atual e mostrar anterior
-                    document.getElementById(`step-${currentStep}`).style.display = 'none';
-                    document.getElementById(`step-${prevStep}`).style.display = 'block';
-                    
-                    // Atualizar indicadores
-                    stepIndicators.forEach(step => {
-                        step.classList.remove('active');
-                    });
-                    stepIndicators[prevStep-1].classList.add('active');
-                    
-                    // Rolar para o topo da seção
-                    window.scrollTo({
-                        top: document.querySelector('.step-indicator').offsetTop - 100,
-                        behavior: 'smooth'
-                    });
-                });
-            });
-            
-            // Atualizar resumo e preço total
-            function atualizarResumo() {
-                // Atualizar campos de texto do resumo
-                document.getElementById('massa-selecionada').textContent = 
-                    selecionados.massa ? traduzirOpcao(selecionados.massa) : '-';
-                
-                document.getElementById('recheios-selecionados').textContent = 
-                    selecionados.recheios.length > 0 ? 
-                    selecionados.recheios.map(r => traduzirOpcao(r)).join(', ') : '-';
-                
-                document.getElementById('cobertura-selecionada').textContent = 
-                    selecionados.cobertura ? traduzirOpcao(selecionados.cobertura) : '-';
-                
-                document.getElementById('finalizacao-selecionada').textContent = 
-                    selecionados.finalizacao.length > 0 ? 
-                    selecionados.finalizacao.map(f => traduzirOpcao(f)).join(', ') : '-';
-                
-                // Calcular preço total
-                calcularPrecoTotal();
-                
-                // Atualizar classe do bolo com recheios selecionados
-                atualizarVisualRecheios();
-            }
-            
-            // Atualizar visual dos recheios
-            function atualizarVisualRecheios() {
-                if (selecionados.recheios.length === 2) {
-                    // Se tem dois recheios, coloca um em cada andar
-                    cakePreview.classList.remove('recheio-brigadeiro', 'recheio-morango', 'recheio-doce_de_leite', 'recheio-chocolate_branco');
-                    
-                    // Adiciona classes específicas para cada recheio em posições diferentes
-                    const recheioBottom = document.querySelector('.cake-filling-bottom');
-                    const recheioTop = document.querySelector('.cake-filling-top');
-                    
-                    recheioBottom.style.background = getRecheioColor(selecionados.recheios[0]);
-                    recheioTop.style.background = getRecheioColor(selecionados.recheios[1]);
-                }
-            }
-            
-            // Obter cor do recheio
-            function getRecheioColor(recheio) {
-                switch(recheio) {
-                    case 'brigadeiro': return 'linear-gradient(to bottom, #3a2014, #25140d)';
-                    case 'morango': return 'linear-gradient(to bottom, #ff758c, #e6677e)';
-                    case 'doce_de_leite': return 'linear-gradient(to bottom, #c68e3c, #b37d2d)';
-                    case 'chocolate_branco': return 'linear-gradient(to bottom, #f2e8cf, #e5d6b1)';
-                    default: return 'transparent';
-                }
-            }
-            
-            // Calcular preço total com base nas seleções
-            function calcularPrecoTotal() {
-                let total = precoBase;
-                
-                // Adicionar preço da massa
-                if (selecionados.massa) {
-                    total += precos.massa[selecionados.massa];
-                }
-                
-                // Adicionar preço dos recheios
-                selecionados.recheios.forEach(recheio => {
-                    total += precos.recheio[recheio];
-                });
-                
-                // Adicionar preço da cobertura
-                if (selecionados.cobertura) {
-                    total += precos.cobertura[selecionados.cobertura];
-                }
-                
-                // Adicionar preço das finalizações
-                selecionados.finalizacao.forEach(finalizacao => {
-                    total += precos.finalizacao[finalizacao];
-                });
-                
-                // Atualizar elemento na página
-                document.getElementById('preco-total').textContent = `R$ ${total.toFixed(2)}`;
-            }
-            
-            // Traduzir os códigos para nomes apresentáveis
-            function traduzirOpcao(codigo) {
-                const traducoes = {
-                    // Massas
-                    chocolate: 'Chocolate',
-                    baunilha: 'Baunilha',
-                    red_velvet: 'Red Velvet',
-                    limao: 'Limão',
-                    
-                    // Recheios
-                    brigadeiro: 'Brigadeiro',
-                    morango: 'Morango',
-                    doce_de_leite: 'Doce de Leite',
-                    chocolate_branco: 'Chocolate Branco',
-                    
-                    // Coberturas
-                    chantilly: 'Chantilly',
-                    ganache: 'Ganache',
-                    pasta_americana: 'Pasta Americana',
-                    cream_cheese: 'Cream Cheese',
-                    
-                    // Finalizações
-                    morangos: 'Morangos Frescos',
-                    chocolate_raspas: 'Raspas de Chocolate',
-                    mm: 'M&M\'s',
-                    confete: 'Confetes Coloridos'
-                };
-                
-                return traducoes[codigo] || codigo;
-            }
-            
-            // Adicionar rotação ao bolo ao passar o mouse
-            const cake = document.getElementById('cake-preview');
-            cake.addEventListener('mousemove', function(e) {
-                const rect = this.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                
-                const rotateY = x * 0.1;
-                const rotateX = -y * 0.05;
-                
-                this.style.transform = `rotateX(${5 + rotateX}deg) rotateY(${rotateY}deg)`;
-            });
-            
-            cake.addEventListener('mouseleave', function() {
-                this.style.transform = 'rotateX(5deg) rotateY(0deg)';
-            });
-            
-            // Validar o formulário antes de enviar
-            document.getElementById('montagem-bolo-form').addEventListener('submit', function(e) {
-                if (!selecionados.massa) {
-                    e.preventDefault();
-                    alert('Por favor, selecione um tipo de massa para o bolo.');
-                    return false;
-                }
-                
-                if (selecionados.recheios.length === 0) {
-                    e.preventDefault();
-                    alert('Por favor, selecione pelo menos um recheio para o bolo.');
-                    return false;
-                }
-                
-                if (!selecionados.cobertura) {
-                    e.preventDefault();
-                    alert('Por favor, selecione uma cobertura para o bolo.');
-                    return false;
-                }
-                
-                return true;
-            });
+            // Inicializar
+            updateSummaryAndPrice();
         });
     </script>
 </body>

@@ -158,7 +158,7 @@ def create_corrected_master_script():
         'detalhes_pedido': 'order.detalhes_pedido',
         'cancelar_pedido': 'order.cancelar_pedido',
         'confirmar_pedido': 'order.confirmar_pedido',
-        'admin_detalhes_pedido': 'order.admin_detalhes_pedido',
+        'admin_detalhes_pedido': 'order.detalhes_pedido',
         'admin_atualizar_pedido': 'order.admin_atualizar_pedido',
         
         # User routes

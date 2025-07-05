@@ -10,17 +10,17 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
     <style>
         :root {
-            --primary-color: #d23f72;        /* Mais escuro e elegante */
-            --primary-dark: #b22d5d;         /* Tom mais profundo */
-            --secondary-color: #ffd6e0;      /* Mantendo o rosa claro suave */
-            --accent-color: #ffb3c6;         /* Tom complementar */
-            --text-color: #2d2d2d;           /* Texto mais escuro e sofisticado */
-            --light-text: #ffffff;           /* Branco puro para contraste */
-            --background-color: #fff8fa;     /* Fundo com tom rosa sutil */
-            --container-bg: #ffffff;         /* Containers brancos */
-            --border-color: #f1c2ce;         /* Bordas mais sutis */
-            --shadow: 0 8px 20px rgba(210, 63, 114, 0.08); /* Sombra mais suave com tom rosa */
-            --radius: 10px;                  /* Bordas mais arredondadas */
+            --primary-color: #d23f72;
+            --primary-dark: #b22d5d;
+            --secondary-color: #ffd6e0;
+            --accent-color: #ffb3c6;
+            --text-color: #2d2d2d;
+            --light-text: #ffffff;
+            --background-color: #fff8fa;
+            --container-bg: #ffffff;
+            --border-color: #f1c2ce;
+            --shadow: 0 8px 20px rgba(210, 63, 114, 0.08);
+            --radius: 10px;
         }
 
         body, html {
@@ -291,8 +291,8 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('cart.carrinho') }}">
                             Carrinho
-                            {% if 'carrinho' in session and session['carrinho'] %}
-                            <span class="badge bg-danger">{{ session['carrinho']|length }}</span>
+                            {% if itens %}
+                            <span class="badge bg-danger">{{ itens|length }}</span>
                             {% endif %}
                         </a>
                     </li>
@@ -331,7 +331,7 @@
     <div class="container my-5">
         <h1 class="mb-4">Finalizar Compra</h1>
 
-        {% if ('carrinho' in session and session['carrinho']) or ('carrinho_personalizado' in session and session['carrinho_personalizado']) %}
+        {% if itens %}
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
                     <h2 class="h5 mb-0">Resumo do Pedido</h2>
@@ -348,33 +348,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% set total = 0 %}
-                                
-                                {% if 'carrinho' in session and session['carrinho'] %}
-                                    {% for item_id, item in session['carrinho'].items() %}
-                                        {% set subtotal = item.preco * item.quantidade %}
-                                        {% set total = total + subtotal %}
-                                        <tr>
-                                            <td>{{ item.nome }}</td>
-                                            <td>{{ item.quantidade }}</td>
-                                            <td>R$ {{ "%.2f"|format(item.preco) }}</td>
-                                            <td class="text-end">R$ {{ "%.2f"|format(subtotal) }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                {% endif %}
-                                
-                                {% if 'carrinho_personalizado' in session and session['carrinho_personalizado'] %}
-                                    {% for item_id, item in session['carrinho_personalizado'].items() %}
-                                        {% set subtotal = item.preco * item.quantidade %}
-                                        {% set total = total + subtotal %}
-                                        <tr>
-                                            <td>{{ item.nome }}</td>
-                                            <td>{{ item.quantidade }}</td>
-                                            <td>R$ {{ "%.2f"|format(item.preco) }}</td>
-                                            <td class="text-end">R$ {{ "%.2f"|format(subtotal) }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                {% endif %}
+                                {% for item in itens %}
+                                <tr>
+                                    <td>{{ item.nome }}</td>
+                                    <td>{{ item.quantidade }}</td>
+                                    <td>R$ {{ "%.2f"|format(item.preco) }}</td>
+                                    <td class="text-end">R$ {{ "%.2f"|format(item.subtotal) }}</td>
+                                </tr>
+                                {% endfor %}
                             </tbody>
                             <tfoot>
                                 <tr>
@@ -391,10 +372,6 @@
                 <div class="card-header bg-primary text-white">
                     <h2 class="h5 mb-0">Confirmar Pedido</h2>
                 </div>
-
-
-
-                
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('order.finalizar_compra') }}">
                         <div class="alert alert-info">
@@ -412,9 +389,6 @@
                     </form>
                 </div>
             </div>
-
-
-
         {% else %}
             <div class="alert alert-warning">
                 <p>Seu carrinho está vazio.</p>
@@ -488,57 +462,6 @@
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     
-    
-<!-- Bootstrap JS Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Script para calcular total -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Função para calcular o total do carrinho
-        function calcularTotal() {
-            let total = 0;
-            const linhasItens = document.querySelectorAll('tbody tr');
-            
-            // Itera sobre cada linha da tabela
-            linhasItens.forEach(function(linha) {
-                const colunas = linha.querySelectorAll('td');
-                if (colunas.length >= 4) {
-                    // Pega o texto do subtotal (última coluna)
-                    const subtotalTexto = colunas[3].textContent.trim();
-                    // Remove o "R$ " e converte para número
-                    const subtotal = parseFloat(subtotalTexto.replace('R$ ', '').replace(',', '.'));
-                    if (!isNaN(subtotal)) {
-                        total += subtotal;
-                    }
-                }
-            });
-            
-            // Atualiza o total no rodapé da tabela
-            const totalElement = document.querySelector('tfoot tr td:last-child strong');
-            if (totalElement) {
-                totalElement.textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
-            }
-            
-            return total;
-        }
-        
-        // Calcula o total quando a página carrega
-        calcularTotal();
-    });
-</script>
-
-<!-- Script para o formulário de contato -->
-<script>
-    document.getElementById('contato-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        alert('Obrigado pelo contato! Responderemos em breve.');
-        this.reset();
-    });
-</script>
-
-
-
     <!-- Script para o formulário de contato -->
     <script>
         document.getElementById('contato-form').addEventListener('submit', function(e) {

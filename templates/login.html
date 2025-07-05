@@ -363,6 +363,25 @@
          .row{
             margin-bottom:70px;
         }
+        
+        /* Estilo para o link de esqueci minha senha */
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 15px;
+        }
+        
+        .forgot-password a {
+            color: var(--primary-color);
+            font-weight: 500;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .forgot-password a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -436,6 +455,9 @@
                                 <div class="form-group mb-3">
                                     <label for="senha" class="form-label">Senha:</label>
                                     <input type="password" id="senha" name="senha" class="form-control" required>
+                                </div>
+                                <div class="forgot-password">
+                                    <a href="{{ url_for('auth.esqueci_senha') }}">Esqueci minha senha</a>
                                 </div>
                                 <div class="form-group d-grid gap-2 mb-3">
                                     <button type="submit" class="btn btn-primary">Entrar</button>

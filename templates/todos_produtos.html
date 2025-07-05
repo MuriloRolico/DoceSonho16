@@ -545,6 +545,11 @@ footer:before {
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('product.todos_produtos') }}">Produtos</a>
                     </li>
+                     <li class="nav-item">
+
+                        
+                       <a class="nav-link" href="{{ url_for('sobrenos.sobrenos') }}">Sobre Nós</a>
+                    </li>
                     
                     {% if 'usuario_id' in session %}
                     <li class="nav-item">
@@ -700,8 +705,7 @@ footer:before {
                         <li><a href="{{ url_for('index') }}">Início</a></li>
                         <li><a href="{{ url_for('product.todos_produtos') }}">Produtos</a></li>
                         <li><a href="{{ url_for('product.montar_bolo') }}">Monte seu Bolo</a></li>
-                        <li><a href="#">Sobre Nós</a></li>
-                        
+                        <li><a href="{{ url_for('sobrenos.sobrenos') }}">Sobre Nós</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">

@@ -969,12 +969,6 @@
                 </div>
                 {% endfor %}
             </div>
-            
-
-
-
-
-
             <div class="text-center mt-5">
                 <a href="{{ url_for('product.todos_produtos') }}" class="btn hero-secondary-btn me-3">
                     <i class="bi bi-grid-3x3-gap-fill"></i> Ver Todos os Produtos
@@ -1086,8 +1080,7 @@
                         <li><a href="{{ url_for('index') }}">Início</a></li>
                         <li><a href="{{ url_for('product.todos_produtos') }}">Produtos</a></li>
                         <li><a href="{{ url_for('product.montar_bolo') }}">Monte seu Bolo</a></li>
-                        <li><a href="#">Sobre Nós</a></li>
-                        
+                        <li><a href="{{ url_for('sobrenos.sobrenos') }}">Sobre Nós</a></li>                      
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">

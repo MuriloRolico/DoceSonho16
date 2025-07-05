@@ -61,7 +61,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <a href="{{ url_for('order.admin_detalhes_pedido', pedido_id=pedido.id) }}" class="btn btn-sm btn-primary">Detalhes</a>
+                                <a href="{{ url_for('order.detalhes_pedido', pedido_id=pedido.id) }}" class="btn btn-sm btn-primary">Detalhes</a>
                             </td>
                         </tr>
                         {% endfor %}

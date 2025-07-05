@@ -1,11 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session , current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app, jsonify
 from database import db
-from models.models import Produto, BoloPersonalizado
-import json
-from werkzeug.utils import secure_filename
-import os
+from models.models import Produto, BoloPersonalizado, CarrinhoBoloPersonalizado, Usuario
 from utils.helpers import is_admin, allowed_file, registrar_log
-
+import os
+from werkzeug.utils import secure_filename
+from sqlalchemy import desc
+import json
 
 product_bp = Blueprint('product', __name__)
 
@@ -109,6 +109,7 @@ def salvar_bolo_personalizado():
     # Criar um novo bolo personalizado
     novo_bolo = BoloPersonalizado(
         usuario_id=session['usuario_id'],
+        nome=f"Bolo Personalizado de {massa.capitalize()}",  # Adicionando nome mais descritivo
         massa=massa,
         recheios=recheios_json,
         cobertura=cobertura,
@@ -117,53 +118,68 @@ def salvar_bolo_personalizado():
         preco=preco_total
     )
     
-    db.session.add(novo_bolo)
-    db.session.commit()
-    
-    # Adicionar ao carrinho automaticamente
-    if 'carrinho_personalizado' not in session:
-        session['carrinho_personalizado'] = {}
-    
-    bolo_id_str = str(novo_bolo.id)
-    
-    carrinho_personalizado = session['carrinho_personalizado']
-    carrinho_personalizado[bolo_id_str] = {
-        'id': novo_bolo.id,
-        'nome': f"Bolo Personalizado de {novo_bolo.massa.capitalize()}",
-        'preco': novo_bolo.preco,
-        'quantidade': 1
-    }
-    
-    session['carrinho_personalizado'] = carrinho_personalizado
-    
-    flash(f'Seu bolo personalizado foi criado e adicionado ao carrinho!', 'success')
-    return redirect(url_for('cart.carrinho'))
+    try:
+        db.session.add(novo_bolo)
+        db.session.commit()
+        
+        # Registrar log
+        registrar_log("INFO", f"Bolo personalizado criado: ID {novo_bolo.id}", session['usuario_id'])
+        
+        # Adicionar ao carrinho automaticamente
+        novo_item_carrinho = CarrinhoBoloPersonalizado(
+            usuario_id=session['usuario_id'],
+            bolo_personalizado_id=novo_bolo.id,
+            quantidade=1
+        )
+        db.session.add(novo_item_carrinho)
+        db.session.commit()
+        
+        registrar_log("INFO", f"Bolo personalizado adicionado ao carrinho: ID {novo_bolo.id}", session['usuario_id'])
+        
+        flash('Seu bolo personalizado foi criado e adicionado ao carrinho!', 'success')
+        return redirect(url_for('cart.carrinho'))
+    except Exception as e:
+        db.session.rollback()
+        registrar_log("ERROR", f"Erro ao criar bolo personalizado: {str(e)}", session.get('usuario_id'))
+        flash(f'Erro ao salvar o bolo personalizado: {str(e)}', 'danger')
+        return redirect(url_for('product.montar_bolo'))
 
+# Rota para a página "Meus Bolos"
 @product_bp.route('/meus-bolos')
 def meus_bolos():
     if 'usuario_id' not in session:
         flash('Você precisa fazer login para ver seus bolos personalizados', 'warning')
         return redirect(url_for('auth.login'))
     
-    bolos = BoloPersonalizado.query.filter_by(usuario_id=session['usuario_id'], ativo=True).all()
+    # Buscar os bolos personalizados do usuário atual
+    bolos = BoloPersonalizado.query.filter_by(usuario_id=session['usuario_id']).order_by(
+        desc(BoloPersonalizado.data_criacao)).all()
+    
     return render_template('meus_bolos.html', bolos=bolos)
 
+# Rota para a página "Detalhes do Bolo Personalizado"
 @product_bp.route('/bolo-personalizado/<int:bolo_id>')
 def detalhes_bolo_personalizado(bolo_id):
     if 'usuario_id' not in session:
-        flash('Faça login para visualizar detalhes do bolo personalizado', 'warning')
+        flash('Você precisa fazer login para ver detalhes de bolos personalizados', 'warning')
         return redirect(url_for('auth.login'))
     
+    # Buscar o bolo pelo ID
     bolo = BoloPersonalizado.query.get_or_404(bolo_id)
     
-    # Verificar se o bolo pertence ao usuário
-    if bolo.usuario_id != session['usuario_id'] and not is_admin():
-        flash('Você não tem permissão para visualizar este bolo', 'danger')
-        return redirect(url_for('index'))
+    # Verificar se o bolo pertence ao usuário atual
+    if bolo.usuario_id != session['usuario_id']:
+        flash('Você não tem permissão para ver este bolo', 'danger')
+        return redirect(url_for('product.meus_bolos'))
     
     # Converter os campos JSON para listas
-    recheios = json.loads(bolo.recheios)
+    recheios = json.loads(bolo.recheios) if bolo.recheios else []
     finalizacao = json.loads(bolo.finalizacao) if bolo.finalizacao else []
     
     return render_template('detalhes_bolo_personalizado.html', bolo=bolo, recheios=recheios, finalizacao=finalizacao)
 
+# Rota para adicionar bolo personalizado ao carrinho
+@product_bp.route('/bolo-personalizado/<int:bolo_id>/adicionar-ao-carrinho')
+def adicionar_bolo_personalizado_ao_carrinho(bolo_id):
+    # Redirecionamento para a rota existente no cart_bp
+    return redirect(url_for('cart.adicionar_bolo_personalizado_ao_carrinho', bolo_id=bolo_id))

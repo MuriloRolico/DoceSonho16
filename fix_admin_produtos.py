@@ -159,7 +159,7 @@ def create_final_corrected_mappings():
         'detalhes_pedido': 'order.detalhes_pedido',
         'cancelar_pedido': 'order.cancelar_pedido',
         'confirmar_pedido': 'order.confirmar_pedido',
-        'admin_detalhes_pedido': 'order.admin_detalhes_pedido',
+        'admin_detalhes_pedido': 'order.detalhes_pedido',
         'admin_atualizar_pedido': 'order.admin_atualizar_pedido',
         
         # User routes
@@ -311,7 +311,7 @@ def fix_all_url_references(templates_dir='templates'):
         'detalhes_pedido': 'order.detalhes_pedido',
         'cancelar_pedido': 'order.cancelar_pedido',
         'confirmar_pedido': 'order.confirmar_pedido',
-        'admin_detalhes_pedido': 'order.admin_detalhes_pedido',
+        'admin_detalhes_pedido': 'order.detalhes_pedido',
         'admin_atualizar_pedido': 'order.admin_atualizar_pedido',
         
         # User routes
