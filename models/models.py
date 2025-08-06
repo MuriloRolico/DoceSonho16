@@ -171,6 +171,7 @@ class Pedido(db.Model):
     valor_frete = db.Column(db.Float, default=0.0)
     endereco_entrega = db.Column(db.Text, nullable=True)
     observacoes = db.Column(db.Text, nullable=True)
+    mercado_pago_transaction_id = db.Column(db.String(255), nullable=True)
     
     # Relationships
     itens = db.relationship('ItemPedido', backref='pedido', lazy=True)

@@ -10,7 +10,9 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def create_mercadopago_preference(user_id, success_url, failure_url, pending_url):
+# utils/payment.py - Função create_mercadopago_preference corrigida
+
+def create_mercadopago_preference(user_id, success_url, failure_url, pending_url, delivery_option=None):
     """
     Cria uma preferência de pagamento no MercadoPago com base nos itens do carrinho.
     
@@ -19,6 +21,7 @@ def create_mercadopago_preference(user_id, success_url, failure_url, pending_url
         success_url: URL de retorno em caso de sucesso
         failure_url: URL de retorno em caso de falha
         pending_url: URL de retorno em caso de pagamento pendente
+        delivery_option: Opção de entrega ('delivery' para entrega em casa, 'pickup' para retirada)
         
     Returns:
         Tupla (link_pagamento, erro) - link de pagamento do MercadoPago ou None em caso de erro
@@ -38,13 +41,21 @@ def create_mercadopago_preference(user_id, success_url, failure_url, pending_url
                         logger.warning(f"Produto {produto.id} tem preço inválido: {produto.preco}")
                         continue
                     
+                    # Melhorar descrição do item com mais detalhes
+                    descricao_detalhada = f"Produto: {produto.nome}"
+                    if produto.descricao:
+                        descricao_detalhada += f" - {produto.descricao}"
+                    if produto.categoria:
+                        descricao_detalhada += f" - Categoria: {produto.categoria}"
+                    
                     items.append({
                         'id': str(produto.id),
                         'title': produto.nome[:256],  # Limitar tamanho do título
-                        'description': (produto.descricao or 'Produto da Doce Sonho')[:256],
+                        'description': descricao_detalhada[:256],
                         'quantity': int(item.quantidade),
                         'unit_price': float(produto.preco),
-                        'currency_id': 'BRL'
+                        'currency_id': 'BRL',
+                        'category_id': produto.categoria if hasattr(produto, 'categoria') else 'produtos'
                     })
             
             # Buscar bolos personalizados
@@ -57,11 +68,16 @@ def create_mercadopago_preference(user_id, success_url, failure_url, pending_url
                         logger.warning(f"Bolo personalizado {bolo.id} tem preço inválido: {bolo.preco}")
                         continue
                     
-                    descricao = f"Massa: {bolo.massa.capitalize()}"
+                    # Descrição mais detalhada do bolo personalizado
+                    descricao = f"Bolo Personalizado - Massa: {bolo.massa.capitalize()}"
                     if bolo.recheios:
                         descricao += f", Recheios: {bolo.recheios}"
                     if bolo.cobertura:
                         descricao += f", Cobertura: {bolo.cobertura}"
+                    if hasattr(bolo, 'finalizacao') and bolo.finalizacao:
+                        descricao += f", Finalização: {bolo.finalizacao}"
+                    if hasattr(bolo, 'observacoes') and bolo.observacoes:
+                        descricao += f", Obs: {bolo.observacoes}"
                     
                     items.append({
                         'id': str(bolo.id),
@@ -69,7 +85,8 @@ def create_mercadopago_preference(user_id, success_url, failure_url, pending_url
                         'description': descricao[:256],  # Limitar tamanho da descrição
                         'quantity': int(item.quantidade),
                         'unit_price': float(bolo.preco),
-                        'currency_id': 'BRL'
+                        'currency_id': 'BRL',
+                        'category_id': 'bolos_personalizados'
                     })
         else:
             # Buscar itens da sessão (usuário não logado)
@@ -79,13 +96,21 @@ def create_mercadopago_preference(user_id, success_url, failure_url, pending_url
                         logger.warning(f"Item da sessão {item_id} tem preço inválido: {item['preco']}")
                         continue
                     
+                    # Melhorar descrição do item da sessão
+                    descricao_detalhada = f"Produto: {item['nome']}"
+                    if 'descricao' in item and item['descricao']:
+                        descricao_detalhada += f" - {item['descricao']}"
+                    if 'categoria' in item and item['categoria']:
+                        descricao_detalhada += f" - Categoria: {item['categoria']}"
+                    
                     items.append({
                         'id': str(item['id']),
                         'title': item['nome'][:256],
-                        'description': item.get('descricao', 'Produto da Doce Sonho')[:256],
+                        'description': descricao_detalhada[:256],
                         'quantity': int(item['quantidade']),
                         'unit_price': float(item['preco']),
-                        'currency_id': 'BRL'
+                        'currency_id': 'BRL',
+                        'category_id': item.get('categoria', 'produtos')
                     })
             
             if 'carrinho_personalizado' in session and session['carrinho_personalizado']:
@@ -94,11 +119,16 @@ def create_mercadopago_preference(user_id, success_url, failure_url, pending_url
                         logger.warning(f"Bolo personalizado da sessão {item_id} tem preço inválido: {item['preco']}")
                         continue
                     
-                    descricao = f"Massa: {item.get('massa', '').capitalize()}"
-                    if 'recheios' in item:
+                    # Descrição mais detalhada do bolo personalizado da sessão
+                    descricao = f"Bolo Personalizado - Massa: {item.get('massa', '').capitalize()}"
+                    if 'recheios' in item and item['recheios']:
                         descricao += f", Recheios: {item['recheios']}"
-                    if 'cobertura' in item:
+                    if 'cobertura' in item and item['cobertura']:
                         descricao += f", Cobertura: {item['cobertura']}"
+                    if 'finalizacao' in item and item['finalizacao']:
+                        descricao += f", Finalização: {item['finalizacao']}"
+                    if 'observacoes' in item and item['observacoes']:
+                        descricao += f", Obs: {item['observacoes']}"
                         
                     items.append({
                         'id': str(item['id']),
@@ -106,8 +136,24 @@ def create_mercadopago_preference(user_id, success_url, failure_url, pending_url
                         'description': descricao[:256],
                         'quantity': int(item['quantidade']),
                         'unit_price': float(item['preco']),
-                        'currency_id': 'BRL'
+                        'currency_id': 'BRL',
+                        'category_id': 'bolos_personalizados'
                     })
+        
+        # Adicionar taxa de entrega se a opção for 'delivery'
+        # Quando adiciona a taxa de entrega
+       # Modificação na função create_mercadopago_preference
+        if delivery_option and str(delivery_option).lower().strip() in ['delivery', 'frete', 'entrega']:
+        # Simplificar e tornar mais explícito o item de entrega
+            items.append({
+        'id': 'delivery_fee',
+        'title': 'Taxa de Entrega',
+        'description': 'Taxa de entrega em domicílio',
+        'quantity': 1,
+        'unit_price': 12.00,  # Garantir que é float
+        'currency_id': 'BRL'
+        })
+        logger.info("Taxa de entrega de R$ 12,00 adicionada ao pedido")
         
         if not items:
             return None, "Não há itens no carrinho"
@@ -121,34 +167,42 @@ def create_mercadopago_preference(user_id, success_url, failure_url, pending_url
             return None, "URLs de retorno não foram definidas corretamente"
         
         # Configurar SDK do MercadoPago
-        # IMPORTANTE: Substitua pelo seu token de acesso real
         access_token = current_app.config.get('MERCADO_PAGO_ACCESS_TOKEN') or "APP_USR-3186829371371378-033109-bd70da5615618f6121a56627b441334a-2363984332"
         sdk = mercadopago.SDK(access_token)
         
-        # Criar preferência de pagamento
+        # Criar preferência de pagamento com informações mais detalhadas
         preference_data = {
-            "items": items,
-            "back_urls": {
-                "success": success_url,
-                "failure": failure_url,
-                "pending": pending_url
-            },
-            # CORRIGIDO: Removendo auto_return ou definindo como "all"
-            "auto_return": "all",
-            "external_reference": str(user_id) if user_id else "guest",
-            "statement_descriptor": "DOCE SONHO",
-            "expires": False,
-            "payment_methods": {
-                "excluded_payment_types": [],
-                "installments": 12
-            },
-            # Adicionando notification_url se disponível
-            "notification_url": current_app.config.get('MERCADO_PAGO_NOTIFICATION_URL')
-        }
+    "items": items,
+    "back_urls": {
+        "success": success_url,
+        "failure": failure_url,
+        "pending": pending_url
+    },
+    "external_reference": str(user_id) if user_id else "guest",
+    "statement_descriptor": "DOCE SONHO CONFEITARIA",
+    "expires": False,
+    "payment_methods": {
+        "excluded_payment_types": [],
+        "installments": 12
+    },
+    "metadata": {
+        "delivery_option": delivery_option,
+        "delivery_fee": "12.00" if delivery_option == 'delivery' else "0.00",
+        "store_name": "Doce Sonho Confeitaria",
+        "order_type": "website",
+        "items_count": len(items)
+    }
+    # REMOVER COMPLETAMENTE:
+    # "notification_url": current_app.config.get('MERCADO_PAGO_NOTIFICATION_URL'),
+    # "payer": {...}
+    # "shipments": {...}
+}
         
         # Remover notification_url se não estiver configurado
-        if not preference_data["notification_url"]:
-            preference_data.pop("notification_url", None)
+        # Adicionar notification_url apenas se estiver configurado
+        notification_url = current_app.config.get('MERCADO_PAGO_NOTIFICATION_URL')
+        if notification_url:
+            preference_data["notification_url"] = notification_url
         
         logger.info(f"Dados da preferência: {preference_data}")
         
@@ -187,7 +241,7 @@ def create_mercadopago_preference(user_id, success_url, failure_url, pending_url
         return None, f"Erro ao criar preferência de pagamento: {str(e)}"
 
 
-def create_mercadopago_preference_simple(user_id, success_url, failure_url, pending_url):
+def create_mercadopago_preference_simple(user_id, success_url, failure_url, pending_url, delivery_option=None):
     """
     Versão simplificada e mais robusta da função de criação de preferência.
     """
@@ -222,6 +276,17 @@ def create_mercadopago_preference_simple(user_id, success_url, failure_url, pend
                         'currency_id': 'BRL'
                     })
         
+        # Adicionar taxa de entrega se a opção for 'delivery'
+        if delivery_option and str(delivery_option).lower().strip() in ['delivery', 'frete', 'entrega']:
+            items.append({
+                'id': 'delivery_fee',
+                'title': 'Taxa de Entrega',
+                'quantity': 1,
+                'unit_price': 12.00,
+                'currency_id': 'BRL'
+            })
+            logger.info("Taxa de entrega de R$ 12,00 adicionada ao pedido (versão simples)")
+        
         if not items:
             return None, "Carrinho vazio"
         
@@ -241,9 +306,15 @@ def create_mercadopago_preference_simple(user_id, success_url, failure_url, pend
                 "pending": pending_url
             },
             # CORRIGIDO: Usando "all" para funcionar com todas as URLs
-            "auto_return": "all",
+            "auto_return": "approved",
+            "binary_mode": True,
             "external_reference": str(user_id) if user_id else "guest",
-            "statement_descriptor": "DOCE SONHO"
+            "statement_descriptor": "DOCE SONHO",
+            # Adicionar informações sobre a entrega nos metadados
+            "metadata": {
+                "delivery_option": delivery_option or "pickup",
+                "delivery_fee": "12.00" if delivery_option == 'delivery' else "0.00"
+            }
         }
         
         logger.info(f"Criando preferência com dados: {preference_data}")
@@ -275,30 +346,7 @@ def create_mercadopago_preference_simple(user_id, success_url, failure_url, pend
         return None, f"Erro interno: {str(e)}"
 
 
-def validate_mercadopago_config():
-    """
-    Valida se a configuração do Mercado Pago está correta.
-    
-    Returns:
-        Tuple (is_valid, error_message)
-    """
-    try:
-        access_token = current_app.config.get('MERCADO_PAGO_ACCESS_TOKEN') or "APP_USR-3186829371371378-033109-bd70da5615618f6121a56627b441334a-2363984332"
-        sdk = mercadopago.SDK(access_token)
-        
-        # Testar conectividade com uma requisição simples
-        response = sdk.preference().search()
-        
-        if response.get("status") == 200:
-            return True, None
-        else:
-            return False, f"Erro na configuração do Mercado Pago: {response.get('status')}"
-    
-    except Exception as e:
-        return False, f"Erro ao validar configuração do Mercado Pago: {str(e)}"
-
-
-def create_mercadopago_preference_minimal(user_id, success_url, failure_url, pending_url):
+def create_mercadopago_preference_minimal(user_id, success_url, failure_url, pending_url, delivery_option=None):
     """
     Versão minimalista para testes - apenas com campos obrigatórios.
     """
@@ -330,6 +378,16 @@ def create_mercadopago_preference_minimal(user_id, success_url, failure_url, pen
                         'unit_price': float(bolo.preco),
                         'currency_id': 'BRL'
                     })
+        
+        # Adicionar taxa de entrega se a opção for 'delivery'
+        if delivery_option and str(delivery_option).lower().strip() in ['delivery', 'frete', 'entrega']:
+            items.append({
+                'title': 'Taxa de Entrega',
+                'quantity': 1,
+                'unit_price': 12.00,
+                'currency_id': 'BRL'
+            })
+            logger.info("Taxa de entrega de R$ 12,00 adicionada ao pedido (versão minimal)")
         
         if not items:
             return None, "Carrinho vazio"
@@ -374,3 +432,79 @@ def create_mercadopago_preference_minimal(user_id, success_url, failure_url, pen
     except Exception as e:
         logger.error(f"Erro na criação da preferência minimalista: {str(e)}")
         return None, f"Erro interno: {str(e)}"
+
+
+def validate_mercadopago_config():
+    """
+    Valida se a configuração do Mercado Pago está correta.
+    
+    Returns:
+        Tuple (is_valid, error_message)
+    """
+    try:
+        access_token = current_app.config.get('MERCADO_PAGO_ACCESS_TOKEN') or "APP_USR-3186829371371378-033109-bd70da5615618f6121a56627b441334a-2363984332"
+        sdk = mercadopago.SDK(access_token)
+        
+        # Testar conectividade com uma requisição simples
+        response = sdk.preference().search()
+        
+        if response.get("status") == 200:
+            return True, None
+        else:
+            return False, f"Erro na configuração do Mercado Pago: {response.get('status')}"
+    
+    except Exception as e:
+        return False, f"Erro ao validar configuração do Mercado Pago: {str(e)}"
+
+
+def calculate_total_with_delivery(user_id, delivery_option=None):
+    """
+    Calcula o total do carrinho incluindo a taxa de entrega se aplicável.
+    
+    Args:
+        user_id: ID do usuário
+        delivery_option: Opção de entrega ('delivery' para entrega em casa, 'pickup' para retirada)
+        
+    Returns:
+        float: Total do carrinho com ou sem taxa de entrega
+    """
+    total = 0.0
+    
+    try:
+        if user_id:
+            # Produtos regulares
+            itens_regulares = CarrinhoItem.query.filter_by(usuario_id=user_id).all()
+            for item in itens_regulares:
+                produto = Produto.query.get(item.produto_id)
+                if produto and produto.preco > 0:
+                    total += float(produto.preco) * item.quantidade
+            
+            # Bolos personalizados
+            bolos_personalizados = CarrinhoBoloPersonalizado.query.filter_by(usuario_id=user_id).all()
+            for item in bolos_personalizados:
+                bolo = BoloPersonalizado.query.get(item.bolo_personalizado_id)
+                if bolo and bolo.preco > 0:
+                    total += float(bolo.preco) * item.quantidade
+        else:
+            # Calcular da sessão (usuário não logado)
+            if 'carrinho' in session and session['carrinho']:
+                for item in session['carrinho'].values():
+                    if item['preco'] > 0:
+                        total += float(item['preco']) * item['quantidade']
+            
+            if 'carrinho_personalizado' in session and session['carrinho_personalizado']:
+                for item in session['carrinho_personalizado'].values():
+                    if item['preco'] > 0:
+                        total += float(item['preco']) * item['quantidade']
+        
+        # Adicionar taxa de entrega se a opção for 'delivery'
+        # No código Python, aceitar ambos os valores:
+        if delivery_option and str(delivery_option).lower().strip() in ['delivery', 'frete', 'entrega']:
+            total += 12.00
+            logger.info(f"Taxa de entrega de R$ 12,00 adicionada ao total. Total final: R$ {total:.2f}")
+        
+        return total
+        
+    except Exception as e:
+        logger.error(f"Erro ao calcular total com entrega: {str(e)}")
+        return 0.0

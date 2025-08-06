@@ -426,11 +426,11 @@
                     {% endif %}
                 </ul>
                 <ul class="navbar-nav">
-                    <li class="nav-item">
+                     <li class="nav-item position-relative">
                         <a class="nav-link" href="{{ url_for('cart.carrinho') }}">
-                            Carrinho
+                            <i class="bi bi-cart3"></i>
                             {% if 'carrinho' in session and session['carrinho'] %}
-                            <span class="badge bg-danger">{{ session['carrinho']|length }}</span>
+                            <span class="badge rounded-pill">{{ session['carrinho']|length }}</span>
                             {% endif %}
                         </a>
                     </li>

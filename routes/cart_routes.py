@@ -231,6 +231,9 @@ def remover_bolo_personalizado(bolo_id):
 
 @cart_bp.route('/atualizar_carrinho', methods=['POST'])
 def atualizar_carrinho():
+    # Verificar se é uma requisição AJAX
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    
     # Atualizar carrinhos no banco de dados para usuários logados
     if 'usuario_id' in session:
         usuario_id = session['usuario_id']
@@ -303,7 +306,14 @@ def atualizar_carrinho():
             
             session['carrinho_personalizado'] = carrinho_personalizado
     
-    flash('Carrinho atualizado com sucesso!', 'success')
+    # Se for AJAX, retornar JSON sem redirect
+    if is_ajax:
+        return jsonify({
+            'status': 'success',
+            'message': 'Carrinho atualizado'
+        })
+    
+    # Comportamento padrão (com redirect e sem mensagem)
     return redirect(url_for('cart.carrinho'))
 
 # Quando um usuário faz login, transferir o carrinho da sessão para o banco de dados

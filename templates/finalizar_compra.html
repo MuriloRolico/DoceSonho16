@@ -357,14 +357,72 @@
                                 </tr>
                                 {% endfor %}
                             </tbody>
-                            <tfoot>
+                            <tfoot id="resumo-valores">
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Subtotal</strong></td>
+                                    <td class="text-end"><strong>R$ {{ "%.2f"|format(total) }}</strong></td>
+                                </tr>
+                                <tr id="linha-frete" style="display: none;">
+                                    <td colspan="3" class="text-end">Taxa de Entrega</td>
+                                    <td class="text-end">R$ 12,00</td>
+                                </tr>
                                 <tr>
                                     <td colspan="3" class="text-end"><strong>Total</strong></td>
-                                    <td class="text-end"><strong>R$ {{ "%.2f"|format(total) }}</strong></td>
+                                    <td class="text-end"><strong id="valor-total">R$ {{ "%.2f"|format(total) }}</strong></td>
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Opções de Entrega</h2>
+                </div>
+                <div class="card-body">
+                    <form id="entrega-form">
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo_entrega" id="entrega_retirada" value="retirada" checked>
+                                <label class="form-check-label" for="entrega_retirada">
+                                    Retirada na loja
+                                </label>
+                                <p class="text-muted small">Retire seu pedido diretamente em nossa loja sem custo adicional.</p>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo_entrega" id="entrega_frete" value="frete">
+                                <label class="form-check-label" for="entrega_frete">
+                                    Entrega no endereço cadastrado (+ R$ 12,00)
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div id="endereco-entrega" class="mb-3 border p-3 rounded" style="display: none;">
+                            <h5>Endereço de Entrega</h5>
+                            {% if usuario is defined and usuario.endereco_rua %}
+                                <p class="mb-1"><strong>Endereço:</strong> {{ usuario.endereco_rua }}, {{ usuario.endereco_numero }}</p>
+                                {% if usuario.endereco_complemento %}
+                                    <p class="mb-1"><strong>Complemento:</strong> {{ usuario.endereco_complemento }}</p>
+                                {% endif %}
+                                <p class="mb-1"><strong>Bairro:</strong> {{ usuario.endereco_bairro }}</p>
+                                <p class="mb-1"><strong>Cidade/Estado:</strong> {{ usuario.endereco_cidade }}/{{ usuario.endereco_estado }}</p>
+                                <p class="mb-1"><strong>CEP:</strong> {{ usuario.endereco_cep }}</p>
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    Você não possui um endereço cadastrado. 
+                                    <a href="{{ url_for('user.perfil') }}" class="alert-link">Cadastre um endereço</a> antes de continuar.
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="observacoes" class="form-label">Observações (opcional)</label>
+                            <textarea class="form-control" id="observacoes" name="observacoes" rows="3" placeholder="Instruções para entrega, referências, etc."></textarea>
+                        </div>
+                    </form>
                 </div>
             </div>
             
@@ -374,6 +432,9 @@
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('order.finalizar_compra') }}">
+                        <input type="hidden" name="tipo_entrega" id="tipo_entrega_hidden" value="retirada">
+                        <input type="hidden" name="observacoes" id="observacoes_hidden" value="">
+                        
                         <div class="alert alert-info">
                             <p>Ao clicar em "Confirmar Pedido", você será redirecionado para o Mercado Pago para finalizar o pagamento de forma segura.</p>
                             <p class="mb-0">Você concorda com os termos de compra e pagamento.</p>
@@ -470,5 +531,70 @@
             this.reset();
         });
     </script>
+
+    <!-- Script para opções de entrega -->
+<!-- Substitua o JavaScript no final do seu HTML finalizar_compra.html por este: -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const enderecoEntrega = document.getElementById('endereco-entrega');
+        const linhaFrete = document.getElementById('linha-frete');
+        const valorTotal = document.getElementById('valor-total');
+        const radioRetirada = document.getElementById('entrega_retirada');
+        const radioFrete = document.getElementById('entrega_frete');
+        const tipoEntregaHidden = document.getElementById('tipo_entrega_hidden');
+        const observacoesInput = document.getElementById('observacoes');
+        const observacoesHidden = document.getElementById('observacoes_hidden');
+        const submitForm = document.querySelector('form[method="POST"]');
+        
+        // Valor base (sem frete)
+        const valorBase = {{ total }};
+        // Valor do frete
+        const valorFrete = 12.00;
+        
+        // Função para atualizar o total
+        function atualizarTotal() {
+            if (radioFrete.checked) {
+                linhaFrete.style.display = 'table-row';
+                enderecoEntrega.style.display = 'block';
+                valorTotal.textContent = `R$ ${(valorBase + valorFrete).toFixed(2)}`.replace('.', ',');
+                tipoEntregaHidden.value = 'frete';  // CORREÇÃO: enviar 'frete' ao invés de 'delivery'
+            } else {
+                linhaFrete.style.display = 'none';
+                enderecoEntrega.style.display = 'none';
+                valorTotal.textContent = `R$ ${valorBase.toFixed(2)}`.replace('.', ',');
+                tipoEntregaHidden.value = 'retirada';  // CORREÇÃO: enviar 'retirada' ao invés de 'pickup'
+            }
+        }
+        
+        // Adicionar listeners para os radio buttons
+        radioRetirada.addEventListener('change', atualizarTotal);
+        radioFrete.addEventListener('change', atualizarTotal);
+        
+        // Sincronizar campos de observações
+        observacoesInput.addEventListener('input', function() {
+            observacoesHidden.value = this.value;
+        });
+        
+        // Configurar envio do formulário
+        submitForm.addEventListener('submit', function(e) {
+            // Verificar se selecionou entrega e se tem endereço cadastrado
+            if (radioFrete.checked && !{{ 'true' if usuario is defined and usuario.endereco_rua else 'false' }}) {
+                e.preventDefault();
+                alert('Você precisa cadastrar um endereço para receber a entrega em domicílio.');
+                return false;
+            }
+            
+            // Atualizar campo oculto com as observações
+            observacoesHidden.value = observacoesInput.value;
+            
+            // Log para debug - pode remover depois
+            console.log('Tipo entrega enviado:', tipoEntregaHidden.value);
+        });
+        
+        // Inicializar o estado
+        atualizarTotal();
+    });
+</script>
 </body>
 </html>
