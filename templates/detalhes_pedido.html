@@ -297,6 +297,10 @@
             line-height: 1.8;
         }
 
+        .footer-social {
+            margin-top: 25px;
+        }
+
         .footer-social a {
             display: inline-flex;
             justify-content: center;
@@ -334,6 +338,73 @@
         .footer-links a:hover {
             color: white;
             transform: translateX(5px);
+        }
+
+        .footer-contact li {
+            color: #aaa;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-contact-icon {
+            margin-right: 15px;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .footer-form .form-control {
+            background-color: rgba(255,255,255,0.08);
+            border: none;
+            color: white;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .footer-form .form-control::placeholder {
+            color: #aaa;
+        }
+
+        .footer-form .form-control:focus {
+            background-color: rgba(255,255,255,0.12);
+            box-shadow: none;
+        }
+
+        .footer-form .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-form .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            padding-left: 30px;
+            padding-top: 30px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-copyright {
+            color: #aaa;
+        }
+
+        .footer-policy a {
+            color: #aaa;
+            margin-left: 20px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .footer-policy a:hover {
+            color: white;
         }
 
         .whatsapp-float {
@@ -436,7 +507,7 @@
                     </li>
                     {% if 'usuario_id' in session %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Sair</a>
+                        <a class="nav-link" href="{{ url_for('user.perfil') }}"><i class="bi bi-person"></i> Perfil</a>
                     </li>
                     {% else %}
                     <li class="nav-item">
@@ -528,104 +599,72 @@
                 </div>
             </div>
             
-            <!-- Status do Pedido com Timeline -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">Status do Pedido</h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between status-timeline">
-                        <div class="status-step text-center {% if pedido.status != 'Cancelado' %}active{% endif %}">
-                            <div class="status-icon mb-2">
-                                <i class="bi bi-clipboard-check"></i>
-                            </div>
-                            <div class="status-text small">Confirmado</div>
-                        </div>
-                        <div class="status-step text-center {% if pedido.status == 'Em Preparo' or pedido.status == 'Em Entrega' or pedido.status == 'Entregue' %}active{% endif %}">
-                            <div class="status-icon mb-2">
-                                <i class="bi bi-tools"></i>
-                            </div>
-                            <div class="status-text small">Em Preparo</div>
-                        </div>
-                        <div class="status-step text-center {% if pedido.status == 'Em Entrega' or pedido.status == 'Entregue' %}active{% endif %}">
-                            <div class="status-icon mb-2">
-                                <i class="bi bi-truck"></i>
-                            </div>
-                            <div class="status-text small">Em Entrega</div>
-                        </div>
-                        <div class="status-step text-center {% if pedido.status == 'Entregue' %}active{% endif %}">
-                            <div class="status-icon mb-2">
-                                <i class="bi bi-check-circle"></i>
-                            </div>
-                            <div class="status-text small">Entregue</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          
             
             <div class="text-center mt-4">
                 <a href="{{ url_for('order.pedidos') }}" class="btn btn-outline-primary">
                     <i class="bi bi-arrow-left"></i> Voltar para Meus Pedidos
                 </a>
-                {% if pedido.status == 'Pendente' %}
-                <a href="#" class="btn btn-danger ms-2">
-                    <i class="bi bi-x-circle"></i> Cancelar Pedido
-                </a>
-                {% endif %}
+                
             </div>
         </div>
     </div>
 
-    <!-- Rodapé -->
-    <footer class="bg-dark text-white pt-5 pb-4">
+<footer>
         <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-4 col-md-6">
                     <h4 class="footer-heading">Doce Sonho Confeitaria</h4>
-                    <p class="footer-text">Transformando ingredientes selecionados em momentos doces e inesquecíveis desde 2015.</p>
-                    <div class="footer-social mt-3">
-                        <a href="#" class="text-white me-3"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-white me-3"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="text-white me-3"><i class="bi bi-whatsapp"></i></a>
+                    <p class="footer-text">Transformamos ingredientes selecionados em momentos doces e inesquecíveis desde 2015. Nossa paixão é adoçar sua vida com sabores especiais.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-whatsapp"></i></a>
+                        <a href="#"><i class="bi bi-tiktok"></i></a>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <h4 class="footer-heading">Horário de Funcionamento</h4>
-                    <ul class="list-unstyled footer-links">
-                        <li>Segunda a Sexta: 9h às 18h</li>
-                        <li>Sábados: 9h às 14h</li>
-                        <li>Domingos e Feriados: Fechado</li>
+                <div class="col-lg-2 col-md-6">
+                    <h4 class="footer-heading">Links Rápidos</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('index') }}">Início</a></li>
+                        <li><a href="{{ url_for('product.todos_produtos') }}">Produtos</a></li>
+                        <li><a href="{{ url_for('product.montar_bolo') }}">Monte seu Bolo</a></li>
+                        <li><a href="{{ url_for('sobrenos.sobrenos') }}">Sobre Nós</a></li>                      
                     </ul>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <h4 class="footer-heading">Entre em Contato</h4>
-                    <form id="contato-form">
-                        <div class="mb-3">
-                            <input type="text" class="form-control" placeholder="Seu nome" required>
-                        </div>
-                        <div class="mb-3">
-                            <input type="email" class="form-control" placeholder="Seu e-mail" required>
-                        </div>
-                        <div class="mb-3">
-                            <textarea class="form-control" rows="3" placeholder="Sua mensagem" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
-                    </form>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="footer-heading">Contato</h4>
+                    <ul class="footer-links footer-contact">
+                        <li>
+                            <i class="bi bi-geo-alt footer-contact-icon"></i>
+                            Rua das Flores, 123 - Centro
+                        </li>
+                        <li>
+                            <i class="bi bi-telephone footer-contact-icon"></i>
+                            (11) 9999-9999
+                        </li>
+                        <li>
+                            <i class="bi bi-envelope footer-contact-icon"></i>
+                            contato@docesonho.com.br
+                        </li>
+                        <li>
+                            <i class="bi bi-clock footer-contact-icon"></i>
+                            Seg-Sex: 9h às 18h | Sáb: 9h às 14h
+                        </li>
+                    </ul>
                 </div>
+               
             </div>
-            <hr>
-            <div class="row">
-                <div class="col-md-6">
-                    <p><i class="bi bi-geo-alt-fill me-2"></i>Rua das Flores, 123 - Centro</p>
-                    <p><i class="bi bi-telephone-fill me-2"></i>(11) 9999-9999</p>
-                    <p><i class="bi bi-envelope-fill me-2"></i>contato@docesonho.com.br</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <p>&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
-                    <p>
-                        <a href="#" class="text-white text-decoration-none me-3">Política de Privacidade</a>
-                        <a href="#" class="text-white text-decoration-none">Termos de Uso</a>
-                    </p>
+            <div class="footer-bottom">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="footer-copyright">&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
+                    </div>
+                    <div class="col-md-6 text-md-end footer-policy">
+                         <a  href="{{ url_for('auth.politica_privacidade') }}">Política de Privacidade</a>
+                     
+                        <a href="#">Termos de Uso</a>
+                    </div>
                 </div>
             </div>
         </div>
