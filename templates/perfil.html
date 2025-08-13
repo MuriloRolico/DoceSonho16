@@ -227,7 +227,7 @@
             transition: all 0.3s ease;
         }
 
-       /* Footer */
+                /* Footer */
         footer {
             background-color: #2d2d2d !important;
             color: #f8f8f8 !important;
@@ -379,6 +379,7 @@
         .footer-policy a:hover {
             color: white;
         }
+
         /* Modais */
         .modal-content {
             border-radius: var(--radius);
@@ -555,45 +556,6 @@
             display: block;
             margin-bottom: 5px;
         }
-
-        /* Mapa e localizador */
-        #map {
-            height: 300px;
-            width: 100%;
-            border-radius: 10px;
-            margin-top: 20px;
-            box-shadow: var(--shadow);
-        }
-
-        .location-verified {
-            display: inline-flex;
-            align-items: center;
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            margin-top: 10px;
-        }
-
-        .location-verified i {
-            margin-right: 5px;
-        }
-
-        .address-confirmation {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .cep-loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            margin-left: 10px;
-        }
     </style>
 </head>
 <body>
@@ -720,7 +682,7 @@
                             <h3 class="card-title mb-2">{{ usuario.nome }}</h3>
                             <p class="text-muted mb-1">
                                 <span class="data-field" data-type="email">{{ usuario.email }}</span>
-                             
+                                <span class="security-badge"><i class="bi bi-envelope-check"></i>Verificado</span>
                             </p>
                             <p class="text-muted">Membro desde {{ usuario.data_registro.strftime('%d/%m/%Y') }}</p>
                             
@@ -792,6 +754,20 @@
                         
                     </ul>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    
                     <div class="tab-content" id="myTabContent">
                         <!-- Aba de Informações Básicas -->
                         <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
@@ -803,13 +779,14 @@
                                     <form method="POST" action="{{ url_for('user.atualizar_perfil') }}">
                                         <div class="form-group mb-4">
                                             <label for="nome" class="form-label">Nome Completo:</label>
+
                                             <input type="text" id="nome" name="nome" value="{{ usuario.nome }}" required class="form-control">
                                         </div>
                                         <div class="form-group mb-4">
                                             <label for="email" class="form-label">Email:</label>
-                                            <input type="email" id="email" name="email" class="form-control" value="{{ usuario.email }}" readonly>
-                                            <small class="form-text text-muted">E-mail somente para visualização</small>
+                                            <input type="email" id="email" name="email" class="form-control" value="{{ usuario.email }}" required>
                                         </div>
+                                       
                                         <div class="d-grid">
                                             <button type="submit" class="btn btn-primary">
                                                 <i class="bi bi-check-circle me-2"></i>Salvar Alterações
@@ -819,6 +796,12 @@
                                 </div>
                             </div>
                         </div>
+                        
+
+
+
+
+
 
                         <!-- Aba de Endereço -->
                         <div class="tab-pane fade" id="endereco" role="tabpanel" aria-labelledby="endereco-tab">
@@ -827,7 +810,7 @@
                                     <h5 class="mb-0">Endereço</h5>
                                 </div>
                                 <div class="card-body">
-                                    <form method="POST" action="{{ url_for('user.atualizar_perfil') }}" id="endereco-form">
+                                    <form method="POST" action="{{ url_for('user.atualizar_perfil') }}">
                                         <div class="row">
                                             <div class="col-md-5 mb-3">
                                                 <label for="endereco_cep" class="form-label">CEP:</label>
@@ -837,14 +820,8 @@
                                                         <i class="bi bi-search"></i>
                                                     </button>
                                                 </div>
-                                                <small class="form-text text-muted">Digite o CEP para buscar automaticamente</small>
                                             </div>
                                         </div>
-                                        
-                                        <div id="cep-feedback" class="mb-3" style="display: none;">
-                                            <!-- Feedback dinâmico para busca de CEP -->
-                                        </div>
-                                        
                                         <div class="row">
                                             <div class="col-md-8 mb-3">
                                                 <label for="endereco_rua" class="form-label">Rua:</label>
@@ -902,24 +879,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        
-                                        <!-- Mapa -->
-                                        <div id="map-container">
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <h6 class="mb-0">Localização no Mapa</h6>
-                                                <button type="button" id="verificarMapa" class="btn btn-sm btn-outline-primary">
-                                                    <i class="bi bi-geo-alt-fill me-2"></i>Verificar no Mapa
-                                                </button>
-                                            </div>
-                                            <div id="map"></div>
-                                            
-                                            <div id="location-confirmation" style="display: none;" class="mt-3 address-confirmation">
-                                                <h6 class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Endereço Confirmado</h6>
-                                                <p id="endereco-confirmado" class="mb-0"></p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="d-grid mt-4">
+                                        <div class="d-grid">
                                             <button type="submit" class="btn btn-primary">
                                                 <i class="bi bi-geo-alt me-2"></i>Salvar Endereço
                                             </button>
@@ -1017,11 +977,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
+                        
+                        
 
     <!-- Modal para Alterar Foto -->
     <div class="modal fade" id="alterarFotoModal" tabindex="-1" aria-labelledby="alterarFotoModalLabel" aria-hidden="true">
@@ -1092,8 +1049,7 @@
         </div>
     </div>
 
-    <!-- Rodapé com área de contato -->
-    <footer>
+       <footer>
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-4 col-md-6">
@@ -1144,7 +1100,7 @@
                         <p class="footer-copyright">&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
                     </div>
                     <div class="col-md-6 text-md-end footer-policy">
-                         <a href="{{ url_for('auth.politica_privacidade') }}">Política de Privacidade</a>
+                         <a  href="{{ url_for('auth.politica_privacidade') }}">Política de Privacidade</a>
                      
                         <a href="#">Termos de Uso</a>
                     </div>
@@ -1163,659 +1119,361 @@
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     
-
-    
-    <!-- Script para o perfil -->
-    <script>
-    // ========================================
-// SCRIPT COMPLETO - PERFIL COM GOOGLE MAPS
-// ========================================
-
-// Variáveis globais
-let mapInitialized = false;
-let map;
-let marker;
-let geocoder;
-let dataMaskingEnabled = true; // Variável em memória em vez de localStorage
-
-// ========================================
-// FUNÇÕES DO GOOGLE MAPS
-// ========================================
-
-// Função global para inicialização do mapa que será chamada como callback
-function initMapCallback() {
-    function initMapCallback() {
-    console.log('Google Maps API carregada com sucesso');
-    mapInitialized = true;
-    
-    // Se a aba de endereço já estiver aberta, inicialize o mapa
-    const enderecoTab = document.querySelector('#endereco-tab.active');
-    if (enderecoTab) {
-        setTimeout(initMap, 100);
-    }
-}
-
-// Função para carregar o script do Google Maps de forma dinâmica
-function loadGoogleMapsScript() {
-    const script = document.createElement('script');
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBGMk-s2L8-vPq74rp_slDz56ItjXK6GFM&libraries=places&callback=initMapCallback';
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-    console.log('Script do Google Maps adicionado dinamicamente');
-}
-
-// Carregar o script após a página estar pronta
-document.addEventListener('DOMContentLoaded', function() {
-    // Resto do código DOMContentLoaded
-    
-    // Carregar o script do Google Maps após um pequeno delay
-    setTimeout(loadGoogleMapsScript, 500);
-});
-}
-
-// Inicializar mapa
-function initMap() {
-    try {
-        if (!window.google || !window.google.maps) {
-            console.error('Google Maps API não foi carregada corretamente');
-            mostrarFeedbackCep('alert-warning', 'Não foi possível carregar o mapa. Tente recarregar a página.');
-            return;
-        }
+ <!-- Script completo para o perfil -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ========== MASCARAMENTO DE DADOS ==========
+        const toggleDataMasking = document.getElementById('toggleDataMasking');
+        const dataFields = document.querySelectorAll('.data-field');
         
-        console.log('Inicializando mapa...');
-        geocoder = new google.maps.Geocoder();
-        
-        // Coordenadas padrão (Brasília, Brasil)
-        const defaultLatLng = {lat: -15.77972, lng: -47.92972};
-        
-        // Elemento do mapa
-        const mapElement = document.getElementById("map");
-        if (!mapElement) {
-            console.error('Elemento do mapa (#map) não encontrado');
-            return;
-        }
-        
-        // Configurar mapa
-        map = new google.maps.Map(mapElement, {
-            center: defaultLatLng,
-            zoom: 4,
-            mapTypeControl: false,
-            streetViewControl: false,
-            fullscreenControl: true,
-            zoomControl: true,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        });
-        
-        console.log('Mapa inicializado com sucesso');
-        
-        // Verifica se já existe um endereço para exibir
-        const temEndereco = verificarCamposEndereco();
-        if (temEndereco) {
-            setTimeout(verificarEnderecoNoMapa, 500);
-        }
-        
-    } catch (error) {
-        console.error('Erro ao inicializar o mapa:', error);
-        mostrarFeedbackCep('alert-danger', 'Erro ao carregar o mapa. Tente novamente mais tarde.');
-    }
-}
-
-// Verificar se os campos de endereço estão preenchidos
-function verificarCamposEndereco() {
-    const rua = document.getElementById('endereco_rua')?.value?.trim();
-    const cidade = document.getElementById('endereco_cidade')?.value?.trim();
-    const estado = document.getElementById('endereco_estado')?.value?.trim();
-    
-    return rua && cidade && estado;
-}
-
-// Verificar endereço no mapa
-function verificarEnderecoNoMapa() {
-    if (!map || !geocoder) {
-        mostrarFeedbackCep('alert-warning', 'O mapa ainda não foi carregado. Aguarde um momento e tente novamente.');
-        return;
-    }
-    
-    const rua = document.getElementById('endereco_rua')?.value?.trim() || '';
-    const numero = document.getElementById('endereco_numero')?.value?.trim() || '';
-    const bairro = document.getElementById('endereco_bairro')?.value?.trim() || '';
-    const cidade = document.getElementById('endereco_cidade')?.value?.trim() || '';
-    const estado = document.getElementById('endereco_estado')?.value?.trim() || '';
-    
-    if (!rua || !cidade || !estado) {
-        mostrarFeedbackCep('alert-warning', 'Preencha pelo menos rua, cidade e estado para visualizar no mapa.');
-        return;
-    }
-    
-    // Montar endereço completo para geocoding
-    const endereco = `${rua}, ${numero || 's/n'}, ${bairro ? bairro + ', ' : ''}${cidade} - ${estado}, Brasil`;
-    console.log('Buscando endereço:', endereco);
-    
-    // Mostrar carregamento no botão
-    const verificarMapaBtn = document.getElementById('verificarMapa');
-    const btnOriginalText = '<i class="bi bi-geo-alt-fill me-2"></i>Verificar no Mapa';
-    const btnLoadingText = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Localizando...';
-    
-    if (verificarMapaBtn) {
-        verificarMapaBtn.innerHTML = btnLoadingText;
-        verificarMapaBtn.disabled = true;
-    }
-    
-    // Fazer geocoding
-    geocoder.geocode({ 
-        'address': endereco,
-        'region': 'BR'
-    }, function(results, status) {
-        // Restaurar botão
-        if (verificarMapaBtn) {
-            verificarMapaBtn.innerHTML = btnOriginalText;
-            verificarMapaBtn.disabled = false;
-        }
-        
-        console.log('Status do geocoding:', status);
-        
-        if (status === google.maps.GeocoderStatus.OK && results && results.length > 0) {
-            const result = results[0];
-            const location = result.geometry.location;
-            
-            console.log('Endereço encontrado:', result.formatted_address);
-            console.log('Coordenadas:', location.lat(), location.lng());
-            
-            // Centrar mapa na localização
-            map.setCenter(location);
-            map.setZoom(16);
-            
-            // Adicionar ou mover marcador
-            if (marker) {
-                marker.setPosition(location);
-                marker.setAnimation(google.maps.Animation.BOUNCE);
-                setTimeout(() => {
-                    marker.setAnimation(null);
-                }, 1000);
-            } else {
-                marker = new google.maps.Marker({
-                    map: map,
-                    position: location,
-                    animation: google.maps.Animation.DROP,
-                    title: 'Seu endereço'
-                });
-            }
-            
-            // Mostrar confirmação do endereço
-            const enderecoConfirmado = document.getElementById('endereco-confirmado');
-            const locationConfirmation = document.getElementById('location-confirmation');
-            
-            if (enderecoConfirmado) {
-                enderecoConfirmado.textContent = result.formatted_address;
-            }
-            if (locationConfirmation) {
-                locationConfirmation.style.display = 'block';
-            }
-            
-            mostrarFeedbackCep('alert-success', 'Endereço localizado com sucesso no mapa!');
-            
-        } else {
-            console.error('Geocoding falhou:', status, results);
-            
-            let errorMessage = 'Não foi possível localizar este endereço no mapa.';
-            
-            switch(status) {
-                case google.maps.GeocoderStatus.ZERO_RESULTS:
-                    errorMessage = 'Endereço não encontrado. Verifique se os dados estão corretos.';
-                    break;
-                case google.maps.GeocoderStatus.OVER_QUERY_LIMIT:
-                    errorMessage = 'Muitas consultas realizadas. Tente novamente em alguns minutos.';
-                    break;
-                case google.maps.GeocoderStatus.REQUEST_DENIED:
-                    errorMessage = 'Solicitação negada. Verifique a configuração da API.';
-                    break;
-                case google.maps.GeocoderStatus.INVALID_REQUEST:
-                    errorMessage = 'Dados do endereço inválidos.';
-                    break;
-            }
-            
-            mostrarFeedbackCep('alert-danger', errorMessage);
-            
-            const locationConfirmation = document.getElementById('location-confirmation');
-            if (locationConfirmation) {
-                locationConfirmation.style.display = 'none';
-            }
-        }
-    });
-}
-
-// ========================================
-// FUNÇÕES UTILITÁRIAS
-// ========================================
-
-// Função para mostrar feedback do CEP
-function mostrarFeedbackCep(tipo, mensagem) {
-    const cepFeedback = document.getElementById('cep-feedback');
-    if (cepFeedback) {
-        cepFeedback.innerHTML = `
-            <div class="alert ${tipo} alert-dismissible fade show py-2" role="alert">
-                <i class="bi ${tipo.includes('success') ? 'bi-check-circle-fill' : tipo.includes('warning') ? 'bi-exclamation-triangle-fill' : 'bi-x-circle-fill'} me-2"></i>
-                ${mensagem}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        `;
-        cepFeedback.style.display = 'block';
-        
-        // Auto-hide após 5 segundos para mensagens de sucesso
-        if (tipo.includes('success')) {
-            setTimeout(() => {
-                const alert = cepFeedback.querySelector('.alert');
-                if (alert) {
-                    alert.classList.remove('show');
-                    setTimeout(() => {
-                        cepFeedback.style.display = 'none';
-                    }, 150);
+        function applyDataMasking(shouldMask) {
+            dataFields.forEach(field => {
+                if (shouldMask) {
+                    field.classList.add('masked-data');
+                } else {
+                    field.classList.remove('masked-data');
                 }
-            }, 5000);
-        }
-    }
-}
-
-// Função para aplicar mascaramento de dados
-function applyDataMasking(shouldMask) {
-    const dataFields = document.querySelectorAll('.data-field');
-    dataFields.forEach(field => {
-        if (shouldMask) {
-            field.classList.add('masked-data');
-        } else {
-            field.classList.remove('masked-data');
-        }
-    });
-    
-    // Salvar preferência em variável de memória
-    dataMaskingEnabled = shouldMask;
-    console.log('Mascaramento de dados:', shouldMask ? 'Ativado' : 'Desativado');
-}
-
-// Buscar CEP via API do ViaCEP
-function buscarCEP(cep) {
-    return fetch(`https://viacep.com.br/ws/${cep}/json/`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.erro) {
-                throw new Error('CEP não encontrado');
-            }
-            return data;
-        });
-}
-
-// Formatar CEP
-function formatarCEP(value) {
-    // Remove tudo que não é número
-    value = value.replace(/\D/g, '');
-    
-    // Limita a 8 dígitos
-    if (value.length > 8) {
-        value = value.substring(0, 8);
-    }
-    
-    // Aplica formatação
-    if (value.length > 5) {
-        value = value.replace(/^(\d{5})(\d{0,3})/, "$1-$2");
-    }
-    
-    return value;
-}
-
-// Validar senha
-function validarSenha(senha) {
-    const requirements = [
-        { id: 'req-length', test: senha.length >= 8, text: 'Mínimo 8 caracteres' },
-        { id: 'req-lowercase', test: /[a-z]/.test(senha), text: 'Letra minúscula' },
-        { id: 'req-uppercase', test: /[A-Z]/.test(senha), text: 'Letra maiúscula' },
-        { id: 'req-number', test: /\d/.test(senha), text: 'Número' },
-        { id: 'req-special', test: /[_@$!%*?&]/.test(senha), text: 'Caractere especial' }
-    ];
-    
-    requirements.forEach(req => {
-        const element = document.getElementById(req.id);
-        if (element) {
-            const isValid = req.test;
-            const icon = isValid ? 'bi-check-circle-fill text-success' : 'bi-x-circle text-muted';
-            element.innerHTML = `<i class="bi ${icon} me-1"></i>${req.text}`;
+            });
             
-            // Atualizar classe do badge
-            const badge = element.closest('.badge');
-            if (badge) {
-                badge.classList.toggle('bg-success', isValid);
-                badge.classList.toggle('text-white', isValid);
-                badge.classList.toggle('bg-light', !isValid);
-                badge.classList.toggle('text-dark', !isValid);
-            }
+            // Salvar preferência no localStorage
+            localStorage.setItem('dataMasking', shouldMask ? 'true' : 'false');
         }
-    });
-    
-    return requirements.every(req => req.test);
-}
-
-// ========================================
-// EVENT LISTENERS E INICIALIZAÇÃO
-// ========================================
-
-// Aguardar carregamento da página
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM carregado - Inicializando aplicação...');
-    
-    // ========================================
-    // TOGGLE DE MASCARAMENTO DE DADOS
-    // ========================================
-    const toggleDataMasking = document.getElementById('toggleDataMasking');
-    if (toggleDataMasking) {
-        // Inicializar com preferência padrão
-        toggleDataMasking.checked = dataMaskingEnabled;
-        applyDataMasking(dataMaskingEnabled);
         
-        // Ouvir mudanças no toggle
-        toggleDataMasking.addEventListener('change', function() {
-            applyDataMasking(this.checked);
-        });
-    }
-    
-    // ========================================
-    // UPLOAD E PREVIEW DE FOTO
-    // ========================================
-    const fotoInput = document.getElementById('foto_perfil');
-    const previewImg = document.querySelector('.preview-img');
-    
-    if (fotoInput && previewImg) {
-        fotoInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                // Validar tipo de arquivo
-                const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                if (!validTypes.includes(file.type)) {
-                    alert('Por favor, selecione uma imagem válida (JPEG, PNG, GIF ou WebP).');
-                    this.value = '';
-                    return;
-                }
-                
-                // Validar tamanho (5MB max)
-                const maxSize = 5 * 1024 * 1024; // 5MB
-                if (file.size > maxSize) {
-                    alert('A imagem deve ter no máximo 5MB.');
-                    this.value = '';
-                    return;
-                }
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImg.src = e.target.result;
-                    previewImg.style.opacity = '0';
-                    setTimeout(() => {
-                        previewImg.style.transition = 'opacity 0.3s ease';
-                        previewImg.style.opacity = '1';
-                    }, 50);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-    
-    // ========================================
-    // VALIDAÇÃO DE SENHA
-    // ========================================
-    const novaSenha = document.getElementById('nova_senha');
-    const confirmarSenha = document.getElementById('confirmar_nova_senha');
-    
-    if (novaSenha) {
-        novaSenha.addEventListener('input', function() {
-            validarSenha(this.value);
-            
-            // Se confirmação já foi preenchida, revalidar
-            if (confirmarSenha && confirmarSenha.value) {
-                confirmarSenha.dispatchEvent(new Event('input'));
-            }
-        });
-    }
-    
-    if (confirmarSenha && novaSenha) {
-        confirmarSenha.addEventListener('input', function() {
-            if (this.value !== novaSenha.value) {
-                this.setCustomValidity('As senhas não coincidem');
-                this.classList.add('is-invalid');
-            } else {
-                this.setCustomValidity('');
-                this.classList.remove('is-invalid');
-                this.classList.add('is-valid');
-            }
-        });
-    }
-    
-    // ========================================
-    // FORMULÁRIO DE CONTATO
-    // ========================================
-    const contatoForm = document.getElementById('contato-form');
-    if (contatoForm) {
-        contatoForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Simular envio
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...';
-            submitBtn.disabled = true;
-            
-            setTimeout(() => {
-                alert('Obrigado pelo contato! Responderemos em breve.');
-                this.reset();
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }, 1500);
-        });
-    }
-    
-    // ========================================
-    // FORMATAÇÃO E BUSCA DE CEP
-    // ========================================
-    const cepInput = document.getElementById('endereco_cep');
-    const buscarCepBtn = document.getElementById('buscarCep');
-    
-    // Formatação automática do CEP
-    if (cepInput) {
-        cepInput.addEventListener('input', function(e) {
-            e.target.value = formatarCEP(e.target.value);
-        });
+        // Inicializar com base no localStorage ou padrão como ativado
+        const savedMaskingPreference = localStorage.getItem('dataMasking');
+        const shouldMaskData = savedMaskingPreference !== null ? savedMaskingPreference === 'true' : true;
         
-        // Buscar CEP ao pressionar Enter
-        cepInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                if (buscarCepBtn) {
-                    buscarCepBtn.click();
-                }
-            }
-        });
-    }
-    
-    // Busca de CEP
-    if (buscarCepBtn && cepInput) {
-        buscarCepBtn.addEventListener('click', function() {
-            const cep = cepInput.value.replace(/\D/g, '');
+        if (toggleDataMasking) {
+            toggleDataMasking.checked = shouldMaskData;
+            applyDataMasking(shouldMaskData);
             
-            if (cep.length !== 8) {
-                mostrarFeedbackCep('alert-danger', 'CEP inválido. O CEP deve conter exatamente 8 dígitos.');
-                cepInput.focus();
-                return;
-            }
-            
-            // Mostrar loading
-            const originalHTML = buscarCepBtn.innerHTML;
-            buscarCepBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-            buscarCepBtn.disabled = true;
-            
-            // Buscar CEP
-            buscarCEP(cep)
-                .then(data => {
-                    // Preencher campos
-                    const campos = {
-                        'endereco_rua': data.logradouro || '',
-                        'endereco_bairro': data.bairro || '',
-                        'endereco_cidade': data.localidade || '',
-                        'endereco_estado': data.uf || ''
+            // Ouvir mudanças no toggle
+            toggleDataMasking.addEventListener('change', function() {
+                applyDataMasking(this.checked);
+            });
+        }
+        
+        // ========== PREVIEW DE IMAGEM ==========
+        const fotoInput = document.getElementById('foto_perfil');
+        const previewImg = document.querySelector('.preview-img');
+        
+        if (fotoInput && previewImg) {
+            fotoInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
                     };
-                    
-                    Object.keys(campos).forEach(fieldId => {
-                        const element = document.getElementById(fieldId);
-                        if (element) {
-                            element.value = campos[fieldId];
-                            element.dispatchEvent(new Event('change'));
-                        }
-                    });
-                    
-                    mostrarFeedbackCep('alert-success', 
-                        `CEP encontrado: ${data.logradouro || 'Logradouro não informado'}, ${data.bairro || ''}, ${data.localidade}/${data.uf}`);
-                    
-                    // Focar no próximo campo
-                    const numeroField = document.getElementById('endereco_numero');
-                    if (numeroField) {
-                        setTimeout(() => numeroField.focus(), 100);
-                    }
-                    
-                    // Localizar no mapa se disponível
-                    if (map && geocoder) {
-                        setTimeout(verificarEnderecoNoMapa, 500);
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro ao buscar CEP:', error);
-                    mostrarFeedbackCep('alert-danger', 'Erro ao buscar CEP. Verifique o número e tente novamente.');
-                })
-                .finally(() => {
-                    // Restaurar botão
-                    buscarCepBtn.innerHTML = originalHTML;
-                    buscarCepBtn.disabled = false;
-                });
-        });
-    }
-    
-    // ========================================
-    // GOOGLE MAPS - INICIALIZAÇÃO DE ABAS
-    // ========================================
-    const enderecoTab = document.getElementById('endereco-tab');
-    if (enderecoTab) {
-        enderecoTab.addEventListener('shown.bs.tab', function() {
-            console.log('Aba de endereço aberta - Verificando mapa...');
-            
-            if (mapInitialized && !map) {
-                console.log('API carregada, inicializando mapa...');
-                setTimeout(initMap, 200);
-            } else if (map) {
-                console.log('Mapa já existe, redimensionando...');
-                // Redimensionar mapa caso já exista
-                setTimeout(() => {
-                    google.maps.event.trigger(map, 'resize');
-                }, 200);
-            }
-        });
-    }
-    
-    // Botão para verificar endereço no mapa
-    const verificarMapaBtn = document.getElementById('verificarMapa');
-    if (verificarMapaBtn) {
-        verificarMapaBtn.addEventListener('click', function() {
-            if (!mapInitialized) {
-                mostrarFeedbackCep('alert-warning', 'Aguardando carregamento do Google Maps...');
-                return;
-            }
-            verificarEnderecoNoMapa();
-        });
-    }
-    
-    // ========================================
-    // MONITORAR MUDANÇAS NOS CAMPOS DE ENDEREÇO
-    // ========================================
-    const enderecoInputs = [
-        'endereco_rua', 'endereco_numero', 'endereco_bairro', 
-        'endereco_cidade', 'endereco_estado'
-    ];
-    
-    enderecoInputs.forEach(id => {
-        const input = document.getElementById(id);
-        if (input) {
-            input.addEventListener('change', function() {
-                // Ocultar confirmação quando endereço mudar
-                const locationConfirmation = document.getElementById('location-confirmation');
-                if (locationConfirmation && locationConfirmation.style.display !== 'none') {
-                    locationConfirmation.style.display = 'none';
+                    reader.readAsDataURL(file);
                 }
             });
         }
-    });
-    
-    console.log('Aplicação inicializada com sucesso!');
-});
-
-// ========================================
-// VERIFICAÇÃO DE CARREGAMENTO DO GOOGLE MAPS
-// ========================================
-window.addEventListener('load', function() {
-    console.log('Página totalmente carregada');
-    
-    // Se o Google Maps ainda não foi carregado após o load da página
-    if (!mapInitialized) {
-        console.log('Google Maps não foi carregado ainda, aguardando...');
         
-        let attempts = 0;
-        const maxAttempts = 20; // 10 segundos (20 x 500ms)
+        // ========== VALIDAÇÃO DE SENHA ==========
+        const novaSenha = document.getElementById('nova_senha');
+        const confirmarSenha = document.getElementById('confirmar_nova_senha');
         
-        const checkGoogleMaps = setInterval(function() {
-            attempts++;
-            
-            if (window.google && window.google.maps) {
-                console.log('Google Maps detectado após', attempts * 500, 'ms');
-                clearInterval(checkGoogleMaps);
-                initMapCallback();
-            } else if (attempts >= maxAttempts) {
-                console.error('Timeout: Google Maps API não foi carregada após 10 segundos');
-                clearInterval(checkGoogleMaps);
+        if (novaSenha) {
+            novaSenha.addEventListener('input', function() {
+                const senha = this.value;
                 
-                // Mostrar erro apenas se a aba de endereço estiver visível
-                const enderecoTab = document.querySelector('#endereco-tab.active');
-                if (enderecoTab) {
-                    mostrarFeedbackCep('alert-danger', 
-                        'Erro ao carregar Google Maps. Verifique sua conexão com a internet e recarregue a página.');
-                }
-            }
-        }, 500);
-    }
-});
-
-// ========================================
-// FUNÇÕES GLOBAIS PARA CHAMADAS EXTERNAS
-// ========================================
-
-// Função para recarregar o mapa (chamada externa)
-window.reloadMap = function() {
-    if (map) {
-        google.maps.event.trigger(map, 'resize');
-        if (marker) {
-            map.setCenter(marker.getPosition());
+                // Verificar requisitos
+                const requisitos = [
+                    { id: 'req-length', test: senha.length >= 8, text: 'Mínimo 8 caracteres' },
+                    { id: 'req-lowercase', test: /[a-z]/.test(senha), text: 'Letra minúscula' },
+                    { id: 'req-uppercase', test: /[A-Z]/.test(senha), text: 'Letra maiúscula' },
+                    { id: 'req-number', test: /\d/.test(senha), text: 'Número' },
+                    { id: 'req-special', test: /[@$!%*?&]/.test(senha), text: 'Caractere especial' }
+                ];
+                
+                requisitos.forEach(req => {
+                    const elemento = document.getElementById(req.id);
+                    if (elemento) {
+                        elemento.innerHTML = req.test ? 
+                            `<i class="bi bi-check-circle-fill text-success me-1"></i>${req.text}` : 
+                            `<i class="bi bi-x-circle me-1"></i>${req.text}`;
+                        
+                        // Atualizar classes visuais
+                        if (req.test) {
+                            elemento.classList.remove('bg-light', 'text-dark');
+                            elemento.classList.add('bg-success', 'text-white');
+                        } else {
+                            elemento.classList.remove('bg-success', 'text-white');
+                            elemento.classList.add('bg-light', 'text-dark');
+                        }
+                    }
+                });
+            });
         }
-    }
-};
-
-// Função para centralizar no endereço atual (chamada externa)
-window.centerMapOnAddress = function() {
-    if (verificarCamposEndereco()) {
-        verificarEnderecoNoMapa();
-    } else {
-        mostrarFeedbackCep('alert-warning', 'Preencha os campos de endereço primeiro.');
-    }
-};
-
-console.log('Script carregado completamente!');
-    </script>
-
+        
+        // Verificação de senhas iguais
+        if (novaSenha && confirmarSenha) {
+            confirmarSenha.addEventListener('input', function() {
+                if (this.value !== novaSenha.value) {
+                    this.setCustomValidity('As senhas não coincidem');
+                } else {
+                    this.setCustomValidity('');
+                }
+            });
+        }
+        
+        // ========== FORMATAÇÃO DE CAMPOS ==========
+        
+        // Formatação de CPF
+        const cpfInput = document.getElementById('cpf');
+        if (cpfInput) {
+            cpfInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 11) {
+                    value = value.substring(0, 11);
+                }
+                
+                if (value.length > 9) {
+                    value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");
+                } else if (value.length > 6) {
+                    value = value.replace(/^(\d{3})(\d{3})(\d{0,3})/, "$1.$2.$3");
+                } else if (value.length > 3) {
+                    value = value.replace(/^(\d{3})(\d{0,3})/, "$1.$2");
+                }
+                
+                e.target.value = value;
+            });
+        }
+        
+        // ========== VIACEP - BUSCA DE ENDEREÇO ==========
+        const cepInput = document.getElementById('endereco_cep');
+        const buscarCepBtn = document.getElementById('buscarCep');
+        const cepCache = new Map();
+        
+        // Formatação de CEP com auto-busca
+        if (cepInput) {
+            cepInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 8) {
+                    value = value.substring(0, 8);
+                }
+                
+                if (value.length > 5) {
+                    value = value.replace(/^(\d{5})(\d{0,3})/, "$1-$2");
+                }
+                
+                e.target.value = value;
+                
+                // Auto-busca quando CEP estiver completo
+                const cepLimpo = value.replace(/\D/g, '');
+                if (cepLimpo.length === 8) {
+                    buscarCEP(cepLimpo);
+                }
+            });
+            
+            // Busca também quando usuário cola um CEP
+            cepInput.addEventListener('paste', function(e) {
+                setTimeout(() => {
+                    const cepLimpo = this.value.replace(/\D/g, '');
+                    if (cepLimpo.length === 8) {
+                        buscarCEP(cepLimpo);
+                    }
+                }, 100);
+            });
+            
+            // Permitir busca com Enter
+            cepInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const cep = this.value.replace(/\D/g, '');
+                    buscarCEP(cep);
+                }
+            });
+        }
+        
+        // Função principal de busca de CEP
+        async function buscarCEP(cep) {
+            if (!cep || cep.length !== 8) {
+                mostrarErro('CEP deve conter exatamente 8 dígitos.');
+                return;
+            }
+            
+            // Verificar cache primeiro
+            if (cepCache.has(cep)) {
+                preencherEndereco(cepCache.get(cep));
+                mostrarSucesso('Endereço encontrado (cache)!');
+                return;
+            }
+            
+            // Mostrar indicador de carregamento
+            setLoadingState(true);
+            
+            try {
+                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error('Erro na requisição');
+                }
+                
+                if (data.erro) {
+                    mostrarErro('CEP não encontrado. Verifique se o número está correto.');
+                    return;
+                }
+                
+                // Salvar no cache
+                cepCache.set(cep, data);
+                
+                // Preencher campos
+                preencherEndereco(data);
+                mostrarSucesso('Endereço encontrado com sucesso!');
+                
+            } catch (error) {
+                console.error('Erro ao buscar CEP:', error);
+                mostrarErro('Erro ao buscar CEP. Verifique sua conexão e tente novamente.');
+            } finally {
+                setLoadingState(false);
+            }
+        }
+        
+        // Função para preencher os campos de endereço
+        function preencherEndereco(data) {
+            const campos = {
+                'endereco_rua': data.logradouro,
+                'endereco_bairro': data.bairro,
+                'endereco_cidade': data.localidade,
+                'endereco_estado': data.uf
+            };
+            
+            Object.entries(campos).forEach(([id, valor]) => {
+                const campo = document.getElementById(id);
+                if (campo && valor) {
+                    campo.value = valor;
+                    // Animação sutil para mostrar que o campo foi preenchido
+                    campo.classList.add('border-success');
+                    setTimeout(() => {
+                        campo.classList.remove('border-success');
+                    }, 2000);
+                }
+            });
+            
+            // SEMPRE limpar o campo número quando endereço mudar
+            const numeroField = document.getElementById('endereco_numero');
+            const complementoField = document.getElementById('endereco_complemento');
+            
+            if (numeroField) {
+                numeroField.value = '';
+                numeroField.focus();
+            }
+            
+            // Também limpar complemento para começar com endereço "limpo"
+            if (complementoField) {
+                complementoField.value = '';
+            }
+        }
+        
+        // Função para controlar estado de carregamento
+        function setLoadingState(isLoading) {
+            if (!buscarCepBtn) return;
+            
+            if (isLoading) {
+                buscarCepBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                buscarCepBtn.disabled = true;
+                if (cepInput) cepInput.disabled = true;
+            } else {
+                buscarCepBtn.innerHTML = '<i class="bi bi-search"></i>';
+                buscarCepBtn.disabled = false;
+                if (cepInput) cepInput.disabled = false;
+            }
+        }
+        
+        // Busca manual via botão
+        if (buscarCepBtn) {
+            buscarCepBtn.addEventListener('click', function() {
+                const cep = cepInput.value.replace(/\D/g, '');
+                buscarCEP(cep);
+            });
+        }
+        
+        // Limpeza de campos quando CEP é alterado significativamente
+        if (cepInput) {
+            let ultimoCepBuscado = '';
+            
+            cepInput.addEventListener('input', function() {
+                const cepAtual = this.value.replace(/\D/g, '');
+                
+                // Se o CEP mudou significativamente, limpar campos
+                if (ultimoCepBuscado && 
+                    cepAtual.length < 8 && 
+                    !ultimoCepBuscado.startsWith(cepAtual.substring(0, 5))) {
+                    
+                    limparCamposEndereco();
+                }
+            });
+            
+            function limparCamposEndereco() {
+                const campos = ['endereco_rua', 'endereco_bairro', 'endereco_cidade', 'endereco_estado', 'endereco_numero', 'endereco_complemento'];
+                campos.forEach(id => {
+                    const campo = document.getElementById(id);
+                    if (campo) {
+                        campo.value = '';
+                        campo.classList.remove('border-success');
+                    }
+                });
+            }
+        }
+        
+        // ========== SISTEMA DE TOAST NOTIFICATIONS ==========
+        
+        // Funções para mostrar mensagens
+        function mostrarSucesso(mensagem) {
+            mostrarToast(mensagem, 'success');
+        }
+        
+        function mostrarErro(mensagem) {
+            mostrarToast(mensagem, 'danger');
+        }
+        
+        // Sistema de toast melhorado (substitui alerts)
+        function mostrarToast(mensagem, tipo = 'info') {
+            // Remove toasts anteriores
+            const existingToasts = document.querySelectorAll('.toast-custom');
+            existingToasts.forEach(toast => toast.remove());
+            
+            const toast = document.createElement('div');
+            toast.className = `toast-custom alert alert-${tipo} alert-dismissible fade show position-fixed`;
+            toast.style.cssText = `
+                top: 20px; 
+                right: 20px; 
+                z-index: 9999; 
+                min-width: 300px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            `;
+            
+            const icon = tipo === 'success' ? 'check-circle-fill' : 
+                        tipo === 'danger' ? 'exclamation-triangle-fill' : 'info-circle-fill';
+            
+            toast.innerHTML = `
+                <i class="bi bi-${icon} me-2"></i>${mensagem}
+                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Auto-remove após 5 segundos
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+        
+        // ========== FORMULÁRIO DE CONTATO ==========
+        const contatoForm = document.getElementById('contato-form');
+        if (contatoForm) {
+            contatoForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                mostrarSucesso('Obrigado pelo contato! Responderemos em breve.');
+                this.reset();
+            });
+        }
+    });
+</script>
+</body>
 </html>

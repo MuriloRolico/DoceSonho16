@@ -29,6 +29,66 @@
             line-height: 1.8;
             background-color: var(--background-color);
         }
+                .navbar {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--primary-color) !important;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-color) !important;
+            margin: 0 12px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            background: transparent;
+            border: none;
+        }
+
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: var(--primary-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover:after {
+            width: 70%;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+            transform: translateY(-2px);
+            background-color: transparent;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+        }
+
+        .navbar-nav .badge {
+            background-color: var(--primary-color) !important;
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform: translate(25%, -25%);
+        }
 
         .cakes-container {
             max-width: 1200px;
@@ -144,6 +204,159 @@
             color: var(--text-color);
             margin-bottom: 20px;
         }
+                /* Footer */
+        footer {
+            background-color: #2d2d2d !important;
+            color: #f8f8f8 !important;
+            padding: 80px 0 30px;
+            position: relative;
+        }
+
+        footer:before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-color: white;
+            clip-path: ellipse(50% 50px at 50% 50px);
+        }
+
+        .footer-heading {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-heading:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 0;
+        }
+
+        .footer-text {
+            color: #aaa;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .footer-social {
+            margin-top: 25px;
+        }
+
+        .footer-social a {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .footer-links {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #aaa;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-contact li {
+            color: #aaa;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-contact-icon {
+            margin-right: 15px;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .footer-form .form-control {
+            background-color: rgba(255,255,255,0.08);
+            border: none;
+            color: white;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .footer-form .form-control::placeholder {
+            color: #aaa;
+        }
+
+        .footer-form .form-control:focus {
+            background-color: rgba(255,255,255,0.12);
+            box-shadow: none;
+        }
+
+        .footer-form .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-form .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            padding-left: 30px;
+            padding-top: 30px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-copyright {
+            color: #aaa;
+        }
+
+        .footer-policy a {
+            color: #aaa;
+            margin-left: 20px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .footer-policy a:hover {
+            color: white;
+        }
+
     </style>
 </head>
 <body>
@@ -288,6 +501,66 @@
         </div>
         {% endif %}
     </div>
+
+        <footer>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="footer-heading">Doce Sonho Confeitaria</h4>
+                    <p class="footer-text">Transformamos ingredientes selecionados em momentos doces e inesquecíveis desde 2015. Nossa paixão é adoçar sua vida com sabores especiais.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-whatsapp"></i></a>
+                        <a href="#"><i class="bi bi-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h4 class="footer-heading">Links Rápidos</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('index') }}">Início</a></li>
+                        <li><a href="{{ url_for('product.todos_produtos') }}">Produtos</a></li>
+                        <li><a href="{{ url_for('product.montar_bolo') }}">Monte seu Bolo</a></li>
+                        <li><a href="{{ url_for('sobrenos.sobrenos') }}">Sobre Nós</a></li>                      
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="footer-heading">Contato</h4>
+                    <ul class="footer-links footer-contact">
+                        <li>
+                            <i class="bi bi-geo-alt footer-contact-icon"></i>
+                            Rua das Flores, 123 - Centro
+                        </li>
+                        <li>
+                            <i class="bi bi-telephone footer-contact-icon"></i>
+                            (11) 9999-9999
+                        </li>
+                        <li>
+                            <i class="bi bi-envelope footer-contact-icon"></i>
+                            contato@docesonho.com.br
+                        </li>
+                        <li>
+                            <i class="bi bi-clock footer-contact-icon"></i>
+                            Seg-Sex: 9h às 18h | Sáb: 9h às 14h
+                        </li>
+                    </ul>
+                </div>
+               
+            </div>
+            <div class="footer-bottom">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="footer-copyright">&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
+                    </div>
+                    <div class="col-md-6 text-md-end footer-policy">
+                         <a  href="{{ url_for('auth.politica_privacidade') }}">Política de Privacidade</a>
+                     
+                        <a href="#">Termos de Uso</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

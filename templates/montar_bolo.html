@@ -449,88 +449,159 @@
             margin-bottom: 30px;
         }
 
-        /* Footer Styles */
+               /* Footer */
         footer {
-            margin-top: 50px;
-            padding-top: 50px;
-            background-color: #2d2d2d;
-            color: white;
+            background-color: #2d2d2d !important;
+            color: #f8f8f8 !important;
+            padding: 80px 0 30px;
+            position: relative;
+        }
+
+        footer:before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-color: white;
+            clip-path: ellipse(50% 50px at 50% 50px);
         }
 
         .footer-heading {
-            font-family: 'Playfair Display', serif;
-            color: var(--secondary-color);
-            margin-bottom: 20px;
-            font-weight: 600;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-heading:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 0;
         }
 
         .footer-text {
-            color: #adb5bd;
+            color: #aaa;
             margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .footer-social {
+            margin-top: 25px;
         }
 
         .footer-social a {
-            display: inline-block;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
             width: 40px;
             height: 40px;
-            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            text-align: center;
-            line-height: 40px;
-            margin-right: 10px;
+            background-color: rgba(255,255,255,0.1);
             color: white;
+            margin-right: 10px;
             transition: all 0.3s ease;
         }
 
         .footer-social a:hover {
             background-color: var(--primary-color);
-            transform: translateY(-5px);
+            transform: translateY(-3px);
+        }
+
+        .footer-links {
+            list-style: none;
+            padding-left: 0;
         }
 
         .footer-links li {
-            margin-bottom: 10px;
-            color: #adb5bd;
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #aaa;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-contact li {
+            color: #aaa;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-contact-icon {
+            margin-right: 15px;
+            color: var(--primary-color);
+            font-size: 1.2rem;
         }
 
         .footer-form .form-control {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255,255,255,0.08);
             border: none;
             color: white;
-            padding: 12px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
         }
 
         .footer-form .form-control::placeholder {
-            color: #adb5bd;
+            color: #aaa;
+        }
+
+        .footer-form .form-control:focus {
+            background-color: rgba(255,255,255,0.12);
+            box-shadow: none;
         }
 
         .footer-form .btn {
             background-color: var(--primary-color);
-            border: none;
             color: white;
-            width: 100%;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-form .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
         }
 
         .footer-bottom {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-left: 30px;
+            padding-top: 30px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
-        .footer-bottom p {
-            color: #adb5bd;
-            margin-bottom: 5px;
+        .footer-copyright {
+            color: #aaa;
         }
 
         .footer-policy a {
-            color: #adb5bd;
-            margin-left: 15px;
+            color: #aaa;
+            margin-left: 20px;
+            transition: all 0.3s ease;
             text-decoration: none;
-            transition: color 0.3s ease;
         }
 
         .footer-policy a:hover {
-            color: var(--primary-color);
+            color: white;
         }
+
 
         /* Responsive Adjustments */
         @media (max-width: 991px) {
@@ -728,7 +799,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="chocolate" data-type="massa">
                                     <div class="price-tag">+ R$ 25,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=Massa+de+Chocolate" alt="Massa de Chocolate">
+                                    <img src="static/uploads/bolochocolate.png" alt="Massa de Chocolate">
                                     <h5>Chocolate</h5>
                                     <p>Massa macia de chocolate belga</p>
                                     <input type="radio" name="massa" value="chocolate" class="visually-hidden">
@@ -737,7 +808,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="baunilha" data-type="massa">
                                     <div class="price-tag">+ R$ 20,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=Massa+de+Baunilha" alt="Massa de Baunilha">
+                                    <img src="static/uploads/bolobaunilha.png" alt="Massa de Baunilha">
                                     <h5>Baunilha</h5>
                                     <p>Massa leve e macia de baunilha</p>
                                     <input type="radio" name="massa" value="baunilha" class="visually-hidden">
@@ -746,7 +817,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="red_velvet" data-type="massa">
                                     <div class="price-tag">+ R$ 30,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=Red+Velvet" alt="Red Velvet">
+                                    <img src="static/uploads/redvevelt.png" alt="Red Velvet">
                                     <h5>Red Velvet</h5>
                                     <p>Massa vermelha aveludada com toque de cacau</p>
                                     <input type="radio" name="massa" value="red_velvet" class="visually-hidden">
@@ -755,7 +826,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="limao" data-type="massa">
                                     <div class="price-tag">+ R$ 22,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=Massa+de+Limão" alt="Massa de Limão">
+                                    <img src="static/uploads/bololimao.png" alt="Massa de Limão">
                                     <h5>Limão</h5>
                                     <p>Massa leve com toque cítrico de limão</p>
                                     <input type="radio" name="massa" value="limao" class="visually-hidden">
@@ -774,7 +845,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="brigadeiro" data-type="recheio">
                                     <div class="price-tag">+ R$ 15,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=Brigadeiro" alt="Brigadeiro">
+                                    <img src="static/uploads/recheiochocolate.png" alt="Brigadeiro">
                                     <h5>Brigadeiro</h5>
                                     <p>Recheio cremoso de chocolate</p>
                                     <input type="checkbox" name="recheios" value="brigadeiro" class="visually-hidden">
@@ -783,7 +854,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="morango" data-type="recheio">
                                     <div class="price-tag">+ R$ 18,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=Morango" alt="Morango">
+                                    <img src="static/uploads/recheiomorango.png" alt="Morango">
                                     <h5>Morango</h5>
                                     <p>Creme de confeiteiro com pedaços de morango</p>
                                     <input type="checkbox" name="recheios" value="morango" class="visually-hidden">
@@ -792,7 +863,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="doce_de_leite" data-type="recheio">
                                     <div class="price-tag">+ R$ 12,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=Doce+de+Leite" alt="Doce de Leite">
+                                    <img src="static/uploads/recheiodocedeleite.png" alt="Doce de Leite">
                                     <h5>Doce de Leite</h5>
                                     <p>Camada generosa de doce de leite argentino</p>
                                     <input type="checkbox" name="recheios" value="doce_de_leite" class="visually-hidden">
@@ -801,7 +872,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="chocolate_branco" data-type="recheio">
                                     <div class="price-tag">+ R$ 16,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=Chocolate+Branco" alt="Chocolate Branco">
+                                    <img src="static/uploads/recheiobaunilha.png" alt="Chocolate Branco">
                                     <h5>Chocolate Branco</h5>
                                     <p>Creme aveludado de chocolate branco</p>
                                     <input type="checkbox" name="recheios" value="chocolate_branco" class="visually-hidden">
@@ -821,7 +892,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="chantilly" data-type="cobertura">
                                     <div class="price-tag">+ R$ 18,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=Chantilly" alt="Chantilly">
+                                    <img src="static/uploads/chantily.png" alt="Chantilly">
                                     <h5>Chantilly</h5>
                                     <p>Cobertura leve e cremosa</p>
                                     <input type="radio" name="cobertura" value="chantilly" class="visually-hidden">
@@ -830,7 +901,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="ganache" data-type="cobertura">
                                     <div class="price-tag">+ R$ 20,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=Ganache" alt="Ganache">
+                                    <img src="static/uploads/ganache.png" alt="Ganache">
                                     <h5>Ganache</h5>
                                     <p>Cobertura rica de chocolate meio amargo</p>
                                     <input type="radio" name="cobertura" value="ganache" class="visually-hidden">
@@ -839,7 +910,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="pasta_americana" data-type="cobertura">
                                     <div class="price-tag">+ R$ 25,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=Pasta+Americana" alt="Pasta Americana">
+                                    <img src="static/uploads/pastaamericana.png" alt="Pasta Americana">
                                     <h5>Pasta Americana</h5>
                                     <p>Cobertura lisa e elegante</p>
                                     <input type="radio" name="cobertura" value="pasta_americana" class="visually-hidden">
@@ -848,7 +919,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="cream_cheese" data-type="cobertura">
                                     <div class="price-tag">+ R$ 22,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=Cream+Cheese" alt="Cream Cheese">
+                                    <img src="static/uploads/creamchesse.png" alt="Cream Cheese">
                                     <h5>Cream Cheese</h5>
                                     <p>Cobertura cremosa com leve acidez</p>
                                     <input type="radio" name="cobertura" value="cream_cheese" class="visually-hidden">
@@ -868,7 +939,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="morangos" data-type="finalizacao">
                                     <div class="price-tag">+ R$ 12,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=Morangos+Frescos" alt="Morangos Frescos">
+                                    <img src="static/uploads/morangos.jpg" alt="Morangos Frescos">
                                     <h5>Morangos Frescos</h5>
                                     <p>Decoração com morangos frescos</p>
                                     <input type="checkbox" name="finalizacao" value="morangos" class="visually-hidden">
@@ -877,7 +948,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="chocolate_raspas" data-type="finalizacao">
                                     <div class="price-tag">+ R$ 8,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=Raspas+de+Chocolate" alt="Raspas de Chocolate">
+                                    <img src="static/uploads/raspas.jpg" alt="Raspas de Chocolate">
                                     <h5>Raspas de Chocolate</h5>
                                     <p>Finalização com raspas de chocolate belga</p>
                                     <input type="checkbox" name="finalizacao" value="chocolate_raspas" class="visually-hidden">
@@ -886,7 +957,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="mm" data-type="finalizacao">
                                     <div class="price-tag">+ R$ 10,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=M%26M" alt="M&M">
+                                    <img src="static/uploads/mms.jpg" alt="M&M">
                                     <h5>M&M's</h5>
                                     <p>Decoração colorida com confeitos de chocolate</p>
                                     <input type="checkbox" name="finalizacao" value="mm" class="visually-hidden">
@@ -895,7 +966,7 @@
                             <div class="col-md-6 mb-4">
                                 <div class="selector-item position-relative" data-value="confete" data-type="finalizacao">
                                     <div class="price-tag">+ R$ 5,00</div>
-                                    <img src="https://via.placeholder.com/300x150?text=Confetes+Coloridos" alt="Confetes Coloridos">
+                                    <img src="static/uploads/confete.jpg" alt="Confetes Coloridos">
                                     <h5>Confetes Coloridos</h5>
                                     <p>Finalização festiva com confetes açucarados</p>
                                     <input type="checkbox" name="finalizacao" value="confete" class="visually-hidden">
@@ -917,55 +988,61 @@
     </div>
 
     <!-- Rodapé -->
-    <footer class="bg-dark text-white pt-5 pb-4">
+       <footer>
         <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-4 col-md-6">
                     <h4 class="footer-heading">Doce Sonho Confeitaria</h4>
-                    <p class="footer-text">Transformando ingredientes selecionados em momentos doces e inesquecíveis desde 2015.</p>
+                    <p class="footer-text">Transformamos ingredientes selecionados em momentos doces e inesquecíveis desde 2015. Nossa paixão é adoçar sua vida com sabores especiais.</p>
                     <div class="footer-social">
                         <a href="#"><i class="bi bi-facebook"></i></a>
                         <a href="#"><i class="bi bi-instagram"></i></a>
                         <a href="#"><i class="bi bi-whatsapp"></i></a>
+                        <a href="#"><i class="bi bi-tiktok"></i></a>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <h4 class="footer-heading">Horário de Funcionamento</h4>
-                    <ul class="list-unstyled footer-links">
-                        <li>Segunda a Sexta: 9h às 18h</li>
-                        <li>Sábados: 9h às 14h</li>
-                        <li>Domingos e Feriados: Fechado</li>
+                <div class="col-lg-2 col-md-6">
+                    <h4 class="footer-heading">Links Rápidos</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('index') }}">Início</a></li>
+                        <li><a href="{{ url_for('product.todos_produtos') }}">Produtos</a></li>
+                        <li><a href="{{ url_for('product.montar_bolo') }}">Monte seu Bolo</a></li>
+                        <li><a href="{{ url_for('sobrenos.sobrenos') }}">Sobre Nós</a></li>                      
                     </ul>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <h4 class="footer-heading">Entre em Contato</h4>
-                    <form id="contato-form" class="footer-form">
-                        <div class="mb-3">
-                            <input type="text" class="form-control" placeholder="Seu nome" required>
-                        </div>
-                        <div class="mb-3">
-                            <input type="email" class="form-control" placeholder="Seu e-mail" required>
-                        </div>
-                        <div class="mb-3">
-                            <textarea class="form-control" rows="3" placeholder="Sua mensagem" required></textarea>
-                        </div>
-                        <button type="submit" class="btn">Enviar Mensagem</button>
-                    </form>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="footer-heading">Contato</h4>
+                    <ul class="footer-links footer-contact">
+                        <li>
+                            <i class="bi bi-geo-alt footer-contact-icon"></i>
+                            Rua das Flores, 123 - Centro
+                        </li>
+                        <li>
+                            <i class="bi bi-telephone footer-contact-icon"></i>
+                            (11) 9999-9999
+                        </li>
+                        <li>
+                            <i class="bi bi-envelope footer-contact-icon"></i>
+                            contato@docesonho.com.br
+                        </li>
+                        <li>
+                            <i class="bi bi-clock footer-contact-icon"></i>
+                            Seg-Sex: 9h às 18h | Sáb: 9h às 14h
+                        </li>
+                    </ul>
                 </div>
+               
             </div>
-            <hr>
-            <div class="row footer-bottom">
-                <div class="col-md-6">
-                    <p><i class="bi bi-geo-alt-fill me-2"></i>Rua das Flores, 123 - Centro</p>
-                    <p><i class="bi bi-telephone-fill me-2"></i>(11) 9999-9999</p>
-                    <p><i class="bi bi-envelope-fill me-2"></i>contato@docesonho.com.br</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <p class="footer-copyright">&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
-                    <p class="footer-policy">
-                        <a href="#">Política de Privacidade</a>
+            <div class="footer-bottom">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="footer-copyright">&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
+                    </div>
+                    <div class="col-md-6 text-md-end footer-policy">
+                         <a  href="{{ url_for('auth.politica_privacidade') }}">Política de Privacidade</a>
+                     
                         <a href="#">Termos de Uso</a>
-                    </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1058,6 +1135,41 @@
                 'confete': '✨'
             };
             
+            // Função para validar cada etapa
+            function validateStep(stepNumber) {
+                switch(stepNumber) {
+                    case 1:
+                        // Validar massa
+                        const massa = document.querySelector('input[name="massa"]:checked');
+                        if (!massa) {
+                            alert('Por favor, selecione um tipo de massa antes de continuar.');
+                            return false;
+                        }
+                        return true;
+                        
+                    case 2:
+                        // Validar recheios (pelo menos 1, máximo 2)
+                        const recheios = document.querySelectorAll('input[name="recheios"]:checked');
+                        if (recheios.length === 0) {
+                            alert('Por favor, selecione pelo menos um recheio antes de continuar.');
+                            return false;
+                        }
+                        return true;
+                        
+                    case 3:
+                        // Validar cobertura
+                        const cobertura = document.querySelector('input[name="cobertura"]:checked');
+                        if (!cobertura) {
+                            alert('Por favor, selecione uma cobertura antes de continuar.');
+                            return false;
+                        }
+                        return true;
+                        
+                    default:
+                        return true;
+                }
+            }
+            
             // Funções de navegação entre etapas
             function goToStep(stepNumber) {
                 steps.forEach((step, index) => {
@@ -1077,10 +1189,13 @@
                 });
             }
             
-            // Adicionar eventos para navegação
+            // Adicionar eventos para navegação com validação
             nextButtons.forEach((button, index) => {
                 button.addEventListener('click', () => {
-                    goToStep(index + 2);
+                    const currentStepNumber = index + 1;
+                    if (validateStep(currentStepNumber)) {
+                        goToStep(currentStepNumber + 1);
+                    }
                 });
             });
             
@@ -1173,7 +1288,7 @@
                 precoTotal.textContent = 'R$ ' + total.toFixed(2);
             }
             
-            // Adicionar eventos de seleção
+            // Adicionar eventos de seleção com validação de recheios
             selectorItems.forEach(item => {
                 item.addEventListener('click', function() {
                     const inputType = this.querySelector('input').type;
@@ -1193,7 +1308,7 @@
                             // Limitar a 2 recheios
                             const recheiosSelecionados = document.querySelectorAll('input[name="recheios"]:checked').length;
                             if (recheiosSelecionados >= 2 && !this.querySelector('input').checked) {
-                                alert('Você pode selecionar no máximo 2 recheios.');
+                                alert('Você pode selecionar no máximo 2 recheios (um por andar).');
                                 return;
                             }
                         }

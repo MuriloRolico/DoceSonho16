@@ -391,7 +391,7 @@ def pedidos():
     return render_template('pedidos.html', pedidos=pedidos)
 
 
-# ROTA PARA VER DETALHES DE UM PEDIDO ESPECÍFICO
+# ROTA PARA VER DETALHES DE UM PEDIDO ESPECÍFICO - CORRIGIDA
 @order_bp.route('/pedido/<int:pedido_id>')
 def detalhes_pedido(pedido_id):
     if 'usuario_id' not in session:
@@ -407,9 +407,49 @@ def detalhes_pedido(pedido_id):
         flash('Pedido não encontrado ou você não tem permissão para visualizá-lo.', 'danger')
         return redirect(url_for('order.pedidos'))
     
-    # Buscar itens do pedido
-    itens_regulares = ItemPedido.query.filter_by(pedido_id=pedido.id).all()
-    itens_personalizados = ItemPedidoPersonalizado.query.filter_by(pedido_id=pedido.id).all()
+    # Buscar itens regulares do pedido com informações do produto
+    itens_regulares = db.session.query(
+        ItemPedido.id,
+        ItemPedido.quantidade,
+        ItemPedido.preco_unitario,
+        Produto.nome
+    ).join(Produto).filter(ItemPedido.pedido_id == pedido.id).all()
+    
+    # Buscar itens personalizados do pedido com informações do bolo
+    itens_personalizados = db.session.query(
+        ItemPedidoPersonalizado.id,
+        ItemPedidoPersonalizado.quantidade,
+        ItemPedidoPersonalizado.preco_unitario,
+        BoloPersonalizado.nome,
+        BoloPersonalizado.id.label('bolo_id')
+    ).join(BoloPersonalizado).filter(ItemPedidoPersonalizado.pedido_id == pedido.id).all()
+    
+    # Combinar os itens em uma única lista com todas as informações que o template precisa
+    itens = []
+    
+    # Adicionar itens regulares
+    for item in itens_regulares:
+        itens.append({
+            'id': item.id,
+            'nome': item.nome,
+            'quantidade': item.quantidade,
+            'preco_unitario': item.preco_unitario,
+            'subtotal': item.quantidade * item.preco_unitario,
+            'tipo': 'regular',
+            'bolo_id': None
+        })
+    
+    # Adicionar itens personalizados
+    for item in itens_personalizados:
+        itens.append({
+            'id': item.id,
+            'nome': item.nome,
+            'quantidade': item.quantidade,
+            'preco_unitario': item.preco_unitario,
+            'subtotal': item.quantidade * item.preco_unitario,
+            'tipo': 'personalizado',
+            'bolo_id': item.bolo_id
+        })
     
     # Processar endereço de entrega se existir
     endereco_entrega = None
@@ -419,8 +459,8 @@ def detalhes_pedido(pedido_id):
         except:
             endereco_entrega = None
     
+    # Passar a lista unificada 'itens' para o template
     return render_template('detalhes_pedido.html', 
                          pedido=pedido, 
-                         itens_regulares=itens_regulares,
-                         itens_personalizados=itens_personalizados,
+                         itens=itens,  # Lista unificada que o template espera
                          endereco_entrega=endereco_entrega)
