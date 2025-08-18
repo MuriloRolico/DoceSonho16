@@ -696,25 +696,6 @@
             background-color: var(--container-bg);
             border-color: var(--border-color);
         }
-
-        /* Form controls */
-        .form-control, .form-select {
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            padding: 10px 15px;
-            color: var(--text-color);
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(210, 63, 114, 0.25);
-        }
-
-        .form-label {
-            font-weight: 500;
-            color: var(--text-color);
-            margin-bottom: 8px;
-        }
     </style>
 </head>
 <body>
@@ -761,7 +742,7 @@
                 <p class="menu-header">Usuários</p>
                 <ul>
                     <li>
-                        <a href="{{ url_for('admin.admin_clientes') }}">
+                        <a href="{{ url_for('admin.admin_clientes') }}" class="active">
                             <i class="bi bi-people"></i> Clientes
                         </a>
                     </li>
@@ -775,7 +756,7 @@
                 <ul>
                    
                     <li>
-                        <a href="{{ url_for('admin.admin_logs') }}" class="active">
+                        <a href="{{ url_for('admin.admin_logs') }}">
                             <i class="bi bi-journal-text"></i> Logs do Sistema
                         </a>
                     </li>
@@ -791,67 +772,25 @@
         <div class="main-content">
             <!-- Page header -->
             <div class="page-header">
-                <h1 class="page-title">Logs do Sistema</h1>
+                <h1 class="page-title">Clientes</h1>
                 <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-white text-decoration-none">Home</a></li>
                 <div>
-                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filtroCollapse" aria-expanded="false" aria-controls="filtroCollapse">
-                        <i class="bi bi-funnel"></i> Filtros
-                    </button>
+                    <form class="d-flex gap-2" method="GET" action="{{ url_for('admin.admin_clientes') }}">
+                        <input class="form-control" type="search" placeholder="Buscar cliente..." name="busca" value="{{ request.args.get('busca', '') }}">
+                        <button class="btn btn-outline-primary" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
 
-            <!-- Filtros -->
-            <div class="collapse mb-4" id="filtroCollapse">
-                <div class="card">
-                    <div class="card-header">
-                        <h5><i class="bi bi-funnel me-2"></i>Filtrar Logs</h5>
-                    </div>
-                    <div class="card-body">
-                        <form action="{{ url_for('admin.filtrar_logs') }}" method="GET" class="row g-3">
-                            <div class="col-md-3">
-                                <label for="tipo" class="form-label">Tipo</label>
-                                <select name="tipo" id="tipo" class="form-select">
-                                    <option value="">Todos</option>
-                                    <option value="novo_pedido" {% if filtros and filtros.tipo == 'novo_pedido' %}selected{% endif %}>Novos Pedidos</option>
-                                    <option value="pedido_atualizado" {% if filtros and filtros.tipo == 'pedido_atualizado' %}selected{% endif %}>Pedidos Atualizados</option>
-                                    <option value="login" {% if filtros and filtros.tipo == 'login' %}selected{% endif %}>Login</option>
-                                    <option value="logout" {% if filtros and filtros.tipo == 'logout' %}selected{% endif %}>Logout</option>
-                                    <option value="cadastro" {% if filtros and filtros.tipo == 'cadastro' %}selected{% endif %}>Cadastro</option>
-                                    <option value="produto" {% if filtros and filtros.tipo == 'produto' %}selected{% endif %}>Produto</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="data_inicio" class="form-label">Data Início</label>
-                                <input type="date" name="data_inicio" id="data_inicio" class="form-control" value="{{ filtros.data_inicio if filtros and filtros.data_inicio }}">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="data_fim" class="form-label">Data Fim</label>
-                                <input type="date" name="data_fim" id="data_fim" class="form-control" value="{{ filtros.data_fim if filtros and filtros.data_fim }}">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="usuario_id" class="form-label">ID do Usuário</label>
-                                <input type="number" name="usuario_id" id="usuario_id" class="form-control" value="{{ filtros.usuario_id if filtros and filtros.usuario_id }}">
-                            </div>
-                            <div class="col-12 d-flex gap-2">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-search"></i> Filtrar
-                                </button>
-                                <a href="{{ url_for('admin.admin_logs') }}" class="btn btn-secondary">
-                                    <i class="bi bi-x-circle"></i> Limpar Filtros
-                                </a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Logs section -->
-            <div id="logs-section" class="card">
+            <!-- Clientes section -->
+            <div id="clientes-section" class="card">
                 <div class="card-header">
-                    <h5><i class="bi bi-journal-text me-2"></i>Registros de Logs</h5>
-                    <div>
-                        <span class="badge bg-primary">Total: {{ logs.total }}</span>
-                    </div>
+                    <h5><i class="bi bi-people me-2"></i>Gerenciamento de Clientes</h5>
+                    <a href="{{ url_for('admin.admin_novo_usuario', tipo='cliente') }}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus-circle"></i> Novo Cliente
+                    </a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -859,44 +798,45 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Data</th>
-                                    <th>Tipo</th>
-                                    <th>Descrição</th>
-                                    <th>Usuário</th>
-                                    <th>IP</th>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Data de Registro</th>
+                                    <th>Pedidos</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for log in logs.items %}
+                                {% for cliente in clientes.items %}
                                 <tr>
-                                    <td>{{ log.id }}</td>
-                                    <td>{{ log.data.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                                    <td>{{ cliente.id }}</td>
+                                    <td>{{ cliente.nome }}</td>
+                                    <td>{{ cliente.email }}</td>
+                                    <td>{{ cliente.data_registro.strftime('%d/%m/%Y') }}</td>
                                     <td>
-                                        {% if log.tipo == 'novo_pedido' %}
-                                            <span class="status-badge success">Novo Pedido</span>
-                                        {% elif log.tipo == 'pedido_atualizado' %}
-                                            <span class="status-badge info">Pedido Atualizado</span>
-                                        {% elif log.tipo == 'login' %}
-                                            <span class="status-badge info">Login</span>
-                                        {% elif log.tipo == 'logout' %}
-                                            <span class="status-badge warning">Logout</span>
-                                        {% elif log.tipo == 'cadastro' %}
-                                            <span class="status-badge success">Cadastro</span>
-                                        {% elif log.tipo == 'produto' %}
-                                            <span class="status-badge info">Produto</span>
-                                        {% else %}
-                                            <span class="status-badge warning">{{ log.tipo }}</span>
-                                        {% endif %}
+                                        <span class="status-badge info">{{ cliente.total_pedidos }}</span>
                                     </td>
-                                    <td>{{ log.descricao }}</td>
                                     <td>
-                                        {% if log.usuario %}
-                                            {{ log.usuario.nome }} (ID: {{ log.usuario.id }})
-                                        {% else %}
-                                            <span class="text-muted">-</span>
-                                        {% endif %}
+                                        <span class="status-badge {{ 'success' if cliente.status == 'ativo' else 'danger' }}">
+                                            {{ cliente.status }}
+                                        </span>
                                     </td>
-                                    <td>{{ log.ip }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('admin.admin_ver_cliente', cliente_id=cliente.id) }}" class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('admin.admin_editar_usuario', usuario_id=cliente.id) }}" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <form action="{{ url_for('admin.admin_alterar_status_usuario', usuario_id=cliente.id) }}" method="POST" style="display: inline-block;">
+                                                <input type="hidden" name="novo_status" value="{{ 'inativo' if cliente.status == 'ativo' else 'ativo' }}">
+                                                <button type="button" class="btn btn-sm {{ 'btn-warning' if cliente.status == 'ativo' else 'btn-success' }}" onclick="confirmarAlteracaoStatus(this)">
+                                                    <i class="bi {{ 'bi-toggle-off' if cliente.status == 'ativo' else 'bi-toggle-on' }}"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -906,13 +846,13 @@
                 <div class="card-footer">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            Mostrando <b>{{ logs.items|length }}</b> de <b>{{ logs.total }}</b> logs
+                            Mostrando <b>{{ clientes.items|length }}</b> de <b>{{ clientes.total }}</b> clientes
                         </div>
                         <nav aria-label="Navegação de páginas">
                             <ul class="pagination mb-0">
-                                {% if logs.has_prev %}
+                                {% if clientes.has_prev %}
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ url_for('admin.admin_logs', page=logs.prev_num, tipo=request.args.get('tipo', ''), data_inicio=request.args.get('data_inicio', ''), data_fim=request.args.get('data_fim', ''), usuario_id=request.args.get('usuario_id', '')) }}">Anterior</a>
+                                    <a class="page-link" href="{{ url_for('admin.admin_clientes', page=clientes.prev_num, busca=request.args.get('busca', '')) }}">Anterior</a>
                                 </li>
                                 {% else %}
                                 <li class="page-item disabled">
@@ -920,15 +860,15 @@
                                 </li>
                                 {% endif %}
                                 
-                                {% for page_num in logs.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                                {% for page_num in clientes.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
                                     {% if page_num %}
-                                        {% if page_num == logs.page %}
+                                        {% if page_num == clientes.page %}
                                         <li class="page-item active">
                                             <span class="page-link">{{ page_num }}</span>
                                         </li>
                                         {% else %}
                                         <li class="page-item">
-                                            <a class="page-link" href="{{ url_for('admin.admin_logs', page=page_num, tipo=request.args.get('tipo', ''), data_inicio=request.args.get('data_inicio', ''), data_fim=request.args.get('data_fim', ''), usuario_id=request.args.get('usuario_id', '')) }}">{{ page_num }}</a>
+                                            <a class="page-link" href="{{ url_for('admin.admin_clientes', page=page_num, busca=request.args.get('busca', '')) }}">{{ page_num }}</a>
                                         </li>
                                         {% endif %}
                                     {% else %}
@@ -938,9 +878,9 @@
                                     {% endif %}
                                 {% endfor %}
                                 
-                                {% if logs.has_next %}
+                                {% if clientes.has_next %}
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ url_for('admin.admin_logs', page=logs.next_num, tipo=request.args.get('tipo', ''), data_inicio=request.args.get('data_inicio', ''), data_fim=request.args.get('data_fim', ''), usuario_id=request.args.get('usuario_id', '')) }}">Próximo</a>
+                                    <a class="page-link" href="{{ url_for('admin.admin_clientes', page=clientes.next_num, busca=request.args.get('busca', '')) }}">Próximo</a>
                                 </li>
                                 {% else %}
                                 <li class="page-item disabled">
@@ -976,6 +916,18 @@
             document.querySelector('.sidebar').classList.toggle('active');
             document.querySelector('.main-content').classList.toggle('active');
         });
+
+        // Confirmation dialog for status change
+        function confirmarAlteracaoStatus(botao) {
+            const novoStatus = botao.closest('form').querySelector('input[name="novo_status"]').value;
+            const mensagem = novoStatus === 'ativo' 
+                ? 'Tem certeza que deseja ativar este cliente?' 
+                : 'Tem certeza que deseja desativar este cliente? Ele não poderá mais fazer pedidos.';
+                
+            if (confirm(mensagem)) {
+                botao.closest('form').submit();
+            }
+        }
 
         // Initialize tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))

@@ -117,7 +117,7 @@ class Usuario(db.Model):
         return f'<Usuario {self.email}>'
 
 class Produto(db.Model):
-    __tablename__ = 'produto'  # Alterado para corresponder ao SQL
+    __tablename__ = 'produto'
     
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
@@ -130,15 +130,42 @@ class Produto(db.Model):
     data_validade = db.Column(db.DateTime, nullable=True)
     informacoes_nutricionais = db.Column(db.Text, nullable=True)
     
+    # NOVO: Campo para soft delete
+    ativo = db.Column(db.Boolean, default=True, nullable=False)
+    data_criacao = db.Column(db.DateTime, default=datetime.utcnow)
+    data_atualizacao = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
     # Relationships
     itens_pedido = db.relationship('ItemPedido', backref='produto', lazy=True)
     carrinho_itens = db.relationship('CarrinhoItem', backref='produto', lazy=True)
     
+    def desativar(self):
+        """Soft delete - marca o produto como inativo"""
+        self.ativo = False
+        self.data_atualizacao = datetime.utcnow()
+        db.session.commit()
+    
+    def reativar(self):
+        """Reativa um produto desativado"""
+        self.ativo = True
+        self.data_atualizacao = datetime.utcnow()
+        db.session.commit()
+    
+    @classmethod
+    def ativos(cls):
+        """Retorna query apenas de produtos ativos"""
+        return cls.query.filter_by(ativo=True)
+    
+    @classmethod
+    def inativos(cls):
+        """Retorna query apenas de produtos inativos"""
+        return cls.query.filter_by(ativo=False)
+    
     def __repr__(self):
-        return f'<Produto {self.nome}>'
+        return f'<Produto {self.nome} (Ativo: {self.ativo})>'
 
 class BoloPersonalizado(db.Model):
-    __tablename__ = 'bolo_personalizado'  # Alterado para corresponder ao SQL
+    __tablename__ = 'bolo_personalizado'
     
     id = db.Column(db.Integer, primary_key=True)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
@@ -160,12 +187,12 @@ class BoloPersonalizado(db.Model):
         return f'<BoloPersonalizado {self.nome}>'
 
 class Pedido(db.Model):
-    __tablename__ = 'pedido'  # Alterado para corresponder ao SQL
+    __tablename__ = 'pedido'
     
     id = db.Column(db.Integer, primary_key=True)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
     data = db.Column(db.DateTime, default=datetime.utcnow)
-    status = db.Column(db.String(20), default='Pendente')  # Alterado para 20 caracteres
+    status = db.Column(db.String(20), default='Pendente')
     total = db.Column(db.Float, default=0.0)
     tipo_entrega = db.Column(db.String(20), nullable=True)
     valor_frete = db.Column(db.Float, default=0.0)
@@ -191,7 +218,7 @@ class Pedido(db.Model):
         return f'<Pedido {self.id} - {self.status}>'
 
 class ItemPedido(db.Model):
-    __tablename__ = 'item_pedido'  # Alterado para corresponder ao SQL
+    __tablename__ = 'item_pedido'
     
     id = db.Column(db.Integer, primary_key=True)
     pedido_id = db.Column(db.Integer, db.ForeignKey('pedido.id'), nullable=False)
@@ -203,7 +230,7 @@ class ItemPedido(db.Model):
         return f'<ItemPedido {self.id} - Produto: {self.produto_id}>'
 
 class ItemPedidoPersonalizado(db.Model):
-    __tablename__ = 'item_pedido_personalizado'  # Alterado para corresponder ao SQL
+    __tablename__ = 'item_pedido_personalizado'
     
     id = db.Column(db.Integer, primary_key=True)
     pedido_id = db.Column(db.Integer, db.ForeignKey('pedido.id'), nullable=False)
@@ -215,7 +242,7 @@ class ItemPedidoPersonalizado(db.Model):
         return f'<ItemPedidoPersonalizado {self.id} - Bolo: {self.bolo_personalizado_id}>'
 
 class Log(db.Model):
-    __tablename__ = 'log'  # Tabela não existe no SQL, mas mantendo para compatibilidade
+    __tablename__ = 'log'
     
     id = db.Column(db.Integer, primary_key=True)
     tipo = db.Column(db.String(50), nullable=False)
@@ -228,7 +255,7 @@ class Log(db.Model):
         return f'<Log {self.id} - {self.tipo}>'
 
 class Token(db.Model):
-    __tablename__ = 'token'  # Alterado para corresponder ao SQL
+    __tablename__ = 'token'
     
     id = db.Column(db.Integer, primary_key=True)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
@@ -244,13 +271,13 @@ class Token(db.Model):
         return f'<Token {self.id} - {self.tipo}>'
 
 class CarrinhoItem(db.Model):
-    __tablename__ = 'carrinho'  # Alterado para corresponder ao SQL
+    __tablename__ = 'carrinho'
     
     id = db.Column(db.Integer, primary_key=True)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
     produto_id = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=False)
     quantidade = db.Column(db.Integer, nullable=False, default=1)
-    data_adicao = db.Column(db.DateTime, default=datetime.utcnow)  # Alterado para corresponder ao SQL
+    data_adicao = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
     usuario = db.relationship('Usuario', backref=db.backref('carrinho_itens', lazy=True))
@@ -259,13 +286,13 @@ class CarrinhoItem(db.Model):
         return f'<CarrinhoItem {self.id}: {self.quantidade}x produto {self.produto_id}>'
 
 class CarrinhoBoloPersonalizado(db.Model):
-    __tablename__ = 'carrinho_personalizado'  # Alterado para corresponder ao SQL
+    __tablename__ = 'carrinho_personalizado'
     
     id = db.Column(db.Integer, primary_key=True)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
     bolo_personalizado_id = db.Column(db.Integer, db.ForeignKey('bolo_personalizado.id'), nullable=False)
     quantidade = db.Column(db.Integer, nullable=False, default=1)
-    data_adicao = db.Column(db.DateTime, default=datetime.utcnow)  # Alterado para corresponder ao SQL
+    data_adicao = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
     usuario = db.relationship('Usuario', backref=db.backref('carrinho_bolos', lazy=True))

@@ -79,9 +79,11 @@ def carrinho():
     
     return render_template('carrinho.html', itens=todos_itens, total=total)
 
-@cart_bp.route('/adicionar_ao_carrinho/<int:produto_id>')
+@cart_bp.route('/adicionar/<int:produto_id>')
 def adicionar_ao_carrinho(produto_id):
-    produto = Produto.query.get_or_404(produto_id)
+    # Verificar se produto existe e está ativo
+    produto = Produto.query.filter_by(id=produto_id, ativo=True).first_or_404()
+    # resto do código...
     
     # Se o usuário estiver logado, salvar no banco de dados
     if 'usuario_id' in session:

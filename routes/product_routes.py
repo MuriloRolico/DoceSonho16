@@ -9,19 +9,25 @@ import json
 
 product_bp = Blueprint('product', __name__)
 
+# No arquivo product_bp.py (ou onde estiver a rota 'todos_produtos')
+
 @product_bp.route('/produtos')
 def todos_produtos():
-    produtos = Produto.query.all()
-    # Buscando todas as categorias distintas do banco de dados
-    categorias = db.session.query(Produto.categoria).distinct().all()
+    # Modificar a consulta para buscar apenas produtos ativos
+    produtos = Produto.query.filter_by(ativo=True).all()
+    # Buscando todas as categorias distintas de produtos ativos
+    categorias = db.session.query(Produto.categoria).filter_by(ativo=True).distinct().all()
     # Convertendo para lista simples e removendo valores vazios
     categorias = [categoria[0] for categoria in categorias if categoria[0]]
     return render_template('todos_produtos.html', produtos=produtos, categorias=categorias)
 
 @product_bp.route('/produto/<int:produto_id>')
 def detalhes_produto(produto_id):
-    produto = Produto.query.get_or_404(produto_id)
+    # Buscar produto e verificar se está ativo
+    produto = Produto.query.filter_by(id=produto_id, ativo=True).first_or_404()
     return render_template('detalhes_produto.html', produto=produto)
+
+
 
 @product_bp.route('/montar-bolo')
 def montar_bolo():
