@@ -1,23 +1,25 @@
-# Flask e extensões principais
+# Flask e extensões
 Flask==2.3.3
 Flask-SQLAlchemy==3.0.5
 
-# Banco de dados MySQL (escolha só um driver!)
+# Driver MySQL (escolha só um)
 PyMySQL==1.1.0
-# mysql-connector-python==8.1.0   # (use esse OU o PyMySQL, não os dois)
+# mysql-connector-python==8.1.0  # Se quiser usar outro driver, mas escolha só um
 
-# Segurança e autenticação
-Werkzeug==2.3.7
-
-# Requisições HTTP para APIs
+# Requisições HTTP
 requests==2.31.0
 
-# SDK do Mercado Pago
+# SDK MercadoPago
 mercadopago==2.2.1
 
 # Manipulação de datas
 python-dateutil==2.8.2
 
-# Configuração de variáveis de ambiente
+# Variáveis de ambiente
 python-dotenv==1.0.0
 python-decouple==3.8
+
+# Segurança
+Werkzeug==2.3.7
+
+
