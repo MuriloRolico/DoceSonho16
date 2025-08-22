@@ -342,7 +342,8 @@ def admin_detalhes_pedido(pedido_id):
             'preco_unitario': item.preco_unitario,
             'subtotal': item.preco_unitario * item.quantidade,
             'tipo': 'regular',
-            'produto_ativo': produto.ativo if produto else False
+            'produto_ativo': produto.ativo if produto else False,
+            'produto': produto  # Adicionar o objeto completo para acessar outras informações
         })
     
     # Obter itens personalizados
@@ -357,39 +358,118 @@ def admin_detalhes_pedido(pedido_id):
             'preco_unitario': item.preco_unitario,
             'subtotal': item.preco_unitario * item.quantidade,
             'tipo': 'personalizado',
-            'bolo_id': bolo.id
+            'bolo_id': bolo.id,
+            'bolo': bolo  # Adicionar o objeto completo para acessar detalhes
         })
     
     # Combinar os dois tipos de itens
     todos_itens = detalhes_itens_regulares + detalhes_itens_personalizados
     
-    return render_template('admin/detalhes_pedido.html', pedido=pedido, itens=todos_itens, usuario=usuario)
+    # Obtém histórico de atualizações de status, se existir
+    historico_status = Log.query.filter(
+        Log.tipo == 'pedido_atualizado',
+        Log.descricao.like(f'Pedido #{pedido.id} atualizado%')
+    ).order_by(Log.data.desc()).all()
+    
+    return render_template('admin/detalhes_pedido.html', 
+                          pedido=pedido, 
+                          itens=todos_itens, 
+                          usuario=usuario,
+                          historico_status=historico_status)
 
-@admin_bp.route('/admin/pedido/<int:pedido_id>/atualizar', methods=['POST'])
+@admin_bp.route('/admin/pedido/<int:pedido_id>/atualizar', methods=['GET', 'POST'])
 def admin_atualizar_pedido(pedido_id):
     if not is_admin():
         flash('Acesso negado. Apenas administradores podem acessar esta área.', 'danger')
         return redirect(url_for('index'))
     
     pedido = Pedido.query.get_or_404(pedido_id)
+    usuario = Usuario.query.get(pedido.usuario_id)
     
-    status_anterior = pedido.status
-    novo_status = request.form.get('status')
-    
-    if novo_status and novo_status != status_anterior:
-        pedido.status = novo_status
-        db.session.commit()
+    if request.method == 'POST':
+        status_anterior = pedido.status
+        novo_status = request.form.get('status')
+        observacoes = request.form.get('observacoes', '')
         
-        # Registrar o log de atualização
-        registrar_log(
-            tipo='pedido_atualizado',
-            descricao=f'Pedido #{pedido.id} atualizado de "{status_anterior}" para "{novo_status}"',
-            usuario_id=session.get('usuario_id')
-        )
-        
-        flash(f'Status do pedido atualizado para: {novo_status}', 'success')
+        if novo_status and novo_status != status_anterior:
+            pedido.status = novo_status
+            
+            # Adicionar observações ao pedido
+            if observacoes:
+                if pedido.observacoes_admin:
+                    pedido.observacoes_admin += f"\n\n[{datetime.now().strftime('%d/%m/%Y %H:%M')}] {observacoes}"
+                else:
+                    pedido.observacoes_admin = f"[{datetime.now().strftime('%d/%m/%Y %H:%M')}] {observacoes}"
+            
+            db.session.commit()
+            
+            # Registrar o log de atualização
+            descricao = f'Pedido #{pedido.id} atualizado de "{status_anterior}" para "{novo_status}"'
+            if observacoes:
+                descricao += f' com observação: "{observacoes}"'
+                
+            registrar_log(
+                tipo='pedido_atualizado',
+                descricao=descricao,
+                usuario_id=session.get('usuario_id')
+            )
+            
+            flash(f'Status do pedido atualizado para: {novo_status}', 'success')
+            return redirect(url_for('admin.admin_detalhes_pedido', pedido_id=pedido.id))
     
-    return redirect(url_for('admin.admin_detalhes_pedido', pedido_id=pedido.id))
+    # Se for GET ou se ocorrer algum erro no POST, mostrar a página de atualização
+    
+    # Obter histórico de status para exibir
+    historico_status = Log.query.filter(
+        Log.tipo == 'pedido_atualizado',
+        Log.descricao.like(f'Pedido #{pedido.id} atualizado%')
+    ).order_by(Log.data.desc()).all()
+    
+    # Obter itens do pedido
+    itens_regulares = ItemPedido.query.filter_by(pedido_id=pedido.id).all()
+    itens_personalizados = ItemPedidoPersonalizado.query.filter_by(pedido_id=pedido.id).all()
+    
+    # Processar itens regulares
+    detalhes_itens_regulares = []
+    for item in itens_regulares:
+        produto = Produto.query.get(item.produto_id)
+        if produto:
+            nome_produto = produto.nome
+            if not produto.ativo:
+                nome_produto += " (Produto descontinuado)"
+        else:
+            nome_produto = "Produto removido"
+        
+        detalhes_itens_regulares.append({
+            'nome': nome_produto,
+            'quantidade': item.quantidade,
+            'preco_unitario': item.preco_unitario,
+            'subtotal': item.preco_unitario * item.quantidade,
+            'tipo': 'regular'
+        })
+    
+    # Processar itens personalizados
+    detalhes_itens_personalizados = []
+    for item in itens_personalizados:
+        bolo = BoloPersonalizado.query.get(item.bolo_personalizado_id)
+        detalhes_itens_personalizados.append({
+            'nome': f"Bolo Personalizado de {bolo.massa.capitalize()}",
+            'quantidade': item.quantidade,
+            'preco_unitario': item.preco_unitario,
+            'subtotal': item.preco_unitario * item.quantidade,
+            'tipo': 'personalizado',
+            'bolo_id': bolo.id,
+            'bolo': bolo
+        })
+    
+    # Combinar os dois tipos de itens
+    todos_itens = detalhes_itens_regulares + detalhes_itens_personalizados
+    
+    return render_template('admin/atualizar_pedido.html', 
+                          pedido=pedido, 
+                          itens=todos_itens,
+                          usuario=usuario,
+                          historico_status=historico_status)
 
 # ROTAS DE PRODUTOS - SEÇÃO COMPLETA COM SOFT DELETE
 @admin_bp.route('/admin/produtos')

@@ -580,9 +580,9 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
-                                            <a href="{{ url_for('order.detalhes_pedido', pedido_id=pedido.id) }}" class="btn btn-sm btn-primary">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
+                                            <a href="{{ url_for('admin.admin_detalhes_pedido', pedido_id=pedido.id) }}" class="btn btn-sm btn-primary">
+    <i class="bi bi-eye"></i>
+</a>
                                             <a href="{{ url_for('admin.admin_atualizar_pedido', pedido_id=pedido.id) }}" class="btn btn-sm btn-success">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
