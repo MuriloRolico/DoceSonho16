@@ -154,6 +154,15 @@
         .item-name {
             font-weight: 600;
             color: var(--text-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .info-icon {
+            color: var(--primary-color);
+            margin-left: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
         }
 
         .item-price {
@@ -501,6 +510,83 @@
             background-color: #cce7ff;
             color: #004085;
         }
+
+        /* ESTILOS DO MODAL DE INFORMAÇÕES DO PRODUTO */
+        .product-info-modal .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom: none;
+            border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+        }
+
+        .product-info-modal .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        .product-info-modal .modal-body {
+            padding: 20px 25px;
+        }
+
+        .product-info-section {
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .product-info-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .product-info-section h5 {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .product-info-data {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .product-info-item {
+            background-color: var(--secondary-color);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-color);
+        }
+
+        .product-observations {
+            font-style: italic;
+            color: #666;
+            background-color: #f9f9f9;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .product-info-modal .modal-footer {
+            border-top: none;
+            justify-content: center;
+        }
+
+        .product-info-modal .btn-close-modal {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 30px;
+            padding: 8px 20px;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .product-info-modal .btn-close-modal:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
@@ -584,7 +670,12 @@
                             {% for item in itens %}
                             <div class="cart-item">
                                 <div class="item-details">
-                                    <div class="item-name">{{ item.nome }}</div>
+                                    <div class="item-name">
+                                        {{ item.nome }}
+                                        <span class="info-icon" data-bs-toggle="modal" data-bs-target="#productInfoModal{{ item.tipo }}_{{ item.id }}">
+                                            <i class="bi bi-info-circle-fill"></i>
+                                        </span>
+                                    </div>
                                     <div class="text-muted">R$ {{ "%.2f"|format(item.preco) }}</div>
                                 </div>
                                 
@@ -608,6 +699,141 @@
                                     {% endif %}
                                 </div>
                             </div>
+
+<!-- Modal para informações do produto -->
+<div class="modal fade product-info-modal" id="productInfoModal{{ item.tipo }}_{{ item.id }}" tabindex="-1" aria-labelledby="productInfoModalLabel{{ item.tipo }}_{{ item.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productInfoModalLabel{{ item.tipo }}_{{ item.id }}">Informações do Produto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="product-info-section">
+                    <h5>Nome do Produto</h5>
+                    <p>{{ item.nome }}</p>
+                </div>
+                
+                {% if item.tipo == 'regular' %}
+                    <!-- Informações para produtos regulares do catálogo -->
+                    {% if item.descricao %}
+                    <div class="product-info-section">
+                        <h5>Descrição</h5>
+                        <p>{{ item.descricao }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if item.categoria %}
+                    <div class="product-info-section">
+                        <h5>Categoria</h5>
+                        <div class="product-info-data">
+                            <span class="product-info-item">{{ item.categoria }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if item.ingredientes %}
+                    <div class="product-info-section">
+                        <h5>Ingredientes</h5>
+                        <p>{{ item.ingredientes }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if item.informacoes_nutricionais %}
+                    <div class="product-info-section">
+                        <h5>Informações Nutricionais</h5>
+                        <p>{{ item.informacoes_nutricionais }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if item.peso %}
+                    <div class="product-info-section">
+                        <h5>Peso</h5>
+                        <p>{{ item.peso }} kg</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if item.data_validade %}
+                    <div class="product-info-section">
+                        <h5>Validade</h5>
+                        <p>{{ item.data_validade.strftime('%d/%m/%Y') }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Observações para produtos regulares -->
+                    {% if item.observacoes %}
+                    <div class="product-info-section">
+                        <h5>Observações</h5>
+                        <div class="product-observations">
+                            {{ item.observacoes }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                {% else %}
+                    <!-- Informações para bolos personalizados -->
+                    <div class="product-info-section">
+                        <h5>Massa</h5>
+                        <div class="product-info-data">
+                            {% if item.massa %}
+                                <p>{{ item.massa }}</p>
+                            {% else %}
+                                <span class="text-muted">Não especificado</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if item.recheios %}
+                    <div class="product-info-section">
+                        <h5>Recheios</h5>
+                        <div class="product-info-data">
+                            <p>{{ item.recheios }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="product-info-section">
+                        <h5>Cobertura</h5>
+                        <div class="product-info-data">
+                            {% if item.cobertura %}
+                                <p>{{ item.cobertura }}</p>
+                            {% else %}
+                                <span class="text-muted">Não especificado</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if item.finalizacao %}
+                    <div class="product-info-section">
+                        <h5>Finalização</h5>
+                        <div class="product-info-data">
+                            <p>{{ item.finalizacao }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if item.observacoes %}
+                    <div class="product-info-section">
+                        <h5>Observações</h5>
+                        <div class="product-observations">
+                            {{ item.observacoes }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                {% endif %}
+                
+                <div class="product-info-section">
+                    <h5>Preço</h5>
+                    <p>R$ {{ "%.2f"|format(item.preco) }}</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-close-modal" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
                             {% endfor %}
                         </div>
                         <div class="card-footer d-flex justify-content-between">

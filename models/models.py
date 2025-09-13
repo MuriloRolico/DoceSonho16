@@ -249,7 +249,7 @@ class Log(db.Model):
     descricao = db.Column(db.Text, nullable=False)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=True)
     data = db.Column(db.DateTime, default=datetime.utcnow)
-    ip = db.Column(db.String(50), nullable=True)
+    # A coluna IP foi removida
     
     def __repr__(self):
         return f'<Log {self.id} - {self.tipo}>'
@@ -262,7 +262,7 @@ class Token(db.Model):
     token = db.Column(db.String(500), nullable=False)
     tipo = db.Column(db.String(20), default='access')
     device_info = db.Column(db.String(200), nullable=True)
-    ip = db.Column(db.String(50), nullable=True)
+    # A coluna IP foi removida
     data_criacao = db.Column(db.DateTime, default=datetime.utcnow)
     data_expiracao = db.Column(db.DateTime, nullable=False)
     is_revogado = db.Column(db.Boolean, default=False)

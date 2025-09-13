@@ -399,9 +399,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('index') }}">Início</a>
-                    </li>
+                  
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('product.todos_produtos') }}">Produtos</a>
                     </li>
@@ -410,7 +408,7 @@
                     </li>
                     {% if 'usuario_id' in session %}
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('product.meus_bolos') }}">Meus Bolos</a>
+                        <a class="nav-link " href="{{ url_for('product.meus_bolos') }}">Meus Bolos</a>
                     </li>
                     {% if is_admin() %}
                     

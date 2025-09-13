@@ -238,6 +238,7 @@ def atualizar_foto():
     
     return redirect(url_for('user.perfil'))
 
+# Modificação em alterar_senha
 @user_bp.route('/perfil/alterar-senha', methods=['POST'])
 @login_required
 def alterar_senha():
@@ -303,12 +304,11 @@ def alterar_senha():
             token = usuario.gerar_auth_token()
             session['auth_token'] = token
             
-            # Salvar novo token no banco
+            # Salvar novo token no banco - removendo o IP
             novo_token = Token(
                 usuario_id=usuario.id,
                 token=token,
                 device_info=request.user_agent.string,
-                ip=request.remote_addr,
                 data_expiracao=datetime.utcnow() + timedelta(hours=24)
             )
             db.session.add(novo_token)
@@ -320,6 +320,7 @@ def alterar_senha():
         flash(f'Erro ao alterar senha: {str(e)}', 'danger')
     
     return redirect(url_for('user.perfil'))
+
 
 @user_bp.route('/perfil/revogar-token/<int:token_id>', methods=['POST'])
 @login_required

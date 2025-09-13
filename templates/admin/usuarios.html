@@ -37,6 +37,9 @@
             line-height: 1.8;
             color: var(--text-color);
         }
+                 .mt-3 {
+        margin-top: 0 !important
+            }
 
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Playfair Display', serif;
@@ -742,7 +745,9 @@
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <i class="bi bi-cake2"></i>
-                <h2>Doce Sonho</h2>
+                <a href="{{ url_for('index') }}" class="text-white text-decoration-none">
+    <h2>Doce Sonho</h2>
+</a>
             </div>
             <div class="sidebar-menu">
                 <p class="menu-header">Principal</p>
@@ -794,7 +799,7 @@
             <!-- Page header -->
             <div class="page-header">
                 <h1 class="page-title">Administradores</h1>
-                <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-white text-decoration-none">Home</a></li>
+                
                 <div>
                     <form class="d-flex gap-2" method="GET" action="{{ url_for('admin.admin_usuarios') }}">
                         <input class="form-control" type="search" placeholder="Buscar administrador..." name="busca" value="{{ request.args.get('busca', '') }}">
@@ -876,9 +881,7 @@
                         <div>
                             Mostrando <b>{{ usuarios|length }}</b> administradores
                         </div>
-                        <a href="{{ url_for('admin.admin_novo_usuario', tipo='admin') }}" class="btn btn-success">
-                            <i class="bi bi-plus-circle"></i> Adicionar Novo Administrador
-                        </a>
+                        
                     </div>
                 </div>
             </div>

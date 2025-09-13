@@ -739,253 +739,254 @@
             <div class="row">
                 <!-- Coluna da prévia do bolo -->
                 <div class="col-lg-4 order-lg-1 order-2 mb-4">
-                    <div class="preview-container">
-                        <h4 class="preview-title">Seu Bolo Personalizado</h4>
-                        
-                        <div class="cake-preview-container">
-                            <div class="cake" id="cake-preview">
-                                <div class="cake-plate"></div>
-                                <div class="cake-stand"></div>
-                                <div class="cake-base"></div>
-                                <div class="cake-filling-bottom"></div>
-                                <div class="cake-middle"></div>
-                                <div class="cake-filling-top"></div>
-                                <div class="cake-top"></div>
-                                <div class="cake-frosting"></div>
-                                <div class="frosting-drip" style="left: 10px;"></div>
-                                <div class="frosting-drip" style="left: 45px;"></div>
-                                <div class="frosting-drip" style="left: 80px;"></div>
-                                <div class="frosting-drip" style="left: 115px;"></div>
-                                <div class="frosting-drip" style="left: 150px;"></div>
-                                <div class="cake-decoration" id="cake-decoration"></div>
-                                <div class="cake-candle" style="left: 80px;"></div>
-                                <div class="cake-candle" style="left: 110px;"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="summary-container">
-                            <div class="summary-item">
-                                <span class="summary-label">Massa:</span>
-                                <span class="summary-value" id="massa-selecionada">-</span>
-                            </div>
-                            <div class="summary-item">
-                                <span class="summary-label">Recheios:</span>
-                                <span class="summary-value" id="recheios-selecionados">-</span>
-                            </div>
-                            <div class="summary-item">
-                                <span class="summary-label">Cobertura:</span>
-                                <span class="summary-value" id="cobertura-selecionada">-</span>
-                            </div>
-                            <div class="summary-item">
-                                <span class="summary-label">Finalização:</span>
-                                <span class="summary-value" id="finalizacao-selecionada">-</span>
-                            </div>
-                            
-                            <div class="total-price">
-                                <div class="total-price-label">Total Estimado:</div>
-                                <div class="total-price-value" id="preco-total">R$ 50,00</div>
-                                <div class="total-price-note">* Preço base do bolo: R$ 50,00</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="preview-container">
+        <h4 class="preview-title">Seu Bolo Personalizado</h4>
+        
+        <div class="cake-preview-container">
+            <div class="cake" id="cake-preview">
+                <div class="cake-plate"></div>
+                <div class="cake-stand"></div>
+                <div class="cake-base"></div>
+                <div class="cake-filling-bottom"></div>
+                <div class="cake-middle"></div>
+                <div class="cake-filling-top"></div>
+                <div class="cake-top"></div>
+                <div class="cake-frosting"></div>
+                <div class="frosting-drip" style="left: 10px;"></div>
+                <div class="frosting-drip" style="left: 45px;"></div>
+                <div class="frosting-drip" style="left: 80px;"></div>
+                <div class="frosting-drip" style="left: 115px;"></div>
+                <div class="frosting-drip" style="left: 150px;"></div>
+                <div class="cake-decoration" id="cake-decoration"></div>
+                <div class="cake-candle" style="left: 80px;"></div>
+                <div class="cake-candle" style="left: 110px;"></div>
+            </div>
+        </div>
+        
+        <div class="summary-container">
+            <div class="summary-item">
+                <span class="summary-label">Massa:</span>
+                <span class="summary-value" id="massa-selecionada">-</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Recheios:</span>
+                <span class="summary-value" id="recheios-selecionados">-</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Cobertura:</span>
+                <span class="summary-value" id="cobertura-selecionada">-</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Finalização:</span>
+                <span class="summary-value" id="finalizacao-selecionada">-</span>
+            </div>
+            
+            <div class="total-price">
+                <div class="total-price-label">Total Estimado:</div>
+                <div class="total-price-value" id="preco-total">R$ 50,00</div>
+                <div class="total-price-note">* Preço base do bolo: R$ 50,00</div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                <!-- Coluna das opções -->
-                <div class="col-lg-8 order-lg-2 order-1">
-                    <!-- Step 1: Tipo de Massa -->
-                    <div class="step-content active" id="step-1">
-                        <h3 class="section-title">Escolha o tipo de massa</h3>
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="chocolate" data-type="massa">
-                                    <div class="price-tag">+ R$ 25,00</div>
-                                    <img src="static/uploads/bolochocolate.png" alt="Massa de Chocolate">
-                                    <h5>Chocolate</h5>
-                                    <p>Massa macia de chocolate belga</p>
-                                    <input type="radio" name="massa" value="chocolate" class="visually-hidden">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="baunilha" data-type="massa">
-                                    <div class="price-tag">+ R$ 20,00</div>
-                                    <img src="static/uploads/bolobaunilha.png" alt="Massa de Baunilha">
-                                    <h5>Baunilha</h5>
-                                    <p>Massa leve e macia de baunilha</p>
-                                    <input type="radio" name="massa" value="baunilha" class="visually-hidden">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="red_velvet" data-type="massa">
-                                    <div class="price-tag">+ R$ 30,00</div>
-                                    <img src="static/uploads/redvevelt.png" alt="Red Velvet">
-                                    <h5>Red Velvet</h5>
-                                    <p>Massa vermelha aveludada com toque de cacau</p>
-                                    <input type="radio" name="massa" value="red_velvet" class="visually-hidden">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="limao" data-type="massa">
-                                    <div class="price-tag">+ R$ 22,00</div>
-                                    <img src="static/uploads/bololimao.png" alt="Massa de Limão">
-                                    <h5>Limão</h5>
-                                    <p>Massa leve com toque cítrico de limão</p>
-                                    <input type="radio" name="massa" value="limao" class="visually-hidden">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="btn-controller">
-                            <button type="button" class="btn btn-next">Próximo <i class="bi bi-arrow-right"></i></button>
-                        </div>
-                    </div>
-
-                    <!-- Step 2: Recheios -->
-                    <div class="step-content" id="step-2" style="display: none;">
-                        <h3 class="section-title">Escolha até 2 recheios (um por andar)</h3>
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="brigadeiro" data-type="recheio">
-                                    <div class="price-tag">+ R$ 15,00</div>
-                                    <img src="static/uploads/recheiochocolate.png" alt="Brigadeiro">
-                                    <h5>Brigadeiro</h5>
-                                    <p>Recheio cremoso de chocolate</p>
-                                    <input type="checkbox" name="recheios" value="brigadeiro" class="visually-hidden">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="morango" data-type="recheio">
-                                    <div class="price-tag">+ R$ 18,00</div>
-                                    <img src="static/uploads/recheiomorango.png" alt="Morango">
-                                    <h5>Morango</h5>
-                                    <p>Creme de confeiteiro com pedaços de morango</p>
-                                    <input type="checkbox" name="recheios" value="morango" class="visually-hidden">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="doce_de_leite" data-type="recheio">
-                                    <div class="price-tag">+ R$ 12,00</div>
-                                    <img src="static/uploads/recheiodocedeleite.png" alt="Doce de Leite">
-                                    <h5>Doce de Leite</h5>
-                                    <p>Camada generosa de doce de leite argentino</p>
-                                    <input type="checkbox" name="recheios" value="doce_de_leite" class="visually-hidden">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="chocolate_branco" data-type="recheio">
-                                    <div class="price-tag">+ R$ 16,00</div>
-                                    <img src="static/uploads/recheiobaunilha.png" alt="Chocolate Branco">
-                                    <h5>Chocolate Branco</h5>
-                                    <p>Creme aveludado de chocolate branco</p>
-                                    <input type="checkbox" name="recheios" value="chocolate_branco" class="visually-hidden">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="btn-controller">
-                            <button type="button" class="btn btn-prev"><i class="bi bi-arrow-left"></i> Voltar</button>
-                            <button type="button" class="btn btn-next">Próximo <i class="bi bi-arrow-right"></i></button>
-                        </div>
-                    </div>
-
-                    <!-- Step 3: Cobertura -->
-                    <div class="step-content" id="step-3" style="display: none;">
-                        <h3 class="section-title">Escolha a cobertura</h3>
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="chantilly" data-type="cobertura">
-                                    <div class="price-tag">+ R$ 18,00</div>
-                                    <img src="static/uploads/chantily.png" alt="Chantilly">
-                                    <h5>Chantilly</h5>
-                                    <p>Cobertura leve e cremosa</p>
-                                    <input type="radio" name="cobertura" value="chantilly" class="visually-hidden">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="ganache" data-type="cobertura">
-                                    <div class="price-tag">+ R$ 20,00</div>
-                                    <img src="static/uploads/ganache.png" alt="Ganache">
-                                    <h5>Ganache</h5>
-                                    <p>Cobertura rica de chocolate meio amargo</p>
-                                    <input type="radio" name="cobertura" value="ganache" class="visually-hidden">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="pasta_americana" data-type="cobertura">
-                                    <div class="price-tag">+ R$ 25,00</div>
-                                    <img src="static/uploads/pastaamericana.png" alt="Pasta Americana">
-                                    <h5>Pasta Americana</h5>
-                                    <p>Cobertura lisa e elegante</p>
-                                    <input type="radio" name="cobertura" value="pasta_americana" class="visually-hidden">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="cream_cheese" data-type="cobertura">
-                                    <div class="price-tag">+ R$ 22,00</div>
-                                    <img src="static/uploads/creamchesse.png" alt="Cream Cheese">
-                                    <h5>Cream Cheese</h5>
-                                    <p>Cobertura cremosa com leve acidez</p>
-                                    <input type="radio" name="cobertura" value="cream_cheese" class="visually-hidden">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="btn-controller">
-                            <button type="button" class="btn btn-prev"><i class="bi bi-arrow-left"></i> Voltar</button>
-                            <button type="button" class="btn btn-next">Próximo <i class="bi bi-arrow-right"></i></button>
-                        </div>
-                    </div>
-
-                    <!-- Step 4: Finalização -->
-                    <div class="step-content" id="step-4" style="display: none;">
-                        <h3 class="section-title">Finalização do Bolo</h3>
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="morangos" data-type="finalizacao">
-                                    <div class="price-tag">+ R$ 12,00</div>
-                                    <img src="static/uploads/morangos.jpg" alt="Morangos Frescos">
-                                    <h5>Morangos Frescos</h5>
-                                    <p>Decoração com morangos frescos</p>
-                                    <input type="checkbox" name="finalizacao" value="morangos" class="visually-hidden">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="chocolate_raspas" data-type="finalizacao">
-                                    <div class="price-tag">+ R$ 8,00</div>
-                                    <img src="static/uploads/raspas.jpg" alt="Raspas de Chocolate">
-                                    <h5>Raspas de Chocolate</h5>
-                                    <p>Finalização com raspas de chocolate belga</p>
-                                    <input type="checkbox" name="finalizacao" value="chocolate_raspas" class="visually-hidden">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="mm" data-type="finalizacao">
-                                    <div class="price-tag">+ R$ 10,00</div>
-                                    <img src="static/uploads/mms.jpg" alt="M&M">
-                                    <h5>M&M's</h5>
-                                    <p>Decoração colorida com confeitos de chocolate</p>
-                                    <input type="checkbox" name="finalizacao" value="mm" class="visually-hidden">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="selector-item position-relative" data-value="confete" data-type="finalizacao">
-                                    <div class="price-tag">+ R$ 5,00</div>
-                                    <img src="static/uploads/confete.jpg" alt="Confetes Coloridos">
-                                    <h5>Confetes Coloridos</h5>
-                                    <p>Finalização festiva com confetes açucarados</p>
-                                    <input type="checkbox" name="finalizacao" value="confete" class="visually-hidden">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group mt-4">
-                            <label for="observacoes" class="form-label">Observações Adicionais:</label>
-                            <textarea class="form-control" id="observacoes" name="observacoes" rows="3" placeholder="Exemplo: mensagem no bolo, alergias ou detalhes especiais"></textarea>
-                        </div>
-                        <div class="btn-controller">
-                            <button type="button" class="btn btn-prev"><i class="bi bi-arrow-left"></i> Voltar</button>
-                            <button type="submit" class="btn btn-submit"><i class="bi bi-cart-plus"></i> Adicionar ao Carrinho</button>
-                        </div>
-                    </div>
+<!-- Coluna das opções -->
+<div class="col-lg-8 order-lg-2 order-1">
+    <!-- Step 1: Tipo de Massa -->
+    <div class="step-content active" id="step-1">
+        <h3 class="section-title">Escolha o tipo de massa</h3>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="chocolate" data-type="massa" data-display="Chocolate">
+                    <div class="price-tag">+ R$ 25,00</div>
+                    <img src="static/uploads/bolochocolate.png" alt="Massa de Chocolate">
+                    <h5>Chocolate</h5>
+                    <p>Massa macia de chocolate belga</p>
+                    <input type="radio" name="massa" value="chocolate" class="visually-hidden">
                 </div>
             </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="baunilha" data-type="massa" data-display="Baunilha">
+                    <div class="price-tag">+ R$ 20,00</div>
+                    <img src="static/uploads/bolobaunilha.png" alt="Massa de Baunilha">
+                    <h5>Baunilha</h5>
+                    <p>Massa leve e macia de baunilha</p>
+                    <input type="radio" name="massa" value="baunilha" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="red_velvet" data-type="massa" data-display="Red Velvet">
+                    <div class="price-tag">+ R$ 30,00</div>
+                    <img src="static/uploads/redvevelt.png" alt="Red Velvet">
+                    <h5>Red Velvet</h5>
+                    <p>Massa vermelha aveludada com toque de cacau</p>
+                    <input type="radio" name="massa" value="red_velvet" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="limao" data-type="massa" data-display="Limão">
+                    <div class="price-tag">+ R$ 22,00</div>
+                    <img src="static/uploads/bololimao.png" alt="Massa de Limão">
+                    <h5>Limão</h5>
+                    <p>Massa leve com toque cítrico de limão</p>
+                    <input type="radio" name="massa" value="limao" class="visually-hidden">
+                </div>
+            </div>
+        </div>
+        <div class="btn-controller">
+            <button type="button" class="btn btn-next">Próximo <i class="bi bi-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <!-- Step 2: Recheios -->
+    <div class="step-content" id="step-2" style="display: none;">
+        <h3 class="section-title">Escolha até 2 recheios (um por andar)</h3>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="brigadeiro" data-type="recheio" data-display="Brigadeiro">
+                    <div class="price-tag">+ R$ 15,00</div>
+                    <img src="static/uploads/recheiochocolate.png" alt="Brigadeiro">
+                    <h5>Brigadeiro</h5>
+                    <p>Recheio cremoso de chocolate</p>
+                    <input type="checkbox" name="recheios" value="brigadeiro" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="morango" data-type="recheio" data-display="Morango">
+                    <div class="price-tag">+ R$ 18,00</div>
+                    <img src="static/uploads/recheiomorango.png" alt="Morango">
+                    <h5>Morango</h5>
+                    <p>Creme de confeiteiro com pedaços de morango</p>
+                    <input type="checkbox" name="recheios" value="morango" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="doce_de_leite" data-type="recheio" data-display="Doce de Leite">
+                    <div class="price-tag">+ R$ 12,00</div>
+                    <img src="static/uploads/recheiodocedeleite.png" alt="Doce de Leite">
+                    <h5>Doce de Leite</h5>
+                    <p>Camada generosa de doce de leite argentino</p>
+                    <input type="checkbox" name="recheios" value="doce_de_leite" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="chocolate_branco" data-type="recheio" data-display="Chocolate Branco">
+                    <div class="price-tag">+ R$ 16,00</div>
+                    <img src="static/uploads/recheiobaunilha.png" alt="Chocolate Branco">
+                    <h5>Chocolate Branco</h5>
+                    <p>Creme aveludado de chocolate branco</p>
+                    <input type="checkbox" name="recheios" value="chocolate_branco" class="visually-hidden">
+                </div>
+            </div>
+        </div>
+        <div class="btn-controller">
+            <button type="button" class="btn btn-prev"><i class="bi bi-arrow-left"></i> Voltar</button>
+            <button type="button" class="btn btn-next">Próximo <i class="bi bi-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <!-- Step 3: Cobertura -->
+    <div class="step-content" id="step-3" style="display: none;">
+        <h3 class="section-title">Escolha a cobertura</h3>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="chantilly" data-type="cobertura" data-display="Chantilly">
+                    <div class="price-tag">+ R$ 18,00</div>
+                    <img src="static/uploads/chantily.png" alt="Chantilly">
+                    <h5>Chantilly</h5>
+                    <p>Cobertura leve e cremosa</p>
+                    <input type="radio" name="cobertura" value="chantilly" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="ganache" data-type="cobertura" data-display="Ganache">
+                    <div class="price-tag">+ R$ 20,00</div>
+                    <img src="static/uploads/ganache.png" alt="Ganache">
+                    <h5>Ganache</h5>
+                    <p>Cobertura rica de chocolate meio amargo</p>
+                    <input type="radio" name="cobertura" value="ganache" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="pasta_americana" data-type="cobertura" data-display="Pasta Americana">
+                    <div class="price-tag">+ R$ 25,00</div>
+                    <img src="static/uploads/pastaamericana.png" alt="Pasta Americana">
+                    <h5>Pasta Americana</h5>
+                    <p>Cobertura lisa e elegante</p>
+                    <input type="radio" name="cobertura" value="pasta_americana" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="cream_cheese" data-type="cobertura" data-display="Cream Cheese">
+                    <div class="price-tag">+ R$ 22,00</div>
+                    <img src="static/uploads/creamchesse.png" alt="Cream Cheese">
+                    <h5>Cream Cheese</h5>
+                    <p>Cobertura cremosa com leve acidez</p>
+                    <input type="radio" name="cobertura" value="cream_cheese" class="visually-hidden">
+                </div>
+            </div>
+        </div>
+        <div class="btn-controller">
+            <button type="button" class="btn btn-prev"><i class="bi bi-arrow-left"></i> Voltar</button>
+            <button type="button" class="btn btn-next">Próximo <i class="bi bi-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <!-- Step 4: Finalização -->
+    <div class="step-content" id="step-4" style="display: none;">
+        <h3 class="section-title">Finalização do Bolo</h3>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="morangos" data-type="finalizacao" data-display="Morangos Frescos">
+                    <div class="price-tag">+ R$ 12,00</div>
+                    <img src="static/uploads/morangos.jpg" alt="Morangos Frescos">
+                    <h5>Morangos Frescos</h5>
+                    <p>Decoração com morangos frescos</p>
+                    <input type="checkbox" name="finalizacao" value="morangos" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="chocolate_raspas" data-type="finalizacao" data-display="Raspas de Chocolate">
+                    <div class="price-tag">+ R$ 8,00</div>
+                    <img src="static/uploads/raspas.jpg" alt="Raspas de Chocolate">
+                    <h5>Raspas de Chocolate</h5>
+                    <p>Finalização com raspas de chocolate belga</p>
+                    <input type="checkbox" name="finalizacao" value="chocolate_raspas" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="mm" data-type="finalizacao" data-display="M&M's">
+                    <div class="price-tag">+ R$ 10,00</div>
+                    <img src="static/uploads/mms.jpg" alt="M&M">
+                    <h5>M&M's</h5>
+                    <p>Decoração colorida com confeitos de chocolate</p>
+                    <input type="checkbox" name="finalizacao" value="mm" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="confete" data-type="finalizacao" data-display="Confetes Coloridos">
+                    <div class="price-tag">+ R$ 5,00</div>
+                    <img src="static/uploads/confete.jpg" alt="Confetes Coloridos">
+                    <h5>Confetes Coloridos</h5>
+                    <p>Finalização festiva com confetes açucarados</p>
+                    <input type="checkbox" name="finalizacao" value="confete" class="visually-hidden">
+                </div>
+            </div>
+        </div>
+        <div class="form-group mt-4">
+            <label for="observacoes" class="form-label">Observações Adicionais:</label>
+            <textarea class="form-control" id="observacoes" name="observacoes" rows="3" placeholder="Exemplo: mensagem no bolo, alergias ou detalhes especiais"></textarea>
+        </div>
+        <div class="btn-controller">
+            <button type="button" class="btn btn-prev"><i class="bi bi-arrow-left"></i> Voltar</button>
+            <button type="submit" class="btn btn-submit"><i class="bi bi-cart-plus"></i> Adicionar ao Carrinho</button>
+        </div>
+    </div>
+</div>
+    </div>
         </form>
     </div>
+
 
     <!-- Rodapé -->
        <footer>
@@ -1053,307 +1054,344 @@
     
     <!-- Script personalizado -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Variáveis de preço
-            const precos = {
-                base: 50,
-                massa: {
-                    'chocolate': 25,
-                    'baunilha': 20,
-                    'red_velvet': 30,
-                    'limao': 22
-                },
-                recheio: {
-                    'brigadeiro': 15,
-                    'morango': 18,
-                    'doce_de_leite': 12,
-                    'chocolate_branco': 16
-                },
-                cobertura: {
-                    'chantilly': 18,
-                    'ganache': 20,
-                    'pasta_americana': 25,
-                    'cream_cheese': 22
-                },
-                finalizacao: {
-                    'morangos': 12,
-                    'chocolate_raspas': 8,
-                    'mm': 10,
-                    'confete': 5
-                }
-            };
-            
-            // Elementos do DOM
-            const steps = document.querySelectorAll('.step');
-            const stepContents = document.querySelectorAll('.step-content');
-            const nextButtons = document.querySelectorAll('.btn-next');
-            const prevButtons = document.querySelectorAll('.btn-prev');
-            const selectorItems = document.querySelectorAll('.selector-item');
-            
-            const massaSelText = document.getElementById('massa-selecionada');
-            const recheiosSelText = document.getElementById('recheios-selecionados');
-            const coberturaSelText = document.getElementById('cobertura-selecionada');
-            const finalizacaoSelText = document.getElementById('finalizacao-selecionada');
-            const precoTotal = document.getElementById('preco-total');
-            
-            // Elementos do bolo
-            const cakeBase = document.querySelector('.cake-base');
-            const cakeMiddle = document.querySelector('.cake-middle');
-            const cakeTop = document.querySelector('.cake-top');
-            const cakeFillingBottom = document.querySelector('.cake-filling-bottom');
-            const cakeFillingTop = document.querySelector('.cake-filling-top');
-            const cakeFrosting = document.querySelector('.cake-frosting');
-            const cakeDecoration = document.getElementById('cake-decoration');
-            const frostingDrips = document.querySelectorAll('.frosting-drip');
-            
-            // Cores e estilos
-            const massaCores = {
-                'chocolate': '#5d4037',
-                'baunilha': '#f5e9be',
-                'red_velvet': '#c62828',
-                'limao': '#fff176'
-            };
-            
-            const recheioCores = {
-                'brigadeiro': '#3e2723',
-                'morango': '#e57373',
-                'doce_de_leite': '#d4a76a',
-                'chocolate_branco': '#f5f5dc'
-            };
-            
-            const coberturaCores = {
-                'chantilly': '#ffffff',
-                'ganache': '#3e2723',
-                'pasta_americana': '#f8bbd0',
-                'cream_cheese': '#f5f5f5'
-            };
-            
-            const finalizacaoIcones = {
-                'morangos': '🍓',
-                'chocolate_raspas': '🍫',
-                'mm': '🍬',
-                'confete': '✨'
-            };
-            
-            // Função para validar cada etapa
-            function validateStep(stepNumber) {
-                switch(stepNumber) {
-                    case 1:
-                        // Validar massa
-                        const massa = document.querySelector('input[name="massa"]:checked');
-                        if (!massa) {
-                            alert('Por favor, selecione um tipo de massa antes de continuar.');
-                            return false;
-                        }
-                        return true;
-                        
-                    case 2:
-                        // Validar recheios (pelo menos 1, máximo 2)
-                        const recheios = document.querySelectorAll('input[name="recheios"]:checked');
-                        if (recheios.length === 0) {
-                            alert('Por favor, selecione pelo menos um recheio antes de continuar.');
-                            return false;
-                        }
-                        return true;
-                        
-                    case 3:
-                        // Validar cobertura
-                        const cobertura = document.querySelector('input[name="cobertura"]:checked');
-                        if (!cobertura) {
-                            alert('Por favor, selecione uma cobertura antes de continuar.');
-                            return false;
-                        }
-                        return true;
-                        
-                    default:
-                        return true;
-                }
-            }
-            
-            // Funções de navegação entre etapas
-            function goToStep(stepNumber) {
-                steps.forEach((step, index) => {
-                    if (index + 1 <= stepNumber) {
-                        step.classList.add('active');
-                    } else {
-                        step.classList.remove('active');
-                    }
-                });
-                
-                stepContents.forEach((content, index) => {
-                    if (index + 1 === stepNumber) {
-                        content.style.display = 'block';
-                    } else {
-                        content.style.display = 'none';
-                    }
-                });
-            }
-            
-            // Adicionar eventos para navegação com validação
-            nextButtons.forEach((button, index) => {
-                button.addEventListener('click', () => {
-                    const currentStepNumber = index + 1;
-                    if (validateStep(currentStepNumber)) {
-                        goToStep(currentStepNumber + 1);
-                    }
-                });
-            });
-            
-            prevButtons.forEach((button, index) => {
-                button.addEventListener('click', () => {
-                    goToStep(index + 1);
-                });
-            });
-            
-            // Função para atualizar o resumo e o preço
-            function updateSummaryAndPrice() {
-                let total = precos.base;
-                
-                // Massa
-                const massaSelecionada = document.querySelector('input[name="massa"]:checked');
-                if (massaSelecionada) {
-                    const massaValor = massaSelecionada.value;
-                    massaSelText.textContent = massaValor.charAt(0).toUpperCase() + massaValor.slice(1);
-                    total += precos.massa[massaValor];
-                    
-                    // Atualizar visualização do bolo
-                    const massaCor = massaCores[massaValor];
-                    cakeBase.style.backgroundColor = massaCor;
-                    cakeMiddle.style.backgroundColor = massaCor;
-                    cakeTop.style.backgroundColor = massaCor;
-                } else {
-                    massaSelText.textContent = '-';
-                }
-                
-                // Recheios
-                const recheiosSelecionados = document.querySelectorAll('input[name="recheios"]:checked');
-                if (recheiosSelecionados.length > 0) {
-                    const recheiosTexto = Array.from(recheiosSelecionados).map(recheio => {
-                        total += precos.recheio[recheio.value];
-                        return recheio.value.charAt(0).toUpperCase() + recheio.value.slice(1);
-                    }).join(', ');
-                    
-                    recheiosSelText.textContent = recheiosTexto;
-                    
-                    // Atualizar visualização do bolo (usar o primeiro recheio)
-                    if (recheiosSelecionados.length > 0) {
-                        const recheioCor = recheioCores[recheiosSelecionados[0].value];
-                        cakeFillingBottom.style.backgroundColor = recheioCor;
-                        cakeFillingTop.style.backgroundColor = recheioCor;
-                    }
-                } else {
-                    recheiosSelText.textContent = '-';
-                    cakeFillingBottom.style.backgroundColor = '#ffffff';
-                    cakeFillingTop.style.backgroundColor = '#ffffff';
-                }
-                
-                // Cobertura
-                const coberturaSelecionada = document.querySelector('input[name="cobertura"]:checked');
-                if (coberturaSelecionada) {
-                    const coberturaValor = coberturaSelecionada.value;
-                    coberturaSelText.textContent = coberturaValor.charAt(0).toUpperCase() + coberturaValor.slice(1);
-                    total += precos.cobertura[coberturaValor];
-                    
-                    // Atualizar visualização do bolo
-                    const coberturaCor = coberturaCores[coberturaValor];
-                    cakeFrosting.style.backgroundColor = coberturaCor;
-                    frostingDrips.forEach(drip => {
-                        drip.style.backgroundColor = coberturaCor;
-                    });
-                } else {
-                    coberturaSelText.textContent = '-';
-                }
-                
-                // Finalização
-                const finalizacoesSelecionadas = document.querySelectorAll('input[name="finalizacao"]:checked');
-                if (finalizacoesSelecionadas.length > 0) {
-                    const finalizacoesTexto = Array.from(finalizacoesSelecionadas).map(finalizacao => {
-                        total += precos.finalizacao[finalizacao.value];
-                        return finalizacao.value.charAt(0).toUpperCase() + finalizacao.value.slice(1);
-                    }).join(', ');
-                    
-                    finalizacaoSelText.textContent = finalizacoesTexto;
-                    
-                    // Atualizar visualização do bolo
-                    cakeDecoration.innerHTML = '';
-                    finalizacoesSelecionadas.forEach(finalizacao => {
-                        cakeDecoration.innerHTML += finalizacaoIcones[finalizacao.value];
-                    });
-                } else {
-                    finalizacaoSelText.textContent = '-';
-                    cakeDecoration.innerHTML = '';
-                }
-                
-                // Atualizar preço total
-                precoTotal.textContent = 'R$ ' + total.toFixed(2);
-            }
-            
-            // Adicionar eventos de seleção com validação de recheios
-            selectorItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const inputType = this.querySelector('input').type;
-                    const inputName = this.querySelector('input').name;
-                    
-                    if (inputType === 'radio') {
-                        // Desmarcar outras opções do mesmo grupo
-                        document.querySelectorAll(`.selector-item[data-type="${this.dataset.type}"]`).forEach(otherItem => {
-                            otherItem.classList.remove('selected');
-                        });
-                        
-                        // Marcar este item
-                        this.classList.add('selected');
-                        this.querySelector('input').checked = true;
-                    } else if (inputType === 'checkbox') {
-                        if (inputName === 'recheios') {
-                            // Limitar a 2 recheios
-                            const recheiosSelecionados = document.querySelectorAll('input[name="recheios"]:checked').length;
-                            if (recheiosSelecionados >= 2 && !this.querySelector('input').checked) {
-                                alert('Você pode selecionar no máximo 2 recheios (um por andar).');
-                                return;
-                            }
-                        }
-                        
-                        this.classList.toggle('selected');
-                        this.querySelector('input').checked = !this.querySelector('input').checked;
-                    }
-                    
-                    updateSummaryAndPrice();
-                });
-            });
-            
-            // Verificar formulário antes de enviar
-            document.getElementById('montagem-bolo-form').addEventListener('submit', function(event) {
-                // Verificar se pelo menos uma massa foi selecionada
+        // Dicionário de formatação no frontend
+// Dicionário de formatação
+const formatarIngredientes = {
+    'red_velvet': 'Red Velvet',
+    'chocolate_branco': 'Chocolate Branco',
+    'pasta_americana': 'Pasta Americana',
+    'doce_de_leite': 'Doce de Leite',
+    'cream_cheese': 'Cream Cheese',
+    'chocolate_raspas': 'Raspas de Chocolate',
+    'mm': 'M&M\'s',
+    'morangos': 'Morangos Frescos',
+    'confete': 'Confetes Coloridos',
+    'baunilha': 'Baunilha',
+    'chocolate': 'Chocolate',
+    'limao': 'Limão',
+    'brigadeiro': 'Brigadeiro',
+    'morango': 'Morango',
+    'chantilly': 'Chantilly',
+    'ganache': 'Ganache'
+};
+
+function formatarNome(valor) {
+    return formatarIngredientes[valor] || valor.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Variáveis de preço
+    const precos = {
+        base: 50,
+        massa: {
+            'chocolate': 25,
+            'baunilha': 20,
+            'red_velvet': 30,
+            'limao': 22
+        },
+        recheio: {
+            'brigadeiro': 15,
+            'morango': 18,
+            'doce_de_leite': 12,
+            'chocolate_branco': 16
+        },
+        cobertura: {
+            'chantilly': 18,
+            'ganache': 20,
+            'pasta_americana': 25,
+            'cream_cheese': 22
+        },
+        finalizacao: {
+            'morangos': 12,
+            'chocolate_raspas': 8,
+            'mm': 10,
+            'confete': 5
+        }
+    };
+    
+    // Elementos do DOM
+    const steps = document.querySelectorAll('.step');
+    const stepContents = document.querySelectorAll('.step-content');
+    const nextButtons = document.querySelectorAll('.btn-next');
+    const prevButtons = document.querySelectorAll('.btn-prev');
+    const selectorItems = document.querySelectorAll('.selector-item');
+    
+    const massaSelText = document.getElementById('massa-selecionada');
+    const recheiosSelText = document.getElementById('recheios-selecionados');
+    const coberturaSelText = document.getElementById('cobertura-selecionada');
+    const finalizacaoSelText = document.getElementById('finalizacao-selecionada');
+    const precoTotal = document.getElementById('preco-total');
+    
+    // Elementos do bolo
+    const cakeBase = document.querySelector('.cake-base');
+    const cakeMiddle = document.querySelector('.cake-middle');
+    const cakeTop = document.querySelector('.cake-top');
+    const cakeFillingBottom = document.querySelector('.cake-filling-bottom');
+    const cakeFillingTop = document.querySelector('.cake-filling-top');
+    const cakeFrosting = document.querySelector('.cake-frosting');
+    const cakeDecoration = document.getElementById('cake-decoration');
+    const frostingDrips = document.querySelectorAll('.frosting-drip');
+    
+    // Cores e estilos
+    const massaCores = {
+        'chocolate': '#5d4037',
+        'baunilha': '#f5e9be',
+        'red_velvet': '#c62828',
+        'limao': '#fff176'
+    };
+    
+    const recheioCores = {
+        'brigadeiro': '#3e2723',
+        'morango': '#e57373',
+        'doce_de_leite': '#d4a76a',
+        'chocolate_branco': '#f5f5dc'
+    };
+    
+    const coberturaCores = {
+        'chantilly': '#ffffff',
+        'ganache': '#3e2723',
+        'pasta_americana': '#f8bbd0',
+        'cream_cheese': '#f5f5f5'
+    };
+    
+    const finalizacaoIcones = {
+        'morangos': '🍓',
+        'chocolate_raspas': '🍫',
+        'mm': '🍬',
+        'confete': '✨'
+    };
+    
+    // Função para validar cada etapa
+    function validateStep(stepNumber) {
+        switch(stepNumber) {
+            case 1:
+                // Validar massa
                 const massa = document.querySelector('input[name="massa"]:checked');
                 if (!massa) {
-                    event.preventDefault();
-                    alert('Por favor, selecione uma massa para o bolo');
-                    goToStep(1);
-                    return;
+                    alert('Por favor, selecione um tipo de massa antes de continuar.');
+                    return false;
                 }
+                return true;
                 
-                // Verificar se pelo menos um recheio foi selecionado
+            case 2:
+                // Validar recheios (pelo menos 1, máximo 2)
                 const recheios = document.querySelectorAll('input[name="recheios"]:checked');
                 if (recheios.length === 0) {
-                    event.preventDefault();
-                    alert('Por favor, selecione pelo menos um recheio para o bolo');
-                    goToStep(2);
-                    return;
+                    alert('Por favor, selecione pelo menos um recheio antes de continuar.');
+                    return false;
                 }
+                return true;
                 
-                // Verificar se uma cobertura foi selecionada
+            case 3:
+                // Validar cobertura
                 const cobertura = document.querySelector('input[name="cobertura"]:checked');
                 if (!cobertura) {
-                    event.preventDefault();
-                    alert('Por favor, selecione uma cobertura para o bolo');
-                    goToStep(3);
-                    return;
+                    alert('Por favor, selecione uma cobertura antes de continuar.');
+                    return false;
                 }
-            });
+                return true;
+                
+            default:
+                return true;
+        }
+    }
+    
+    // Funções de navegação entre etapas
+    function goToStep(stepNumber) {
+        steps.forEach((step, index) => {
+            if (index + 1 <= stepNumber) {
+                step.classList.add('active');
+            } else {
+                step.classList.remove('active');
+            }
+        });
+        
+        stepContents.forEach((content, index) => {
+            if (index + 1 === stepNumber) {
+                content.style.display = 'block';
+            } else {
+                content.style.display = 'none';
+            }
+        });
+    }
+    
+    // Adicionar eventos para navegação com validação
+    nextButtons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+            const currentStepNumber = index + 1;
+            if (validateStep(currentStepNumber)) {
+                goToStep(currentStepNumber + 1);
+            }
+        });
+    });
+    
+    prevButtons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+            goToStep(index + 1);
+        });
+    });
+    
+    // Função para atualizar o resumo e o preço
+    function updateSummaryAndPrice() {
+        let total = precos.base;
+        
+        // Massa
+        const massaSelecionada = document.querySelector('input[name="massa"]:checked');
+        if (massaSelecionada) {
+            const massaValor = massaSelecionada.value;
+            // USAR FORMATAÇÃO AQUI
+            massaSelText.textContent = formatarNome(massaValor);
+            total += precos.massa[massaValor];
             
-            // Inicializar
+            // Atualizar visualização do bolo
+            const massaCor = massaCores[massaValor];
+            if (cakeBase) cakeBase.style.backgroundColor = massaCor;
+            if (cakeMiddle) cakeMiddle.style.backgroundColor = massaCor;
+            if (cakeTop) cakeTop.style.backgroundColor = massaCor;
+        } else {
+            massaSelText.textContent = '-';
+        }
+        
+        // Recheios
+        const recheiosSelecionados = document.querySelectorAll('input[name="recheios"]:checked');
+        if (recheiosSelecionados.length > 0) {
+            const recheiosTexto = Array.from(recheiosSelecionados).map(recheio => {
+                total += precos.recheio[recheio.value];
+                // USAR FORMATAÇÃO AQUI
+                return formatarNome(recheio.value);
+            }).join(', ');
+            
+            recheiosSelText.textContent = recheiosTexto;
+            
+            // Atualizar visualização do bolo (usar o primeiro recheio)
+            if (recheiosSelecionados.length > 0) {
+                const recheioCor = recheioCores[recheiosSelecionados[0].value];
+                if (cakeFillingBottom) cakeFillingBottom.style.backgroundColor = recheioCor;
+                if (cakeFillingTop) cakeFillingTop.style.backgroundColor = recheioCor;
+            }
+        } else {
+            recheiosSelText.textContent = '-';
+            if (cakeFillingBottom) cakeFillingBottom.style.backgroundColor = '#ffffff';
+            if (cakeFillingTop) cakeFillingTop.style.backgroundColor = '#ffffff';
+        }
+        
+        // Cobertura
+        const coberturaSelecionada = document.querySelector('input[name="cobertura"]:checked');
+        if (coberturaSelecionada) {
+            const coberturaValor = coberturaSelecionada.value;
+            // USAR FORMATAÇÃO AQUI
+            coberturaSelText.textContent = formatarNome(coberturaValor);
+            total += precos.cobertura[coberturaValor];
+            
+            // Atualizar visualização do bolo
+            const coberturaCor = coberturaCores[coberturaValor];
+            if (cakeFrosting) cakeFrosting.style.backgroundColor = coberturaCor;
+            frostingDrips.forEach(drip => {
+                drip.style.backgroundColor = coberturaCor;
+            });
+        } else {
+            coberturaSelText.textContent = '-';
+        }
+        
+        // Finalização
+        const finalizacoesSelecionadas = document.querySelectorAll('input[name="finalizacao"]:checked');
+        if (finalizacoesSelecionadas.length > 0) {
+            const finalizacoesTexto = Array.from(finalizacoesSelecionadas).map(finalizacao => {
+                total += precos.finalizacao[finalizacao.value];
+                // USAR FORMATAÇÃO AQUI
+                return formatarNome(finalizacao.value);
+            }).join(', ');
+            
+            finalizacaoSelText.textContent = finalizacoesTexto;
+            
+            // Atualizar visualização do bolo
+            if (cakeDecoration) {
+                cakeDecoration.innerHTML = '';
+                finalizacoesSelecionadas.forEach(finalizacao => {
+                    cakeDecoration.innerHTML += finalizacaoIcones[finalizacao.value] || '⭐';
+                });
+            }
+        } else {
+            finalizacaoSelText.textContent = '-';
+            if (cakeDecoration) cakeDecoration.innerHTML = '';
+        }
+        
+        // Atualizar preço total
+        precoTotal.textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+    }
+    
+    // Adicionar eventos de seleção com validação de recheios
+    selectorItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const input = this.querySelector('input');
+            if (!input) return;
+            
+            const inputType = input.type;
+            const inputName = input.name;
+            
+            if (inputType === 'radio') {
+                // Desmarcar outras opções do mesmo grupo
+                document.querySelectorAll(`.selector-item[data-type="${this.dataset.type}"]`).forEach(otherItem => {
+                    otherItem.classList.remove('selected');
+                });
+                
+                // Marcar este item
+                this.classList.add('selected');
+                input.checked = true;
+            } else if (inputType === 'checkbox') {
+                if (inputName === 'recheios') {
+                    // Limitar a 2 recheios
+                    const recheiosSelecionados = document.querySelectorAll('input[name="recheios"]:checked').length;
+                    if (recheiosSelecionados >= 2 && !input.checked) {
+                        alert('Você pode selecionar no máximo 2 recheios (um por andar).');
+                        return;
+                    }
+                }
+                
+                this.classList.toggle('selected');
+                input.checked = !input.checked;
+            }
+            
             updateSummaryAndPrice();
         });
+    });
+    
+    // Verificar formulário antes de enviar
+    const form = document.getElementById('montagem-bolo-form');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            // Verificar se pelo menos uma massa foi selecionada
+            const massa = document.querySelector('input[name="massa"]:checked');
+            if (!massa) {
+                event.preventDefault();
+                alert('Por favor, selecione uma massa para o bolo');
+                goToStep(1);
+                return;
+            }
+            
+            // Verificar se pelo menos um recheio foi selecionado
+            const recheios = document.querySelectorAll('input[name="recheios"]:checked');
+            if (recheios.length === 0) {
+                event.preventDefault();
+                alert('Por favor, selecione pelo menos um recheio para o bolo');
+                goToStep(2);
+                return;
+            }
+            
+            // Verificar se uma cobertura foi selecionada
+            const cobertura = document.querySelector('input[name="cobertura"]:checked');
+            if (!cobertura) {
+                event.preventDefault();
+                alert('Por favor, selecione uma cobertura para o bolo');
+                goToStep(3);
+                return;
+            }
+        });
+    }
+    
+    // Inicializar
+    updateSummaryAndPrice();
+});
     </script>
 </body>
 </html>

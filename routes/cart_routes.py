@@ -2,8 +2,44 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from database import db
 from models.models import Produto, BoloPersonalizado, Usuario, CarrinhoItem, CarrinhoBoloPersonalizado
 from utils.helpers import registrar_log
+import json
 
 cart_bp = Blueprint('cart', __name__)
+
+def formatar_lista_json(valor):
+    """
+    Converte uma string JSON para uma lista formatada e legível
+    """
+    if not valor:
+        return ""
+    
+    try:
+        # Se já é uma lista, usa diretamente
+        if isinstance(valor, list):
+            lista = valor
+        else:
+            # Tenta fazer parse do JSON
+            lista = json.loads(valor)
+        
+        # Formata os itens da lista
+        itens_formatados = []
+        for item in lista:
+            # Remove underscores e capitaliza
+            item_formatado = item.replace('_', ' ').title()
+            itens_formatados.append(item_formatado)
+        
+        return ', '.join(itens_formatados)
+    except:
+        # Se não conseguir fazer parse, tenta tratar como string simples
+        return valor.replace('_', ' ').title() if valor else ""
+
+def formatar_campo_simples(valor):
+    """
+    Formata campos simples removendo underscores e capitalizando
+    """
+    if not valor:
+        return ""
+    return valor.replace('_', ' ').title()
 
 @cart_bp.route('/carrinho')
 def carrinho():
@@ -40,7 +76,12 @@ def carrinho():
                 total += subtotal
                 itens_personalizados.append({
                     'id': bolo.id,
-                    'nome': f"Bolo Personalizado de {bolo.massa.capitalize()}",
+                    'nome': bolo.nome or f"Bolo Personalizado de {formatar_campo_simples(bolo.massa) if bolo.massa else 'Personalizado'}",
+                    'massa': formatar_campo_simples(bolo.massa),
+                    'recheios': formatar_lista_json(bolo.recheios),
+                    'cobertura': formatar_campo_simples(bolo.cobertura),
+                    'finalizacao': formatar_lista_json(bolo.finalizacao),
+                    'observacoes': bolo.observacoes,
                     'preco': bolo.preco,
                     'quantidade': item.quantidade,
                     'subtotal': subtotal,
@@ -68,6 +109,11 @@ def carrinho():
                 itens_personalizados.append({
                     'id': item['id'],
                     'nome': item['nome'],
+                    'massa': formatar_campo_simples(item.get('massa', '')),
+                    'recheios': formatar_lista_json(item.get('recheios', '')),
+                    'cobertura': formatar_campo_simples(item.get('cobertura', '')),
+                    'finalizacao': formatar_lista_json(item.get('finalizacao', '')),
+                    'observacoes': item.get('observacoes', ''),
                     'preco': item['preco'],
                     'quantidade': item['quantidade'],
                     'subtotal': subtotal,

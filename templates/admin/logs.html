@@ -740,7 +740,9 @@
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <i class="bi bi-cake2"></i>
-                <h2>Doce Sonho</h2>
+                <a href="{{ url_for('index') }}" class="text-white text-decoration-none">
+    <h2>Doce Sonho</h2>
+</a>
             </div>
             <div class="sidebar-menu">
                 <p class="menu-header">Principal</p>
@@ -792,7 +794,7 @@
             <!-- Page header -->
             <div class="page-header">
                 <h1 class="page-title">Logs do Sistema</h1>
-                <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-white text-decoration-none">Home</a></li>
+                
                 <div>
                     <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filtroCollapse" aria-expanded="false" aria-controls="filtroCollapse">
                         <i class="bi bi-funnel"></i> Filtros
@@ -855,52 +857,68 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Data</th>
-                                    <th>Tipo</th>
-                                    <th>Descrição</th>
-                                    <th>Usuário</th>
-                                    <th>IP</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for log in logs.items %}
-                                <tr>
-                                    <td>{{ log.id }}</td>
-                                    <td>{{ log.data.strftime('%d/%m/%Y %H:%M:%S') }}</td>
-                                    <td>
-                                        {% if log.tipo == 'novo_pedido' %}
-                                            <span class="status-badge success">Novo Pedido</span>
-                                        {% elif log.tipo == 'pedido_atualizado' %}
-                                            <span class="status-badge info">Pedido Atualizado</span>
-                                        {% elif log.tipo == 'login' %}
-                                            <span class="status-badge info">Login</span>
-                                        {% elif log.tipo == 'logout' %}
-                                            <span class="status-badge warning">Logout</span>
-                                        {% elif log.tipo == 'cadastro' %}
-                                            <span class="status-badge success">Cadastro</span>
-                                        {% elif log.tipo == 'produto' %}
-                                            <span class="status-badge info">Produto</span>
-                                        {% else %}
-                                            <span class="status-badge warning">{{ log.tipo }}</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ log.descricao }}</td>
-                                    <td>
-                                        {% if log.usuario %}
-                                            {{ log.usuario.nome }} (ID: {{ log.usuario.id }})
-                                        {% else %}
-                                            <span class="text-muted">-</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ log.ip }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                       <table class="table table-hover">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th>Descrição</th>
+            <th>Usuário</th>
+            <!-- Coluna de IP removida -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs.items %}
+        <tr>
+            <td>{{ log.id }}</td>
+            <td>{{ log.data.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+            <td>
+                {% if log.tipo == 'novo_pedido' %}
+                    <span class="status-badge success">Novo Pedido</span>
+                {% elif log.tipo == 'pedido_atualizado' %}
+                    <span class="status-badge info">Pedido Atualizado</span>
+                {% elif log.tipo == 'login' %}
+                    <span class="status-badge info">Login</span>
+                {% elif log.tipo == 'logout' %}
+                    <span class="status-badge warning">Logout</span>
+                {% elif log.tipo == 'cadastro' %}
+                    <span class="status-badge success">Cadastro</span>
+                {% elif log.tipo == 'produto' %}
+                    <span class="status-badge info">Produto</span>
+                {% else %}
+                    <span class="status-badge warning">{{ log.tipo }}</span>
+                {% endif %}
+            </td>
+            <!-- Substitua a célula da descrição por: -->
+<td>
+    {% if log.usuario and log.usuario.ativo %}
+        {{ log.descricao }}
+    {% else %}
+        {% set words = log.descricao.split(' ') %}
+        {% set result = [] %}
+        {% for word in words %}
+            {% if '@' in word and '.' in word.split('@')[-1] %}
+                {{ result.append('[email removido]') or '' }}
+            {% else %}
+                {{ result.append(word) or '' }}
+            {% endif %}
+        {% endfor %}
+        {{ result | join(' ') }}
+    {% endif %}
+</td>
+            <td>
+                {% if log.usuario %}
+                    {{ log.usuario.nome }} (ID: {{ log.usuario.id }})
+                {% else %}
+                    <span class="text-muted">-</span>
+                {% endif %}
+            </td>
+            <!-- Célula de IP removida -->
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
                     </div>
                 </div>
                 <div class="card-footer">

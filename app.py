@@ -3,6 +3,10 @@ from database import db
 import os
 from datetime import timedelta
 from routes.auth_routes import auth_bp
+from dotenv import load_dotenv
+
+
+load_dotenv() 
 
 def create_app():
     app = Flask(__name__)

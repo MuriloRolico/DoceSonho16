@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atualizar Pedido #{{ pedido.id }} - Doce Sonho</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Detalhes do Pedido #{{ pedido.id }} - Admin</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
-    <style>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    
+    <!-- Admin Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    
+        <style>
         :root {
             --primary-color: #d23f72;
             --primary-dark: #b22d5d;
@@ -610,29 +617,31 @@
             <!-- Page header -->
             <div class="page-header">
                 <div>
-                    <h1 class="page-title">Atualizar Pedido #{{ pedido.id }}</h1>
+                    <h1 class="page-title">Detalhes do Pedido #{{ pedido.id }}</h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item"><a href="{{ url_for('admin.admin_pedidos') }}" class="text-decoration-none">Pedidos</a></li>
-                            <li class="breadcrumb-item"><a href="{{ url_for('admin.admin_detalhes_pedido', pedido_id=pedido.id) }}" class="text-decoration-none">Detalhes do Pedido #{{ pedido.id }}</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Atualizar Status</li>
+                            <li class="breadcrumb-item active" aria-current="page">Detalhes do Pedido #{{ pedido.id }}</li>
                         </ol>
                     </nav>
                 </div>
-                <div>
-                    <a href="{{ url_for('admin.admin_pedidos', pedido_id=pedido.id) }}" class="btn btn-outline-secondary">
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('admin.admin_atualizar_pedido', pedido_id=pedido.id) }}" class="btn btn-primary">
+                        <i class="bi bi-pencil-square me-1"></i> Atualizar Status
+                    </a>
+                    <a href="{{ url_for('admin.admin_pedidos') }}" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left me-1"></i> Voltar
                     </a>
                 </div>
             </div>
 
             <div class="row">
-                <!-- Coluna da esquerda: Formulário de atualização -->
+                <!-- Coluna da esquerda: Informações do pedido -->
                 <div class="col-lg-8">
                     <!-- Card de Status do Pedido -->
                     <div class="card mb-4">
                         <div class="card-header">
-                            <h5><i class="bi bi-pencil-square me-2"></i>Atualizar Status do Pedido</h5>
+                            <h5><i class="bi bi-info-circle me-2"></i>Status do Pedido</h5>
                             <div>
                                 {% if pedido.status == 'Pendente' %}
                                     <span class="badge badge-pendente"><i class="bi bi-clock me-1"></i>Pendente</span>
@@ -650,130 +659,195 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <form action="{{ url_for('admin.admin_atualizar_pedido', pedido_id=pedido.id) }}" method="POST">
-                                <!-- Opções de status com cards -->
-                                <div class="mb-4">
-                                    <label class="form-label fw-bold">Selecione o novo status:</label>
-                                    
-                                    <div class="status-option {% if pedido.status == 'Pendente' %}selected{% endif %}" data-status="Pendente">
-                                        <div class="status-header">
-                                            <div class="status-icon" style="background-color: #ffeeba; color: #856404;">
-                                                <i class="bi bi-clock"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="status-title">Pendente</h6>
-                                                <p class="status-description">Pedido recebido, aguardando processamento</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="status-option {% if pedido.status == 'Em Preparo' %}selected{% endif %}" data-status="Em Preparo">
-                                        <div class="status-header">
-                                            <div class="status-icon" style="background-color: #bee5eb; color: #0c5460;">
-                                                <i class="bi bi-hourglass-split"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="status-title">Em Preparo</h6>
-                                                <p class="status-description">Pedido está sendo preparado pela confeitaria</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="status-option {% if pedido.status == 'Pronto para Entrega' %}selected{% endif %}" data-status="Pronto para Entrega">
-                                        <div class="status-header">
-                                            <div class="status-icon" style="background-color: #c3e6cb; color: #155724;">
-                                                <i class="bi bi-check2-circle"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="status-title">Pronto para Entrega</h6>
-                                                <p class="status-description">Pedido pronto e aguardando entrega ou retirada</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="status-option {% if pedido.status == 'Entregue' %}selected{% endif %}" data-status="Entregue">
-                                        <div class="status-header">
-                                            <div class="status-icon" style="background-color: #d6d8db; color: #383d41;">
-                                                <i class="bi bi-truck"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="status-title">Entregue</h6>
-                                                <p class="status-description">Pedido entregue ou retirado com sucesso</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="status-option {% if pedido.status == 'Cancelado' %}selected{% endif %}" data-status="Cancelado">
-                                        <div class="status-header">
-                                            <div class="status-icon" style="background-color: #f5c6cb; color: #721c24;">
-                                                <i class="bi bi-x-circle"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="status-title">Cancelado</h6>
-                                                <p class="status-description">Pedido foi cancelado</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-calendar3 me-2"></i>Data do Pedido:</p>
+                                    <p class="fw-bold">{{ pedido.data.strftime('%d/%m/%Y às %H:%M') }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-currency-dollar me-2"></i>Valor Total:</p>
+                                    <p class="fw-bold">R$ {{ "%.2f"|format(pedido.total) }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-credit-card me-2"></i>Forma de Pagamento:</p>
+                                    <p class="fw-bold">{{ pedido.forma_pagamento }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-truck me-2"></i>Método de Entrega:</p>
+                                    <p class="fw-bold">{{ pedido.metodo_entrega }}</p>
+                                </div>
+                                
+                                {% if pedido.valor_frete and pedido.valor_frete > 0 %}
+                                <div class="col-md-6 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-cash me-2"></i>Valor do Frete:</p>
+                                    <p class="fw-bold">R$ {{ "%.2f"|format(pedido.valor_frete) }}</p>
+                                </div>
+                                {% endif %}
+                                
+                                {% if pedido.tipo_entrega %}
+                                <div class="col-md-6 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-box-seam me-2"></i>Tipo de Entrega:</p>
+                                    <p class="fw-bold">{{ pedido.tipo_entrega }}</p>
+                                </div>
+                                {% endif %}
 
-                                    <!-- Campo oculto para armazenar o status selecionado -->
-                                    <input type="hidden" name="status" id="selectedStatus" value="{{ pedido.status }}">
+                                {% if pedido.mercado_pago_transaction_id %}
+                                <div class="col-md-6 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-receipt me-2"></i>ID Transação:</p>
+                                    <p class="fw-bold">{{ pedido.mercado_pago_transaction_id }}</p>
                                 </div>
+                                {% endif %}
                                 
-                                <!-- Observações da atualização -->
-                                <div class="mb-4">
-                                    <label for="observacoes" class="form-label fw-bold">Observações (opcional):</label>
-                                    <textarea class="form-control" id="observacoes" name="observacoes" rows="4" placeholder="Adicione informações adicionais sobre esta atualização de status..."></textarea>
-                                    <div class="form-text">Estas observações serão visíveis apenas para administradores.</div>
+                                {% if pedido.data_entrega %}
+                                <div class="col-md-12 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-calendar-check me-2"></i>Data de Entrega/Retirada:</p>
+                                    <p class="fw-bold">{{ pedido.data_entrega.strftime('%d/%m/%Y às %H:%M') }}</p>
                                 </div>
+                                {% endif %}
                                 
-                                <!-- Botões de ação -->
-                                <div class="d-flex justify-content-end gap-2">
-                                    <a href="{{ url_for('admin.admin_detalhes_pedido', pedido_id=pedido.id) }}" class="btn btn-outline-secondary">
-                                        Cancelar
-                                    </a>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-check2 me-1"></i> Salvar Alterações
-                                    </button>
+                                {% if pedido.endereco_entrega %}
+                                <div class="col-md-12 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-geo-alt me-2"></i>Endereço de Entrega (informado no pedido):</p>
+                                    <p class="bg-light p-3 rounded">{{ pedido.endereco_entrega }}</p>
                                 </div>
-                            </form>
+                                {% endif %}
+                                
+                                {% if pedido.observacoes %}
+                                <div class="col-md-12">
+                                    <p class="mb-1 text-muted"><i class="bi bi-chat-left-text me-2"></i>Observações do Cliente:</p>
+                                    <p class="bg-light p-3 rounded">{{ pedido.observacoes }}</p>
+                                </div>
+                                {% endif %}
+                                {% if pedido.observacoes_admin %}
+                                <div class="col-md-12">
+                                    <p class="mb-1 text-muted"><i class="bi bi-clipboard-check me-2"></i>Observações da Administração:</p>
+                                    <p class="bg-light p-3 rounded">{{ pedido.observacoes_admin|nl2br }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Resumo do Pedido -->
+                    <!-- Card de Itens do Pedido -->
                     <div class="card mb-4">
                         <div class="card-header">
-                            <h5><i class="bi bi-list-check me-2"></i>Resumo do Pedido</h5>
+                            <h5><i class="bi bi-basket me-2"></i>Itens do Pedido</h5>
+                            <span class="badge bg-light text-dark">{{ itens|length }} itens</span>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th>Item</th>
-                                            <th>Qtd</th>
-                                            <th>Preço</th>
+                                            <th>Quantidade</th>
+                                            <th>Preço Unitário</th>
                                             <th>Subtotal</th>
+                                            <th>Tipo</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for item in itens %}
                                         <tr>
-                                            <td>{{ item.nome }}</td>
+                                            <td>
+                                                <strong>{{ item.nome }}</strong>
+                                                {% if item.tipo == 'personalizado' %}
+                                                <button class="btn btn-sm btn-outline-primary ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#bolo{{ item.bolo_id }}" aria-expanded="false">
+                                                    <i class="bi bi-info-circle"></i> Detalhes
+                                                </button>
+                                                <div class="collapse mt-2" id="bolo{{ item.bolo_id }}">
+                                                    <div class="bolo-details">
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Massa:</span>
+                                                            <span>{{ (item.bolo.massa|capitalize) if item.bolo.massa else 'Não informado' }}</span>
+                                                        </div>
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Recheio:</span>
+                                                            <span>{{ (item.bolo.recheios|capitalize) if item.bolo.recheios else 'Não informado' }}</span>
+                                                        </div>
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Cobertura:</span>
+                                                            <span>{{ (item.bolo.cobertura|capitalize) if item.bolo.cobertura else 'Não informado' }}</span>
+                                                        </div>
+                                                        {% if item.bolo.observacoes %}
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Observações:</span>
+                                                            <span>{{ item.bolo.observacoes }}</span>
+                                                        </div>
+                                                        {% endif %}
+                                                        {% if item.bolo.finalizacao %}
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Finalização:</span>
+                                                            <span>{{ item.bolo.finalizacao }}</span>
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                {% elif item.tipo == 'regular' and item.produto %}
+                                                <div class="mt-1 small text-muted">
+                                                    {{ item.produto.descricao|truncate(50) }}
+                                                </div>
+                                                {% if item.produto.ingredientes %}
+                                                <button class="btn btn-sm btn-outline-secondary mt-1" type="button" data-bs-toggle="collapse" data-bs-target="#produto{{ item.produto.id }}" aria-expanded="false">
+                                                    <i class="bi bi-info-circle"></i> Detalhes
+                                                </button>
+                                                <div class="collapse mt-2" id="produto{{ item.produto.id }}">
+                                                    <div class="bolo-details">
+                                                        {% if item.produto.ingredientes %}
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Ingredientes:</span>
+                                                            <span>{{ item.produto.ingredientes }}</span>
+                                                        </div>
+                                                        {% endif %}
+                                                        {% if item.produto.peso %}
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Peso:</span>
+                                                            <span>{{ item.produto.peso }} kg</span>
+                                                        </div>
+                                                        {% endif %}
+                                                        {% if item.produto.informacoes_nutricionais %}
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Info. Nutricionais:</span>
+                                                            <span>{{ item.produto.informacoes_nutricionais }}</span>
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                {% endif %}
+                                            </td>
                                             <td>{{ item.quantidade }}</td>
                                             <td>R$ {{ "%.2f"|format(item.preco_unitario) }}</td>
                                             <td>R$ {{ "%.2f"|format(item.subtotal) }}</td>
+                                            <td>
+                                                {% if item.tipo == 'regular' %}
+                                                <span class="badge bg-info">Catálogo</span>
+                                                {% else %}
+                                                <span class="badge bg-primary">Personalizado</span>
+                                                {% endif %}
+                                            </td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
                                     <tfoot class="table-group-divider">
+                                        {% if pedido.valor_frete and pedido.valor_frete > 0 %}
+                                        <tr>
+                                            <td colspan="3" class="text-end">Subtotal:</td>
+                                            <td colspan="2">R$ {{ "%.2f"|format(pedido.total - pedido.valor_frete) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" class="text-end">Frete:</td>
+                                            <td colspan="2">R$ {{ "%.2f"|format(pedido.valor_frete) }}</td>
+                                        </tr>
+                                        {% endif %}
                                         <tr>
                                             <td colspan="3" class="text-end fw-bold">Total:</td>
-                                            <td class="fw-bold">R$ {{ "%.2f"|format(pedido.total) }}</td>
+                                            <td colspan="2" class="fw-bold">R$ {{ "%.2f"|format(pedido.total) }}</td>
                                         </tr>
                                     </tfoot>
                                 </table>
                             </div>
-                        </div> 
+                        </div>
                     </div>
                 </div>
 
@@ -795,24 +869,58 @@
                                 </div>
                             </div>
                             
-                            {% if pedido.metodo_entrega == 'Entrega' %}
                             <div class="mb-3">
-                                <p class="mb-1 fw-bold"><i class="bi bi-geo-alt me-2"></i>Endereço de Entrega:</p>
-                                <address class="mb-0">
-                                    {{ usuario.endereco_rua }}, {{ usuario.endereco_numero }}<br>
-                                    {% if usuario.endereco_complemento %}
-                                    {{ usuario.endereco_complemento }}<br>
+                                <p class="mb-1 fw-bold"><i class="bi bi-phone me-2"></i>Informações de Contato:</p>
+                                <p class="mb-0 small">
+                                    {% if usuario.telefone %}
+                                    <strong>Telefone:</strong> {{ usuario.telefone }}<br>
                                     {% endif %}
-                                    {{ usuario.endereco_bairro }}<br>
-                                    {{ usuario.endereco_cidade }}, {{ usuario.endereco_estado }}<br>
-                                    CEP: {{ usuario.endereco_cep }}
+                                    {% if usuario.cpf_hash %}
+                                    <strong>CPF:</strong> {% if usuario.mascarar_cpf %}***.***.**-** (mascarado){% else %}{{ usuario.cpf_hash }}{% endif %}<br>
+                                    {% endif %}
+                                    <strong>Cliente desde:</strong> {{ usuario.data_registro.strftime('%d/%m/%Y') }}
+                                </p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <p class="mb-1 fw-bold"><i class="bi bi-geo-alt me-2"></i>Endereço do Cliente:</p>
+                                <address class="mb-0 small">
+                                    {% if usuario.endereco_rua %}
+                                        {{ usuario.endereco_rua }}, {{ usuario.endereco_numero }}<br>
+                                        {% if usuario.endereco_complemento %}
+                                        {{ usuario.endereco_complemento }}<br>
+                                        {% endif %}
+                                        {{ usuario.endereco_bairro }}<br>
+                                        {{ usuario.endereco_cidade }}, {{ usuario.endereco_estado }}<br>
+                                        CEP: {{ usuario.endereco_cep }}
+                                    {% else %}
+                                        <span class="text-muted">Endereço não cadastrado</span>
+                                    {% endif %}
+                                </address>
+                            </div>
+                            
+                            {% if pedido.metodo_entrega == 'Entrega' or pedido.tipo_entrega == 'delivery' %}
+                            <div class="mb-3">
+                                <p class="mb-1 fw-bold"><i class="bi bi-geo-alt-fill me-2"></i>Endereço de Entrega:</p>
+                                <address class="mb-0 small bg-light p-2 rounded">
+                                    {% if pedido.endereco_entrega %}
+                                        {{ pedido.endereco_entrega }}
+                                    {% elif usuario.endereco_rua %}
+                                        {{ usuario.endereco_rua }}, {{ usuario.endereco_numero }}<br>
+                                        {% if usuario.endereco_complemento %}
+                                        {{ usuario.endereco_complemento }}<br>
+                                        {% endif %}
+                                        {{ usuario.endereco_bairro }}<br>
+                                        {{ usuario.endereco_cidade }}, {{ usuario.endereco_estado }}<br>
+                                        CEP: {{ usuario.endereco_cep }}
+                                    {% else %}
+                                        <span class="text-muted">Endereço não informado</span>
+                                    {% endif %}
                                 </address>
                             </div>
                             {% endif %}
                             
-                            <a href="{{ url_for('admin.admin_ver_cliente', cliente_id=usuario.id) }}" class="btn btn-outline-primary btn-sm w-100">
-                                <i class="bi bi-eye me-1"></i> Ver Perfil Completo
-                            </a>
+                           
                         </div>
                     </div>
 
@@ -873,6 +981,33 @@
                             {% endif %}
                         </div>
                     </div>
+                    
+                    <!-- Card de Pagamento (se tiver informações disponíveis) -->
+                    {% if pedido.forma_pagamento or pedido.mercado_pago_transaction_id %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="bi bi-credit-card me-2"></i>Detalhes do Pagamento</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <p class="mb-1 text-muted">Forma de Pagamento:</p>
+                                <p class="fw-bold">{{ pedido.forma_pagamento }}</p>
+                            </div>
+                            
+                            {% if pedido.mercado_pago_transaction_id %}
+                            <div class="mb-2">
+                                <p class="mb-1 text-muted">ID da Transação (Mercado Pago):</p>
+                                <p class="fw-bold">{{ pedido.mercado_pago_transaction_id }}</p>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="mb-0">
+                                <p class="mb-1 text-muted">Valor Total Pago:</p>
+                                <p class="fw-bold">R$ {{ "%.2f"|format(pedido.total) }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 
@@ -899,24 +1034,10 @@
             document.querySelector('.main-content').classList.toggle('active');
         });
 
-        // Inicializar a seleção de status
-        document.addEventListener('DOMContentLoaded', function() {
-            const statusOptions = document.querySelectorAll('.status-option');
-            const selectedStatusInput = document.getElementById('selectedStatus');
-            
-            // Adicionar evento de clique a cada opção de status
-            statusOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    // Remover a classe selected de todas as opções
-                    statusOptions.forEach(opt => opt.classList.remove('selected'));
-                    
-                    // Adicionar a classe selected à opção clicada
-                    this.classList.add('selected');
-                    
-                    // Atualizar o valor do input hidden
-                    selectedStatusInput.value = this.dataset.status;
-                });
-            });
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
         });
     </script>
 </body>

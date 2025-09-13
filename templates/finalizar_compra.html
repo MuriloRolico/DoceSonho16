@@ -258,10 +258,37 @@
             border-color: var(--primary-color);
         }
 
+        /* Estilo para o aviso de prazo de entrega */
+        .prazo-entrega-aviso {
+            background: #F57C00 ;
+            border: 2px solid #000000ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-align: center;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .prazo-entrega-aviso i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: white;
+        }
+
+        
+
         @media (max-width: 768px) {
             .d-md-flex {
                 display: grid !important;
                 grid-gap: 10px;
+            }
+            
+            .prazo-entrega-aviso {
+                font-size: 1rem;
+                padding: 15px;
             }
         }
     </style>
@@ -399,6 +426,12 @@
                                 </label>
                             </div>
                         </div>
+
+                        <!-- Aviso de prazo de entrega -->
+                        <div id="prazo-entrega-aviso" class="prazo-entrega-aviso" style="display: none;">
+                            <i class="bi bi-clock-history"></i>
+                            <strong>ATENÇÃO:</strong> A entrega será realizada em 1 dia útil a partir da confirmação do pagamento.
+                        </div>
                         
                         <div id="endereco-entrega" class="mb-3 border p-3 rounded" style="display: none;">
                             <h5>Endereço de Entrega</h5>
@@ -533,68 +566,69 @@
     </script>
 
     <!-- Script para opções de entrega -->
-<!-- Substitua o JavaScript no final do seu HTML finalizar_compra.html por este: -->
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const enderecoEntrega = document.getElementById('endereco-entrega');
-        const linhaFrete = document.getElementById('linha-frete');
-        const valorTotal = document.getElementById('valor-total');
-        const radioRetirada = document.getElementById('entrega_retirada');
-        const radioFrete = document.getElementById('entrega_frete');
-        const tipoEntregaHidden = document.getElementById('tipo_entrega_hidden');
-        const observacoesInput = document.getElementById('observacoes');
-        const observacoesHidden = document.getElementById('observacoes_hidden');
-        const submitForm = document.querySelector('form[method="POST"]');
-        
-        // Valor base (sem frete)
-        const valorBase = {{ total }};
-        // Valor do frete
-        const valorFrete = 12.00;
-        
-        // Função para atualizar o total
-        function atualizarTotal() {
-            if (radioFrete.checked) {
-                linhaFrete.style.display = 'table-row';
-                enderecoEntrega.style.display = 'block';
-                valorTotal.textContent = `R$ ${(valorBase + valorFrete).toFixed(2)}`.replace('.', ',');
-                tipoEntregaHidden.value = 'frete';  // CORREÇÃO: enviar 'frete' ao invés de 'delivery'
-            } else {
-                linhaFrete.style.display = 'none';
-                enderecoEntrega.style.display = 'none';
-                valorTotal.textContent = `R$ ${valorBase.toFixed(2)}`.replace('.', ',');
-                tipoEntregaHidden.value = 'retirada';  // CORREÇÃO: enviar 'retirada' ao invés de 'pickup'
-            }
-        }
-        
-        // Adicionar listeners para os radio buttons
-        radioRetirada.addEventListener('change', atualizarTotal);
-        radioFrete.addEventListener('change', atualizarTotal);
-        
-        // Sincronizar campos de observações
-        observacoesInput.addEventListener('input', function() {
-            observacoesHidden.value = this.value;
-        });
-        
-        // Configurar envio do formulário
-        submitForm.addEventListener('submit', function(e) {
-            // Verificar se selecionou entrega e se tem endereço cadastrado
-            if (radioFrete.checked && !{{ 'true' if usuario is defined and usuario.endereco_rua else 'false' }}) {
-                e.preventDefault();
-                alert('Você precisa cadastrar um endereço para receber a entrega em domicílio.');
-                return false;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const enderecoEntrega = document.getElementById('endereco-entrega');
+            const linhaFrete = document.getElementById('linha-frete');
+            const prazoEntregaAviso = document.getElementById('prazo-entrega-aviso');
+            const valorTotal = document.getElementById('valor-total');
+            const radioRetirada = document.getElementById('entrega_retirada');
+            const radioFrete = document.getElementById('entrega_frete');
+            const tipoEntregaHidden = document.getElementById('tipo_entrega_hidden');
+            const observacoesInput = document.getElementById('observacoes');
+            const observacoesHidden = document.getElementById('observacoes_hidden');
+            const submitForm = document.querySelector('form[method="POST"]');
+            
+            // Valor base (sem frete)
+            const valorBase = {{ total }};
+            // Valor do frete
+            const valorFrete = 12.00;
+            
+            // Função para atualizar o total
+            function atualizarTotal() {
+                if (radioFrete.checked) {
+                    linhaFrete.style.display = 'table-row';
+                    enderecoEntrega.style.display = 'block';
+                    prazoEntregaAviso.style.display = 'block';
+                    valorTotal.textContent = `R$ ${(valorBase + valorFrete).toFixed(2)}`.replace('.', ',');
+                    tipoEntregaHidden.value = 'frete';
+                } else {
+                    linhaFrete.style.display = 'none';
+                    enderecoEntrega.style.display = 'none';
+                    prazoEntregaAviso.style.display = 'none';
+                    valorTotal.textContent = `R$ ${valorBase.toFixed(2)}`.replace('.', ',');
+                    tipoEntregaHidden.value = 'retirada';
+                }
             }
             
-            // Atualizar campo oculto com as observações
-            observacoesHidden.value = observacoesInput.value;
+            // Adicionar listeners para os radio buttons
+            radioRetirada.addEventListener('change', atualizarTotal);
+            radioFrete.addEventListener('change', atualizarTotal);
             
-            // Log para debug - pode remover depois
-            console.log('Tipo entrega enviado:', tipoEntregaHidden.value);
+            // Sincronizar campos de observações
+            observacoesInput.addEventListener('input', function() {
+                observacoesHidden.value = this.value;
+            });
+            
+            // Configurar envio do formulário
+            submitForm.addEventListener('submit', function(e) {
+                // Verificar se selecionou entrega e se tem endereço cadastrado
+                if (radioFrete.checked && !{{ 'true' if usuario is defined and usuario.endereco_rua else 'false' }}) {
+                    e.preventDefault();
+                    alert('Você precisa cadastrar um endereço para receber a entrega em domicílio.');
+                    return false;
+                }
+                
+                // Atualizar campo oculto com as observações
+                observacoesHidden.value = observacoesInput.value;
+                
+                // Log para debug - pode remover depois
+                console.log('Tipo entrega enviado:', tipoEntregaHidden.value);
+            });
+            
+            // Inicializar o estado
+            atualizarTotal();
         });
-        
-        // Inicializar o estado
-        atualizarTotal();
-    });
-</script>
+    </script>
 </body>
 </html>

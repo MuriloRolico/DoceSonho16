@@ -10,7 +10,7 @@ import re
 import os
 import hashlib
 import secrets
-from email_sender import enviar_email  # Supondo que você tenha um módulo para enviar emails
+from utils.email_sender import enviar_email  # Supondo que você tenha um módulo para enviar emails
 from utils.helpers import registrar_log
 from flask_mail import Mail, Message
 
@@ -436,94 +436,102 @@ def esqueci_senha():
     if request.method == 'POST':
         email = request.form.get('email')
         
-        if not email:
-            flash('Por favor, informe seu email', 'danger')
-            return redirect(url_for('auth.esqueci_senha'))
-        
-        # Verificar se o email existe
+        # Verificar se o usuário existe
         usuario = Usuario.query.filter_by(email=email).first()
         
         if usuario:
-            # Gerar token único para redefinição de senha
+            # Gerar token único
             token = secrets.token_urlsafe(32)
-            expiracao = datetime.utcnow() + timedelta(hours=24)
             
-            # Salvar token no banco de dados
+            # Armazenar token no banco de dados com expiração de 1 hora
             usuario.reset_token = token
-            usuario.reset_token_expiracao = expiracao
-            
-            # Criar um registro na tabela de tokens
-            try:
-                novo_token = Token(
-                    usuario_id=usuario.id,
-                    token=token,
-                    tipo='reset',
-                    device_info=request.user_agent.string,
-                    ip=request.remote_addr,
-                    data_expiracao=expiracao
-                )
-                db.session.add(novo_token)
-            except Exception as e:
-                print(f"Erro ao criar token na tabela: {str(e)}")
+            usuario.reset_token_expiracao = datetime.now() + timedelta(hours=1)
             
             db.session.commit()
             
-            # Criar link de redefinição
+            # Criar URL de recuperação
             reset_url = url_for('auth.redefinir_senha', token=token, _external=True)
             
-            # Tentar enviar email com Flask-Mail primeiro, depois fallback para email_sender
-            email_enviado = False
+            # Criar mensagem de email
+            assunto = "Redefinição de Senha - Doce Sonho Confeitaria"
+            mensagem = f"""
+            Olá {usuario.nome},
             
-            # Tentativa 1: Flask-Mail
-            try:
-                msg = Message(
-                    'Redefinição de Senha - Doce Sonho Confeitaria',
-                    sender=current_app.config['MAIL_DEFAULT_SENDER'],
-                    recipients=[email]
-                )
-                msg.body = f'''Para redefinir sua senha, visite o seguinte link:
-
-{reset_url}
-
-Se você não solicitou a redefinição de senha, ignore este email e nenhuma alteração será feita.
-
-Atenciosamente,
-Equipe Doce Sonho Confeitaria
-'''
-                mail.send(msg)
-                email_enviado = True
-            except Exception as e:
-                print(f"Erro ao enviar email com Flask-Mail: {e}")
-                
-                # Tentativa 2: email_sender
-                try:
-                    enviar_email(
-                        destinatario=email,
-                        assunto='Redefinição de Senha - Doce Sonho Confeitaria',
-                        mensagem=f'Olá {usuario.nome},\n\nVocê solicitou a redefinição de sua senha. Clique no link abaixo para criar uma nova senha:\n\n{reset_url}\n\nEste link é válido por 24 horas.\n\nSe você não solicitou esta alteração, ignore este email.\n\nAtenciosamente,\nEquipe Doce Sonho Confeitaria'
-                    )
-                    email_enviado = True
-                except Exception as e2:
-                    print(f"Erro ao enviar email com email_sender: {e2}")
+            Recebemos uma solicitação para redefinir sua senha. Para continuar, acesse o link abaixo:
             
-            if not email_enviado:
+            {reset_url}
+            
+            Este link expira em 1 hora.
+            
+            Se você não solicitou esta redefinição, ignore este email.
+            
+            Atenciosamente,
+            Equipe Doce Sonho Confeitaria
+            """
+            
+            # Criar versão HTML do email
+            html = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                    .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                    .header {{ background-color: #d23f72; color: white; padding: 10px 20px; text-align: center; }}
+                    .content {{ padding: 20px; background-color: #fff8fa; }}
+                    .button {{ display: inline-block; background-color: #d23f72; color: white; padding: 10px 20px; 
+                              text-decoration: none; border-radius: 5px; margin: 20px 0; }}
+                    .footer {{ text-align: center; margin-top: 20px; font-size: 12px; color: #777; }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h2>Doce Sonho Confeitaria</h2>
+                    </div>
+                    <div class="content">
+                        <p>Olá <strong>{usuario.nome}</strong>,</p>
+                        <p>Recebemos uma solicitação para redefinir sua senha. Para continuar, clique no botão abaixo:</p>
+                        <p style="text-align: center;">
+                            <a href="{reset_url}" class="button">Redefinir minha senha</a>
+                        </p>
+                        <p>Ou copie e cole este link no seu navegador:</p>
+                        <p>{reset_url}</p>
+                        <p>Este link expira em <strong>1 hora</strong>.</p>
+                        <p>Se você não solicitou esta redefinição, ignore este email.</p>
+                    </div>
+                    <div class="footer">
+                        <p>Atenciosamente,<br>Equipe Doce Sonho Confeitaria</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            
+            # Enviar email
+            enviado = enviar_email(email, assunto, mensagem, html)
+            
+            if enviado:
+                flash('Um link de recuperação foi enviado para o seu email.', 'success')
+            else:
                 flash('Ocorreu um erro ao enviar o email. Por favor, tente novamente mais tarde.', 'danger')
-                return redirect(url_for('auth.esqueci_senha'))
+                
+        else:
+            # Mesmo se o usuário não existir, mostrar a mesma mensagem por segurança
+            flash('Um link de recuperação foi enviado para o seu email, se ele estiver cadastrado.', 'success')
         
-        # Por segurança, sempre mostramos a mesma mensagem
-        flash('Se o email estiver cadastrado, você receberá instruções para redefinir sua senha.', 'info')
         return redirect(url_for('auth.login'))
-    
+        
     return render_template('esqueci_senha.html')
 
 @auth_bp.route('/redefinir-senha/<token>', methods=['GET', 'POST'])
 def redefinir_senha(token):
-    # Verificar se o token é válido
+    # Verificar se o token existe e é válido
     usuario = Usuario.query.filter_by(reset_token=token).first()
     
-    # Se o token não existir ou estiver expirado
-    if not usuario or not usuario.reset_token_expiracao or usuario.reset_token_expiracao < datetime.utcnow():
-        flash('O link de redefinição de senha é inválido ou expirou.', 'danger')
+    # Verificar se o token é válido e não expirou
+    if not usuario or usuario.reset_token_expiracao < datetime.now():
+        flash('O link de recuperação é inválido ou expirou. Por favor, solicite um novo.', 'danger')
         return redirect(url_for('auth.esqueci_senha'))
     
     if request.method == 'POST':
@@ -531,44 +539,28 @@ def redefinir_senha(token):
         confirmar_senha = request.form.get('confirmar_senha')
         
         if nova_senha != confirmar_senha:
-            flash('As senhas não coincidem.', 'danger')
+            flash('As senhas não coincidem. Por favor, tente novamente.', 'danger')
             return render_template('redefinir_senha.html', token=token)
         
-        # Verificar requisitos de senha
-        if len(nova_senha) < 8:
-            flash('A senha deve ter pelo menos 8 caracteres.', 'danger')
-            return render_template('redefinir_senha.html', token=token)
-        if not re.search("[a-z]", nova_senha):
-            flash('A senha deve conter pelo menos uma letra minúscula.', 'danger')
-            return render_template('redefinir_senha.html', token=token)
-        if not re.search("[A-Z]", nova_senha):
-            flash('A senha deve conter pelo menos uma letra maiúscula.', 'danger')
-            return render_template('redefinir_senha.html', token=token)
-        if not re.search("[0-9]", nova_senha):
-            flash('A senha deve conter pelo menos um número.', 'danger')
-            return render_template('redefinir_senha.html', token=token)
-        if not re.search("[_@$!%*?&]", nova_senha):
-            flash('A senha deve conter pelo menos um caractere especial.', 'danger')
+        # Validar força da senha
+        if len(nova_senha) < 8 or not any(c.isupper() for c in nova_senha) or \
+           not any(c.islower() for c in nova_senha) or not any(c.isdigit() for c in nova_senha) or \
+           not any(c in '@$!%*?&' for c in nova_senha):
+            flash('A senha deve conter pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.', 'danger')
             return render_template('redefinir_senha.html', token=token)
         
-        # Atualizar a senha
-        usuario.senha = generate_password_hash(nova_senha)
+        # Atualizar senha (usando a convenção de prefixo que vi no seu código)
+        usuario.senha = f"mysql_hash:{hashlib.sha256(nova_senha.encode()).hexdigest()}"
+        
+        # Limpar token após uso
         usuario.reset_token = None
         usuario.reset_token_expiracao = None
         
-        # Revogar todos os tokens existentes por segurança
-        try:
-            tokens = Token.query.filter_by(usuario_id=usuario.id, is_revogado=False).all()
-            for t in tokens:
-                t.is_revogado = True
-        except Exception as e:
-            print(f"Erro ao revogar tokens: {str(e)}")
-        
         db.session.commit()
         
-        flash('Sua senha foi redefinida com sucesso! Faça login com sua nova senha.', 'success')
+        flash('Sua senha foi alterada com sucesso! Agora você pode fazer login.', 'success')
         return redirect(url_for('auth.login'))
-    
+        
     return render_template('redefinir_senha.html', token=token)
 
 @auth_bp.route('/politica-privacidade')
