@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar {{ 'Administrador' if usuario.is_admin else 'Cliente' }} - Doce Sonho</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+ <style>
+  :root {
+            --primary-color: #d23f72;
+            --primary-dark: #b22d5d;
+            --secondary-color: #ffd6e0;
+            --accent-color: #ffb3c6;
+            --text-color: #2d2d2d;
+            --light-text: #ffffff;
+            --background-color: #fff8fa;
+            --container-bg: #ffffff;
+            --border-color: #f1c2ce;
+            --shadow: 0 8px 20px rgba(210, 63, 114, 0.08);
+            --radius: 10px;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --secondary-dark: #6c757d;
+        }
+
+body, html {
+    scroll-behavior: smooth;
+    background-color: var(--background-color);
+}
+         .mt-3 {
+        margin-top: 0 !important
+            }
+body {
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1.8;
+    color: var(--text-color);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 0.5px;
+}
+
+/* Sidebar */
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 280px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: var(--light-text);
+    position: fixed;
+    height: 100%;
+    overflow-y: auto;
+    z-index: 999;
+    transition: all 0.3s;
+    box-shadow: var(--shadow);
+}
+
+.sidebar-brand {
+    padding: 25px 20px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-brand h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: var(--light-text);
+}
+
+.sidebar-brand i {
+    font-size: 2rem;
+    margin-right: 15px;
+}
+
+.sidebar-menu {
+    padding: 20px 0;
+}
+
+.menu-header {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 15px 25px 5px;
+}
+
+.sidebar-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 2px;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    padding: 12px 25px;
+    transition: all 0.3s;
+    font-weight: 500;
+    border-left: 4px solid transparent;
+}
+
+.sidebar-menu a i {
+    margin-right: 15px;
+    font-size: 1.2rem;
+}
+
+.sidebar-menu a:hover, 
+.sidebar-menu a.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--light-text);
+    border-left-color: var(--secondary-color);
+}
+
+.sidebar-menu a.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+}
+
+.sidebar-profile {
+    padding: 20px 25px;
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-profile .profile-info {
+    display: flex;
+    align-items: center;
+}
+
+/* Main content */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 30px;
+    transition: all 0.3s;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    background-color: var(--container-bg);
+    padding: 22px 28px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border-left: 5px solid var(--primary-color);
+}
+
+.page-title {
+    margin: 0;
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+/* Cards */
+.card {
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: none;
+    margin-bottom: 25px;
+    overflow: hidden;
+    background-color: var(--container-bg);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 12px 25px rgba(142, 68, 173, 0.12);
+}
+
+.card-header {
+    padding: 20px 25px;
+    background-color: var(--container-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h5 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.card-header h5 i {
+    margin-right: 10px;
+    font-size: 1.3rem;
+}
+
+.card-body {
+    padding: 25px;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(142, 68, 173, 0.25);
+}
+
+.btn-outline-secondary {
+    color: var(--secondary-dark);
+    border-color: var(--secondary-dark);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--secondary-dark);
+    color: var(--light-text);
+    transform: translateY(-2px);
+}
+
+/* Forms */
+.form-control, .form-select {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--container-bg);
+    transition: all 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(142, 68, 173, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 8px;
+}
+
+.input-group .btn {
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+}
+
+/* Status badges */
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.success {
+    background-color: rgba(39, 174, 96, 0.15);
+    color: var(--success-color);
+    border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.status-badge.warning {
+    background-color: rgba(243, 156, 18, 0.15);
+    color: var(--warning-color);
+    border: 1px solid rgba(243, 156, 18, 0.3);
+}
+
+.status-badge.danger {
+    background-color: rgba(231, 76, 60, 0.15);
+    color: var(--danger-color);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.status-badge.primary {
+    background-color: rgba(142, 68, 173, 0.15);
+    color: var(--primary-color);
+    border: 1px solid rgba(142, 68, 173, 0.3);
+}
+
+/* Tables */
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    font-weight: 600;
+    color: var(--primary-color);
+    background-color: rgba(142, 68, 173, 0.05);
+    border-bottom: 2px solid var(--primary-color);
+    padding: 15px;
+}
+
+.table td {
+    padding: 15px;
+    vertical-align: middle;
+    border-color: var(--border-color);
+}
+
+.table tr:hover {
+    background-color: rgba(142, 68, 173, 0.03);
+}
+
+.table img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+/* Profile image in card */
+.card .rounded-circle {
+    border: 4px solid var(--secondary-color);
+    box-shadow: 0 5px 15px rgba(142, 68, 173, 0.2);
+}
+
+/* Footer */
+.admin-footer {
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 30px;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: var(--secondary-dark);
+}
+
+/* Alert messages */
+.alert {
+    border-radius: var(--radius);
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 15px 20px;
+    margin-bottom: 25px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .sidebar {
+        margin-left: -280px;
+    }
+    .sidebar.active {
+        margin-left: 0;
+    }
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    .main-content.active {
+        margin-left: 280px;
+    }
+}
+
+/* Mobile toggle button */
+.sidebar-toggle {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+    box-shadow: 0 5px 15px rgba(142, 68, 173, 0.3);
+    display: none;
+    font-size: 1.5rem;
+}
+
+@media (max-width: 992px) {
+    .sidebar-toggle {
+        display: flex;
+    }
+}
+
+/* Cliente details specific styles */
+.mb-3 .text-muted {
+    display: inline-block;
+    min-width: 120px;
+    color: var(--secondary-dark) !important;
+}
+
+.mb-3 .fw-bold {
+    color: var(--text-color);
+}
+
+/* Badge overrides */
+.badge.bg-success {
+    background-color: var(--success-color) !important;
+}
+
+.badge.bg-danger {
+    background-color: var(--danger-color) !important;
+}
+
+/* Flash messages */
+.flash-messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
+}
+
+.flash-messages .alert {
+    margin-bottom: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid var(--primary-color);
+}
+
+.flash-messages .alert-success {
+    border-left-color: var(--success-color);
+}
+
+.flash-messages .alert-danger {
+    border-left-color: var(--danger-color);
+}
+
+.flash-messages .alert-warning {
+    border-left-color: var(--warning-color);
+}
+
+/* Smooth transitions */
+*, *:before, *:after {
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+/* Empty state styling */
+.text-center.p-4 {
+    padding: 40px !important;
+}
+
+.text-center.p-4 i {
+    font-size: 3.5rem !important;
+    color: var(--border-color) !important;
+    margin-bottom: 15px;
+}
+
+.text-center.p-4 p {
+    font-size: 1.1rem;
+    color: var(--secondary-dark) !important;
+}
+
+/* Form validation */
+.is-invalid {
+    border-color: var(--danger-color) !important;
+}
+
+.invalid-feedback {
+    color: var(--danger-color);
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+/* New Product form specific */
+.navbar {
+    background-color: var(--container-bg) !important;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: var(--primary-color) !important;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+}
+
+footer {
+    background-color: #2c3e50 !important;
+    color: var(--light-text) !important;
+}
+
+footer h4 {
+    color: var(--light-text);
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+footer h4:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 50px;
+    height: 2px;
+    background-color: var(--primary-color);
+}
+
+footer .social-icons a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s;
+}
+
+footer .social-icons a:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-3px);
+}
+
+.whatsapp-float .btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+}
+
+.whatsapp-float .btn:hover {
+    transform: scale(1.1);
+}
+
+/* Dark mode toggle (optional feature) */
+.dark-mode-toggle {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    z-index: 1000;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: var(--container-bg);
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    color: var(--primary-color);
+}
+</style>
+<body>
+    <!-- Mensagens Flash -->
+    <div class="container-fluid px-4 mt-3">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- Main container -->
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="bi bi-cake2"></i>
+                <h2>Doce Sonho</h2>
+            </div>
+            <div class="sidebar-menu">
+                <p class="menu-header">Principal</p>
+                <ul>
+                    <li>
+                        <a href="{{ url_for('admin.admin_produtos') }}">
+                            <i class="bi bi-box-seam"></i> Produtos
+                        </a>
+                    </li>
+                   
+                    <li>
+                        <a href="{{ url_for('admin.admin_pedidos') }}">
+                            <i class="bi bi-bag"></i> Pedidos
+                        </a>
+                    </li>
+                   
+                </ul>
+                <p class="menu-header">Usuários</p>
+                <ul>
+                    <li>
+                        <a href="{{ url_for('admin.admin_clientes') }}" {{ 'class="active"' if not usuario.is_admin else '' }}>
+                            <i class="bi bi-people"></i> Clientes
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('admin.admin_usuarios') }}" {{ 'class="active"' if usuario.is_admin else '' }}>
+                            <i class="bi bi-person-badge"></i> Administradores
+                        </a>
+                    </li>
+                </ul>
+                <p class="menu-header">Relatórios</p>
+                <ul>
+                   
+                    <li>
+                        <a href="{{ url_for('admin.admin_logs') }}">
+                            <i class="bi bi-journal-text"></i> Logs do Sistema
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-profile">
+                <div class="profile-info">
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <div class="main-content">
+            <!-- Page header -->
+            <div class="page-header">
+                <h1 class="page-title">Editar {{ 'Administrador' if usuario.is_admin else 'Cliente' }}</h1>
+                <div>
+                    {% if usuario.is_admin %}
+                    <a href="{{ url_for('admin.admin_usuarios') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Voltar para Administradores
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('admin.admin_clientes') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Voltar para Clientes
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Form card -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-pencil-square me-2"></i>Editar {{ 'Administrador' if usuario.is_admin else 'Cliente' }}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin.admin_editar_usuario', usuario_id=usuario.id) }}">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="nome" class="form-label">Nome Completo *</label>
+                                <input type="text" class="form-control" id="nome" name="nome" value="{{ usuario.nome }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ usuario.email }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="senha" class="form-label">Nova Senha (deixe em branco para manter a atual)</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="senha" name="senha">
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="confirmar_senha" class="form-label">Confirmar Nova Senha</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="confirmar_senha">
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div id="senha-feedback" class="invalid-feedback d-none">
+                                    As senhas não coincidem
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if not usuario.is_admin %}
+                        <h5 class="mt-4 mb-3">Endereço</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="cep" class="form-label">CEP</label>
+                                <input type="text" class="form-control" id="cep" name="cep" value="{{ usuario.endereco_cep or '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="rua" class="form-label">Rua</label>
+                                <input type="text" class="form-control" id="rua" name="rua" value="{{ usuario.endereco_rua or '' }}">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="numero" class="form-label">Número</label>
+                                <input type="text" class="form-control" id="numero" name="numero" value="{{ usuario.endereco_numero or '' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="complemento" class="form-label">Complemento</label>
+                                <input type="text" class="form-control" id="complemento" name="complemento" value="{{ usuario.endereco_complemento or '' }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="bairro" class="form-label">Bairro</label>
+                                <input type="text" class="form-control" id="bairro" name="bairro" value="{{ usuario.endereco_bairro or '' }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="cidade" class="form-label">Cidade</label>
+                                <input type="text" class="form-control" id="cidade" name="cidade" value="{{ usuario.endereco_cidade or '' }}">
+                            </div>
+                            <div class="col-md-1">
+                                <label for="estado" class="form-label">UF</label>
+                                <input type="text" class="form-control" id="estado" name="estado" maxlength="2" value="{{ usuario.endereco_estado or '' }}">
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">Salvar Alterações</button>
+                            {% if usuario.is_admin %}
+                            <a href="{{ url_for('admin.admin_usuarios') }}" class="btn btn-outline-secondary">Cancelar</a>
+                            {% else %}
+                            <a href="{{ url_for('admin.admin_clientes') }}" class="btn btn-outline-secondary">Cancelar</a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="admin-footer">
+                <p>&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar toggle for mobile -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Admin scripts -->
+    <script>
+        // Toggle sidebar on mobile
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.main-content').classList.toggle('active');
+        });
+        
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const senha = document.getElementById('senha');
+            const type = senha.getAttribute('type') === 'password' ? 'text' : 'password';
+            senha.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('bi-eye');
+            this.querySelector('i').classList.toggle('bi-eye-slash');
+        });
+        
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+            const confirmarSenha = document.getElementById('confirmar_senha');
+            const type = confirmarSenha.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmarSenha.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('bi-eye');
+            this.querySelector('i').classList.toggle('bi-eye-slash');
+        });
+        
+        // Validação de senha
+        const senha = document.getElementById('senha');
+        const confirmarSenha = document.getElementById('confirmar_senha');
+        const senhaFeedback = document.getElementById('senha-feedback');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        function validarSenhas() {
+            if (senha.value && confirmarSenha.value && senha.value !== confirmarSenha.value) {
+                senhaFeedback.classList.remove('d-none');
+                confirmarSenha.classList.add('is-invalid');
+                submitBtn.disabled = true;
+            } else {
+                senhaFeedback.classList.add('d-none');
+                confirmarSenha.classList.remove('is-invalid');
+                submitBtn.disabled = false;
+            }
+        }
+        
+        senha.addEventListener('input', validarSenhas);
+        confirmarSenha.addEventListener('input', validarSenhas);
+        
+        // Para clientes: busca de CEP via API
+        {% if not usuario.is_admin %}
+        const cepInput = document.getElementById('cep');
+        
+        cepInput.addEventListener('blur', function() {
+            const cep = this.value.replace(/\D/g, '');
+            
+            if (cep.length !== 8) {
+                return;
+            }
+            
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.erro) {
+                        document.getElementById('rua').value = data.logradouro;
+                        document.getElementById('bairro').value = data.bairro;
+                        document.getElementById('cidade').value = data.localidade;
+                        document.getElementById('estado').value = data.uf;
+                    }
+                })
+                .catch(error => console.error('Erro ao buscar CEP:', error));
+        });
+        {% endif %}
+    </script>
+</body>
+</html>

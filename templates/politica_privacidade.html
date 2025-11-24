@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Política de Privacidade e Termos de Uso - Doce Sonho Confeitaria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --primary-color: #d23f72;
+            --primary-dark: #b22d5d;
+            --secondary-color: #ffd6e0;
+            --accent-color: #ffb3c6;
+            --text-color: #2d2d2d;
+            --light-text: #ffffff;
+            --background-color: #fff8fa;
+            --container-bg: #ffffff;
+            --border-color: #f1c2ce;
+            --shadow: 0 8px 20px rgba(210, 63, 114, 0.08);
+            --radius: 10px;
+        }
+
+        body, html {
+            scroll-behavior: smooth;
+            background-color: #ffb3c6;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.8;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.5px;
+            color: var(--primary-dark);
+        }
+
+        .py-5 {
+            background-color: #ffd6e0;
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--primary-color) !important;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-color) !important;
+            margin: 0 12px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            background: transparent;
+            border: none;
+        }
+
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: var(--primary-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover:after {
+            width: 70%;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+            transform: translateY(-2px);
+            background-color: transparent;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+        }
+
+        .navbar-nav .badge {
+            background-color: var(--primary-color) !important;
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform: translate(25%, -25%);
+        }
+
+        .card {
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: none;
+            overflow: hidden;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(178, 45, 93, 0.3);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+            color: var(--primary-dark);
+        }
+
+        .update-date {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .highlight {
+            background-color: #fff3e0;
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .important {
+            background-color: #ffebee;
+            border-left: 4px solid #d32f2f;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .info-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        footer {
+            background-color: #2d2d2d !important;
+            color: #f8f8f8 !important;
+            padding: 80px 0 30px;
+            position: relative;
+        }
+
+        footer:before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-color: white;
+            clip-path: ellipse(50% 50px at 50% 50px);
+        }
+
+        .footer-heading {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-heading:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 0;
+        }
+
+        .footer-text {
+            color: #aaa;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .social-icons a {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.1);
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        #contato-form .form-control {
+            background-color: rgba(255,255,255,0.08);
+            border: none;
+            color: white;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            padding: 12px 15px;
+        }
+
+        #contato-form .form-control::placeholder {
+            color: #aaa;
+        }
+
+        #contato-form .form-control:focus {
+            background-color: rgba(255,255,255,0.12);
+            box-shadow: none;
+        }
+
+        #contato-form .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        #contato-form .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+        .pt-4{
+            padding-top: 50px !important;
+
+        }
+    </style>
+</head>
+<body>
+    
+
+    <div class="container py-5">
+        <header class="text-center mb-5">
+            <h1 class="section-title">Política de Privacidade e Termos de Uso</h1>
+            <p class="update-date">Última atualização: Outubro de 2025</p>
+        </header>
+
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <section class="mb-5">
+                    <h2>1. Introdução</h2>
+                    <p>Esta Política de Privacidade descreve como coletamos, usamos, armazenamos e protegemos seus dados pessoais em conformidade com a Lei Geral de Proteção de Dados (LGPD - Lei nº 13.709/2018) e o Código de Defesa do Consumidor (CDC - Lei nº 8.078/1990).</p>
+                    <p>Ao utilizar nossos serviços, você concorda com as práticas descritas neste documento. Recomendamos a leitura atenta de todos os termos.</p>
+                </section>
+
+                <section class="mb-5">
+                    <h2>2. Definições Importantes</h2>
+                    <ul>
+                        <li><strong>Titular:</strong> Pessoa natural a quem se referem os dados pessoais.</li>
+                        <li><strong>Dados Pessoais:</strong> Informações relacionadas a pessoa natural identificada ou identificável.</li>
+                        <li><strong>Controlador:</strong> Pessoa natural ou jurídica responsável pelas decisões sobre o tratamento de dados pessoais.</li>
+                        <li><strong>Operador:</strong> Pessoa natural ou jurídica que realiza o tratamento de dados em nome do controlador.</li>
+                        <li><strong>Tratamento:</strong> Toda operação realizada com dados pessoais (coleta, armazenamento, compartilhamento, exclusão, etc.).</li>
+                    </ul>
+                </section>
+
+                <section class="mb-5">
+                    <h2>3. Dados Coletados</h2>
+                    <h3>3.1. Dados Fornecidos Diretamente</h3>
+                    <p>Coletamos os seguintes dados pessoais quando você se cadastra ou utiliza nossos serviços:</p>
+                    <ul>
+                        <li>Nome completo</li>
+                        <li>Endereço de e-mail</li>
+                        <li>CPF (criptografado)</li>
+                        <li>Telefone</li>
+                        <li>Endereço completo (para entregas)</li>
+                        <li>Data de nascimento</li>
+                        <li>Foto de perfil (opcional)</li>
+                        <li>Informações de pagamento (processadas via gateway seguro)</li>
+                    </ul>
+
+                    <h3>3.2. Dados Coletados Automaticamente</h3>
+                    <p>Durante o uso da plataforma, coletamos automaticamente:</p>
+                    <ul>
+                        <li>Endereço IP</li>
+                        <li>Tipo de navegador e dispositivo</li>
+                        <li>Páginas visitadas e tempo de navegação</li>
+                        <li>Data e hora de acesso</li>
+                        <li>Cookies e tecnologias similares</li>
+                        <li>Histórico de compras e preferências</li>
+                    </ul>
+                </section>
+
+                <section class="mb-5">
+                    <h2>4. Finalidade do Tratamento de Dados</h2>
+                    <p>Seus dados pessoais são tratados para as seguintes finalidades:</p>
+                    <ol>
+                        <li><strong>Execução do Contrato:</strong> Processar pedidos, entregas e pagamentos</li>
+                        <li><strong>Comunicação:</strong> Enviar atualizações sobre pedidos, notificações importantes e responder dúvidas</li>
+                        <li><strong>Personalização:</strong> Oferecer recomendações personalizadas de produtos</li>
+                        <li><strong>Segurança:</strong> Prevenir fraudes e garantir a segurança da plataforma</li>
+                        <li><strong>Marketing:</strong> Enviar promoções e ofertas (mediante consentimento)</li>
+                        <li><strong>Cumprimento Legal:</strong> Atender obrigações legais e regulatórias</li>
+                        <li><strong>Melhoria dos Serviços:</strong> Análise de uso e aprimoramento da experiência</li>
+                    </ol>
+                </section>
+
+                <section class="mb-5">
+                    <h2>5. Base Legal para o Tratamento</h2>
+                    <p>O tratamento dos seus dados pessoais está fundamentado nas seguintes bases legais da LGPD:</p>
+                    <ul>
+                        <li><strong>Execução de contrato:</strong> Para processar e entregar seus pedidos</li>
+                        <li><strong>Consentimento:</strong> Para envio de comunicações de marketing</li>
+                        <li><strong>Legítimo interesse:</strong> Para prevenção de fraudes e segurança</li>
+                        <li><strong>Cumprimento de obrigação legal:</strong> Para atender requisitos fiscais e regulatórios</li>
+                    </ul>
+                </section>
+
+                <section class="mb-5">
+                    <h2>6. Compartilhamento de Dados</h2>
+                    <p>Seus dados pessoais podem ser compartilhados nas seguintes situações:</p>
+                    <ul>
+                        <li><strong>Processadores de Pagamento:</strong> Para processar transações financeiras de forma segura</li>
+                        <li><strong>Serviços de Entrega:</strong> Para realizar a entrega dos produtos adquiridos</li>
+                        <li><strong>Prestadores de Serviços:</strong> Empresas que nos auxiliam na operação (hospedagem, e-mail, etc.)</li>
+                        <li><strong>Autoridades Competentes:</strong> Quando exigido por lei ou ordem judicial</li>
+                    </ul>
+                    <p><strong>Importante:</strong> Nunca vendemos, alugamos ou comercializamos seus dados pessoais para terceiros.</p>
+                </section>
+
+                <section class="mb-5">
+                    <h2>7. Armazenamento e Segurança</h2>
+                    <h3>7.1. Medidas de Segurança</h3>
+                    <p>Implementamos medidas técnicas e organizacionais para proteger seus dados:</p>
+                    <ul>
+                        <li>Criptografia de dados sensíveis (SSL/TLS)</li>
+                        <li>Controle de acesso restrito</li>
+                        <li>Monitoramento de segurança contínuo</li>
+                        <li>Backups regulares</li>
+                        <li>Testes de vulnerabilidade periódicos</li>
+                        <li>Treinamento de equipe em proteção de dados</li>
+                    </ul>
+
+                    <h3>7.2. Prazo de Armazenamento</h3>
+                    <p>Mantemos seus dados pessoais pelo tempo necessário para:</p>
+                    <ul>
+                        <li>Cumprir as finalidades descritas nesta política</li>
+                        <li>Atender obrigações legais (5 anos para dados fiscais)</li>
+                        <li>Resguardar direitos em processos judiciais</li>
+                    </ul>
+                    <p>Após esses períodos, os dados serão anonimizados ou excluídos de forma segura.</p>
+                </section>
+
+                <section class="mb-5">
+                    <h2>8. Seus Direitos como Titular (LGPD)</h2>
+                    <p>De acordo com a LGPD, você possui os seguintes direitos:</p>
+                    <ol>
+                        <li><strong>Confirmação e Acesso:</strong> Confirmar se tratamos seus dados e acessá-los</li>
+                        <li><strong>Correção:</strong> Solicitar a correção de dados incompletos, inexatos ou desatualizados</li>
+                        <li><strong>Anonimização, Bloqueio ou Eliminação:</strong> Solicitar a exclusão de dados desnecessários ou excessivos</li>
+                        <li><strong>Portabilidade:</strong> Solicitar a transferência de seus dados para outro fornecedor</li>
+                        <li><strong>Informação sobre Compartilhamento:</strong> Saber com quem compartilhamos seus dados</li>
+                        <li><strong>Revogação do Consentimento:</strong> Retirar seu consentimento a qualquer momento</li>
+                        <li><strong>Oposição:</strong> Opor-se ao tratamento de dados realizado em desacordo com a LGPD</li>
+                    </ol>
+                    <p>Para exercer seus direitos, entre em contato através do e-mail: <strong>privacidade@docesonho.com.br</strong></p>
+                </section>
+
+                <section class="mb-5">
+                    <h2>9. Política de Cancelamento de Pedidos (CDC)</h2>
+                    
+                    <h3>9.1. Direito de Arrependimento (Art. 49 do CDC)</h3>
+                    <div class="highlight">
+                        <p><strong>Você tem o direito de desistir da compra no prazo de 7 (sete) dias corridos, contados da data de recebimento do produto, sem necessidade de justificativa.</strong></p>
+                    </div>
+                    
+                    <p>Condições para o exercício do direito de arrependimento:</p>
+                    <ul>
+                        <li>O produto deve estar em sua embalagem original, sem sinais de uso</li>
+                        <li>Produtos alimentícios perecíveis seguem condições especiais (ver item 9.4)</li>
+                        <li>A solicitação deve ser feita através dos nossos canais de atendimento</li>
+                        <li>O reembolso será processado em até 10 dias úteis após a devolução</li>
+                    </ul>
+
+                    <h3>9.2. Cancelamento pelo Cliente Antes da Produção</h3>
+                    <p>Você pode cancelar seu pedido sem custo nas seguintes situações:</p>
+                    <ul>
+                        <li><strong>Produtos Prontos:</strong> Até 24 horas antes da entrega/retirada</li>
+                        <li><strong>Produtos Personalizados:</strong> Até 48 horas antes do início da produção</li>
+                    </ul>
+                    <p>Após esses prazos, será cobrada taxa de cancelamento de 30% do valor do pedido para cobrir custos de produção.</p>
+
+                    <h3>9.3. Cancelamento pela Empresa</h3>
+                    <p>Reservamo-nos o direito de cancelar pedidos nas seguintes situações:</p>
+                    <ul>
+                        <li>Impossibilidade de confirmar dados de pagamento ou entrega</li>
+                        <li>Indisponibilidade do produto</li>
+                        <li>Suspeita de fraude</li>
+                        <li>Falhas técnicas no sistema</li>
+                    </ul>
+                    <p>Nesses casos, você será notificado imediatamente e receberá reembolso integral em até 5 dias úteis.</p>
+
+                    <h3>9.4. Condições Especiais para Produtos Perecíveis</h3>
+                    <div class="important">
+                        <p><strong>Importante:</strong> Por se tratar de produtos alimentícios perecíveis e/ou personalizados, o direito de arrependimento pode não se aplicar nos seguintes casos:</p>
+                        <ul>
+                            <li>Produtos fabricados sob encomenda com especificações personalizadas</li>
+                            <li>Produtos que se deteriorem ou percam validade rapidamente</li>
+                            <li>Produtos cuja embalagem foi violada após a entrega</li>
+                        </ul>
+                        <p>Nestas situações, o cancelamento só será aceito em caso de defeito, vício ou divergência do produto.</p>
+                    </div>
+
+                    <h3>9.5. Procedimento para Cancelamento</h3>
+                    <p>Para cancelar seu pedido, siga os passos:</p>
+                    <ol>
+                        <li>Acesse "Meus Pedidos" em sua conta</li>
+                        <li>Selecione o pedido que deseja cancelar</li>
+                        <li>Clique em "Solicitar Cancelamento"</li>
+                        <li>Informe o motivo do cancelamento</li>
+                        <li>Aguarde a confirmação por e-mail</li>
+                    </ol>
+                    <p>Alternativamente, entre em contato através dos nossos canais de atendimento.</p>
+
+                    <h3>9.6. Reembolso</h3>
+                    <p>Política de reembolso:</p>
+                    <ul>
+                        <li><strong>Pagamento por Cartão:</strong> Estorno em 1 a 2 faturas</li>
+                        <li><strong>Pagamento por Pix:</strong> Reembolso em até 5 dias úteis na conta informada</li>
+                        <li><strong>Pagamento por Boleto:</strong> Reembolso em até 10 dias úteis via transferência bancária</li>
+                    </ul>
+                </section>
+
+                <section class="mb-5">
+                    <h2>10. Garantia e Vícios do Produto (CDC)</h2>
+                    <p>Conforme previsto no Código de Defesa do Consumidor:</p>
+                    
+                    <h3>10.1. Garantia Legal</h3>
+                    <p>Todos os produtos possuem garantia legal de 30 dias para produtos não duráveis (Art. 26 do CDC).</p>
+
+                    <h3>10.2. Vícios Aparentes</h3>
+                    <p>Caso identifique algum problema com o produto no momento da entrega:</p>
+                    <ul>
+                        <li>Recuse o recebimento imediatamente</li>
+                        <li>Fotografe o produto e a embalagem</li>
+                        <li>Entre em contato conosco em até 24 horas</li>
+                    </ul>
+
+                    <h3>10.3. Vícios Ocultos</h3>
+                    <p>Para vícios que se manifestem após o recebimento:</p>
+                    <ul>
+                        <li>Notifique-nos em até 30 dias do recebimento</li>
+                        <li>Forneça fotos e descrição detalhada do problema</li>
+                        <li>Teremos 30 dias para solucionar o problema</li>
+                    </ul>
+
+                    <h3>10.4. Soluções Oferecidas</h3>
+                    <p>Em caso de vício ou defeito, você pode escolher entre:</p>
+                    <ol>
+                        <li>Substituição do produto por outro em perfeitas condições</li>
+                        <li>Reembolso integral do valor pago</li>
+                        <li>Abatimento proporcional do preço (quando aplicável)</li>
+                    </ol>
+                </section>
+
+                <section class="mb-5">
+                    <h2>11. Cookies</h2>
+                    <p>Utilizamos cookies e tecnologias similares para:</p>
+                    <ul>
+                        <li>Manter você conectado à sua conta</li>
+                        <li>Lembrar suas preferências</li>
+                        <li>Analisar o uso da plataforma</li>
+                        <li>Personalizar conteúdo e anúncios</li>
+                    </ul>
+                    <p>Você pode gerenciar suas preferências de cookies nas configurações do navegador, mas isso pode afetar algumas funcionalidades do site.</p>
+                </section>
+
+                <section class="mb-5">
+                    <h2>12. Menores de Idade</h2>
+                    <p>Nossos serviços são destinados a pessoas maiores de 18 anos. Não coletamos intencionalmente dados de menores de idade. Se você é responsável por um menor e acredita que ele forneceu dados pessoais, entre em contato conosco.</p>
+                </section>
+
+                <section class="mb-5">
+                    <h2>13. Transferência Internacional de Dados</h2>
+                    <p>Seus dados são armazenados em servidores localizados no Brasil. Em casos excepcionais, quando houver transferência internacional, garantimos que o país de destino possui nível adequado de proteção de dados ou adotamos cláusulas contratuais padrão.</p>
+                </section>
+
+                <section class="mb-5">
+                    <h2>14. Alterações nesta Política</h2>
+                    <p>Esta Política de Privacidade pode ser atualizada periodicamente. Notificaremos você sobre mudanças significativas através de:</p>
+                    <ul>
+                        <li>Aviso destacado no site</li>
+                        <li>E-mail cadastrado</li>
+                        <li>Notificação no aplicativo (quando aplicável)</li>
+                    </ul>
+                    <p>Recomendamos revisar esta política regularmente.</p>
+                </section>
+
+                <section class="mb-5">
+                    <h2>15. Encarregado de Proteção de Dados (DPO)</h2>
+                    <p>Nosso Encarregado de Proteção de Dados está disponível para esclarecer dúvidas sobre o tratamento de dados pessoais:</p>
+                    <div class="info-box">
+                        <p><strong>Nome:</strong> Responsável DPO - Doce Sonho</p>
+                        <p><strong>E-mail:</strong> dpo@docesonho.com.br</p>
+                        <p><strong>Telefone:</strong> (11) 9999-9999</p>
+                    </div>
+                </section>
+
+                <section class="mb-5">
+                    <h2>16. Autoridade Nacional de Proteção de Dados (ANPD)</h2>
+                    <p>Caso suas solicitações não sejam atendidas satisfatoriamente, você pode contatar a Autoridade Nacional de Proteção de Dados:</p>
+                    <div class="info-box">
+                        <p><strong>Site:</strong> www.gov.br/anpd</p>
+                        <p><strong>E-mail:</strong> contato@anpd.gov.br</p>
+                    </div>
+                </section>
+
+                <section class="mb-5">
+                    <h2>17. Canais de Atendimento</h2>
+                    <p>Para dúvidas, solicitações ou reclamações, entre em contato através de:</p>
+                    <ul>
+                        <li><strong>E-mail:</strong> contato@docesonho.com.br</li>
+                        <li><strong>Telefone:</strong> (11) 9999-9999</li>
+                        <li><strong>WhatsApp:</strong> (11) 99999-9999</li>
+                        <li><strong>Chat online:</strong> Disponível no site durante horário comercial</li>
+                        <li><strong>Endereço:</strong> Rua das Flores, 123 - Centro</li>
+                    </ul>
+                    <p><strong>Horário de atendimento:</strong> Segunda a sexta, das 9h às 18h (exceto feriados)</p>
+                </section>
+
+                <section class="mb-5">
+                    <h2>18. Legislação Aplicável</h2>
+                    <p>Esta Política de Privacidade é regida pelas leis brasileiras, especialmente:</p>
+                    <ul>
+                        <li>Lei Geral de Proteção de Dados (Lei nº 13.709/2018)</li>
+                        <li>Código de Defesa do Consumidor (Lei nº 8.078/1990)</li>
+                        <li>Marco Civil da Internet (Lei nº 12.965/2014)</li>
+                        <li>Código Civil Brasileiro (Lei nº 10.406/2002)</li>
+                    </ul>
+                </section>
+
+                <section class="mb-5">
+                    <h2>19. Aceitação dos Termos</h2>
+                    <p>Ao utilizar nossos serviços, você declara que:</p>
+                    <ul>
+                        <li>Leu e compreendeu esta Política de Privacidade</li>
+                        <li>Concorda com os termos aqui estabelecidos</li>
+                        <li>Tem capacidade legal para aceitar estes termos</li>
+                        <li>Forneceu informações verdadeiras e atualizadas</li>
+                    </ul>
+                </section>
+
+                <footer class="mt-5 pt-4 border-top">
+                    <p><strong>Razão Social:</strong> Doce Sonho Confeitaria Ltda.</p>
+                    <p><strong>CNPJ:</strong> XX.XXX.XXX/XXXX-XX</p>
+                    <p><strong>Endereço:</strong> Rua das Flores, 123 - Centro</p>
+                    <p><strong>Data da última atualização:</strong> Outubro de 2025</p>
+                    <p style="margin-top: 20px;">© 2025 - Todos os direitos reservados</p>
+                </footer>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4 mb-5">
+            <a href="{{ url_for('auth.registro') }}" class="btn btn-primary">Voltar à Página de Registro</a>
+        </div>
+    </div>
+
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.getElementById('contato-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Obrigado pelo contato! Responderemos em breve.');
+            this.reset();
+        });
+    </script>
+</body>
+</html>

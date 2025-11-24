@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todos os Produtos - Doce Sonho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/base.css') }}">
+    <style>
+        :root {
+            --primary-color: #d23f72;        /* Mais escuro e elegante */
+            --primary-dark: #b22d5d;         /* Tom mais profundo */
+            --secondary-color: #ffd6e0;      /* Mantendo o rosa claro suave */
+            --accent-color: #ffb3c6;         /* Tom complementar */
+            --text-color: #2d2d2d;           /* Texto mais escuro e sofisticado */
+            --light-text: #ffffff;           /* Branco puro para contraste */
+            --background-color: #fff8fa;     /* Fundo com tom rosa sutil */
+            --container-bg: #ffffff;         /* Containers brancos */
+            --border-color: #f1c2ce;         /* Bordas mais sutis */
+            --shadow: 0 8px 20px rgba(210, 63, 114, 0.08); /* Sombra mais suave com tom rosa */
+            --radius: 10px;                  /* Bordas mais arredondadas */
+        }
+
+        body, html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.8;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--primary-color) !important;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-color) !important;
+            margin: 0 12px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            background: transparent;
+            border: none;
+        }
+
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: var(--primary-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover:after {
+            width: 70%;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+            transform: translateY(-2px);
+            background-color: transparent;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+        }
+
+        .navbar-nav .badge {
+            background-color: var(--primary-color) !important;
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform: translate(25%, -25%);
+        }
+
+        /* Section headers */
+        .section-header {
+            margin-bottom: 50px;
+            position: relative;
+            text-align: center;
+        }
+
+        .display-5 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+            color: var(--primary-dark);
+        }
+
+        .display-5:after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .intro-message {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 700px;
+            margin: 20px auto 0;
+        }
+
+        /* Filtros */
+        .filtros {
+            background-color: var(--container-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+
+        .form-select, .form-control {
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus, .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(210, 63, 114, 0.25);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 30px;
+            padding: 8px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(178, 45, 93, 0.2);
+        }
+
+        .btn-outline-secondary {
+            border-radius: 30px;
+            padding: 8px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+
+        .btn-outline-secondary:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-3px);
+            background-color: transparent;
+        }
+
+        /* Produtos cards */
+        .produto-card {
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: none;
+            background-color: var(--container-bg);
+        }
+
+        .produto-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 15px 40px rgba(210, 63, 114, 0.15);
+        }
+
+        .produto-card img {
+            height: 240px;
+            object-fit: cover;
+            transition: all 0.5s ease;
+        }
+
+        .produto-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .produto-info {
+            padding: 25px 20px;
+        }
+
+        .produto-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .produto-card h3 a {
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .produto-card:hover h3 a {
+            color: var(--primary-color);
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background-color: var(--secondary-color) !important;
+            color: var(--primary-dark) !important;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .text-center{
+            padding-bottom:30px;
+        }
+
+        .preco {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        /* Monte seu bolo */
+        .btn-danger {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            
+            box-shadow: 0 8px 20px rgba(210, 63, 114, 0.15);
+        }
+
+        .btn-danger:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(210, 63, 114, 0.25);
+        }
+
+        /* Footer principal */
+footer {
+    background-color: #2d2d2d !important;
+    color: #f8f8f8 !important;
+    padding: 80px 0 30px;
+    position: relative;
+}
+
+footer:before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background-color: white;
+    clip-path: ellipse(50% 50px at 50% 50px);
+}
+
+.footer-heading {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 25px;
+    position: relative;
+    display: inline-block;
+}
+
+.footer-heading:after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 2px;
+    background-color: var(--primary-color);
+    bottom: -10px;
+    left: 0;
+}
+
+.footer-text {
+    color: #aaa;
+    margin-bottom: 20px;
+    line-height: 1.8;
+}
+
+.footer-social {
+    margin-top: 25px;
+}
+
+.footer-social a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+}
+
+.footer-social a:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-3px);
+}
+
+.footer-links {
+    list-style: none;
+    padding-left: 0;
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: #aaa;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.footer-links a:hover {
+    color: white;
+    transform: translateX(5px);
+}
+
+.footer-contact li {
+    color: #aaa;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.footer-contact-icon {
+    margin-right: 15px;
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+
+.footer-form .form-control {
+    background-color: rgba(255,255,255,0.08);
+    border: none;
+    color: white;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.footer-form .form-control::placeholder {
+    color: #aaa;
+}
+
+.footer-form .form-control:focus {
+    background-color: rgba(255,255,255,0.12);
+    box-shadow: none;
+}
+
+.footer-form .btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 25px;
+    border-radius: 5px;
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.footer-form .btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-3px);
+}
+
+.footer-bottom {
+    padding-left: 30px;
+    padding-top: 30px;
+    margin-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.footer-copyright {
+    color: #aaa;
+}
+
+.footer-policy a {
+    color: #aaa;
+    margin-left: 20px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.footer-policy a:hover {
+    color: white;
+}
+
+/* CSS responsivo do footer */
+@media (max-width: 768px) {
+    .footer-heading {
+        margin-top: 30px;
+    }
+    
+    .footer-policy {
+        text-align: center !important;
+        margin-top: 15px;
+    }
+    
+    .footer-copyright {
+        text-align: center !important;
+    }
+}
+
+        /* Alert messages */
+        .alert {
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            border: none;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease;
+        }
+
+        .fade-in.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+       .row {
+          padding-top: 50px;
+        }
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .back-to-top a:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-5px);
+        }
+        .produto-info .card-text {
+    height: 60px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+        
+    </style>
+</head>
+<body>
+    <!-- Barra de navegação -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Doce Sonho</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link " href="{{ url_for('index') }}">Início</a>
+                    </li>
+                     <li class="nav-item">
+
+                        
+                       <a class="nav-link" href="{{ url_for('sobrenos.sobrenos') }}">Sobre Nós</a>
+                    </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('product.montar_bolo') }}">Monte seu Bolo</a>
+                    </li>
+                    
+                    
+                    {% if 'usuario_id' in session %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('order.pedidos') }}">Meus Pedidos</a>
+                    </li>
+                    {% if is_admin() %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.admin_produtos') }}">Admin</a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                    <li class="nav-item position-relative">
+                        <a class="nav-link" href="{{ url_for('cart.carrinho') }}">
+                            <i class="bi bi-cart3"></i>
+                            {% if 'carrinho' in session and session['carrinho'] %}
+                            <span class="badge rounded-pill">{{ session['carrinho']|length }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% if 'usuario_id' in session %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('user.perfil') }}"><i class="bi bi-person"></i> Perfil</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mensagens Flash -->
+    <div class="container mt-3">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <!-- Conteúdo Principal -->
+        <section id="produtos" class="py-5">
+            <div class="section-header">
+                <h1 class="display-5">Catálogo Completo</h1>
+                <p class="intro-message">Conheça todos os produtos da Doce Sonho Confeitaria</p>
+            </div>
+
+            <!-- Barra de filtros -->
+            <div class="filtros mb-4">
+                <div class="row">
+                  <div class="col-md-3 mb-3">
+                <select class="form-select" id="filtro-categoria">
+                <option value="">Todas as categorias</option>
+                {% for categoria in categorias %}
+                <option value="{{ categoria|lower }}">{{ categoria }}</option>
+                 {% endfor %}
+                </select>
+                </div>
+                    <div class="col-md-3 mb-3">
+                        <select class="form-select" id="filtro-preco">
+                            <option value="">Ordenar por preço</option>
+                            <option value="menor">Menor preço</option>
+                            <option value="maior">Maior preço</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Buscar produtos..." id="busca-produto">
+                            <button class="btn btn-primary" type="button"><i class="bi bi-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for produto in produtos %}
+                <div class="col">
+                    <div class="produto-card card h-100">
+                        {% if produto.imagem %}
+                        <img src="{{ produto.imagem }}" class="card-img-top" alt="{{ produto.nome }}" 
+                            onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text={{ produto.nome }}';">
+                        {% else %}
+                        <img src="https://via.placeholder.com/300x200?text={{ produto.nome }}" class="card-img-top" alt="{{ produto.nome }}">
+                        {% endif %}
+                        <div class="produto-info card-body">
+                            <h3 class="card-title">
+                                <a href="{{ url_for('product.detalhes_produto', produto_id=produto.id) }}" class="text-decoration-none text-dark">
+                                    {{ produto.nome }}
+                                </a>
+                            </h3>
+                            <div class="badge">{{ produto.categoria if produto.categoria else "Diversos" }}</div>
+                            <p class="card-text">{{ produto.descricao }}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div style="width: 120px; display: flex; align-items: center;">
+                            <span class="preco mb-0" style="line-height: 1;">R$ {{ "%.2f"|format(produto.preco) }}</span>
+                        </div>
+                        <div class="d-flex gap-2 flex-shrink-0">
+                            <a href="{{ url_for('product.detalhes_produto', produto_id=produto.id) }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-eye"></i> Detalhes
+                            </a>
+                            <a href="{{ url_for('cart.adicionar_ao_carrinho', produto_id=produto.id) }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-cart-plus"></i> Adicionar
+                            </a>
+                        </div>
+                    </div>
+
+
+
+
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="text-center mt-5">
+                <a href="{{ url_for('product.montar_bolo') }}" class="btn btn-lg btn-danger">
+                    <i class="bi bi-cake2"></i> Monte o seu Bolo Personalizado
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <!-- Rodapé -->
+    <footer>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="footer-heading">Doce Sonho Confeitaria</h4>
+                    <p class="footer-text">Transformamos ingredientes selecionados em momentos doces e inesquecíveis desde 2015. Nossa paixão é adoçar sua vida com sabores especiais.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-whatsapp"></i></a>
+                        <a href="#"><i class="bi bi-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h4 class="footer-heading">Links Rápidos</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('index') }}">Início</a></li>
+                        <li><a href="{{ url_for('product.todos_produtos') }}">Produtos</a></li>
+                        <li><a href="{{ url_for('product.montar_bolo') }}">Monte seu Bolo</a></li>
+                        <li><a href="{{ url_for('sobrenos.sobrenos') }}">Sobre Nós</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="footer-heading">Contato</h4>
+                    <ul class="footer-links footer-contact">
+                        <li>
+                            <i class="bi bi-geo-alt footer-contact-icon"></i>
+                            Rua das Flores, 123 - Centro
+                        </li>
+                        <li>
+                            <i class="bi bi-telephone footer-contact-icon"></i>
+                            (11) 9999-9999
+                        </li>
+                        <li>
+                            <i class="bi bi-envelope footer-contact-icon"></i>
+                            contato@docesonho.com.br
+                        </li>
+                        <li>
+                            <i class="bi bi-clock footer-contact-icon"></i>
+                            Seg-Sex: 9h às 18h | Sáb: 9h às 14h
+                        </li>
+                    </ul>
+                </div>
+               
+            </div>
+            <div class="footer-bottom">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="footer-copyright">&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
+                    </div>
+                    <div class="col-md-6 text-md-end footer-policy">
+                         <a  href="{{ url_for('auth.politica_privacidade') }}">Política de Privacidade</a>
+                     
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="back-to-top">
+        <a href="#" id="back-to-top-btn">
+            <i class="bi bi-arrow-up"></i>
+        </a>
+    </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script para o formulário de contato -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Adicionar classe de animação aos cards
+            const cards = document.querySelectorAll('.produto-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('fade-in');
+                    card.classList.add('show');
+                }, 100 * index);
+            });
+            
+            // Script para os filtros
+            const filtroCategoriaEl = document.getElementById('filtro-categoria');
+            const filtroPrecoEl = document.getElementById('filtro-preco');
+            const buscaProdutoEl = document.getElementById('busca-produto');
+            const produtosEl = document.querySelectorAll('.col');
+            
+            // Função para aplicar os filtros
+            function aplicarFiltros() {
+                const categoriaFiltro = filtroCategoriaEl.value.toLowerCase();
+                const precoFiltro = filtroPrecoEl.value;
+                const buscaFiltro = buscaProdutoEl.value.toLowerCase().trim();
+                
+                // Coletar todos os produtos visíveis após o filtro de categoria e busca
+                const produtosVisiveis = [];
+                
+                produtosEl.forEach(produto => {
+                    const categoriaElement = produto.querySelector('.badge');
+                    const categoria = categoriaElement ? categoriaElement.textContent.toLowerCase().trim() : "";
+                    
+                    const nomeElement = produto.querySelector('.card-title');
+                    const nome = nomeElement ? nomeElement.textContent.toLowerCase().trim() : "";
+                    
+                    const descricaoElement = produto.querySelector('.card-text');
+                    const descricao = descricaoElement ? descricaoElement.textContent.toLowerCase().trim() : "";
+                    
+                    let mostrar = true;
+                    
+                    // Filtro de categoria - verificação exata ou parcial melhorada
+                    if (categoriaFiltro && categoriaFiltro !== "") {
+                        // Verificar se a categoria é exatamente igual ou contém a string de filtro
+                        if (categoria !== categoriaFiltro && !categoria.includes(categoriaFiltro)) {
+                            mostrar = false;
+                        }
+                    }
+                    
+                    // Filtro de busca - melhorado para buscar em nome e descrição
+                    if (buscaFiltro && buscaFiltro !== "") {
+                        const palavrasBusca = buscaFiltro.split(' ');
+                        const conteudoProduto = nome + ' ' + descricao + ' ' + categoria;
+                        
+                        // Uma palavra é suficiente para corresponder
+                        const encontrou = palavrasBusca.some(palavra => 
+                            palavra.length > 1 && conteudoProduto.includes(palavra)
+                        );
+                        
+                        if (!encontrou) {
+                            mostrar = false;
+                        }
+                    }
+                    
+                    if (mostrar) {
+                        produto.style.display = '';  // Usando string vazia em vez de 'block' para respeitar o display original
+                        produtosVisiveis.push(produto);
+                    } else {
+                        produto.style.display = 'none';
+                    }
+                });
+                
+                // Ordenar por preço se necessário
+                if (precoFiltro && produtosVisiveis.length > 1) {
+                    const container = document.querySelector('.row.row-cols-1.row-cols-md-2.row-cols-lg-3.g-4');
+                    
+                    produtosVisiveis.sort((a, b) => {
+                        const precoAElement = a.querySelector('.preco');
+                        const precoBElement = b.querySelector('.preco');
+                        
+                        const precoA = precoAElement ? parseFloat(precoAElement.textContent.replace('R$ ', '').replace(',', '.')) : 0;
+                        const precoB = precoBElement ? parseFloat(precoBElement.textContent.replace('R$ ', '').replace(',', '.')) : 0;
+                        
+                        return precoFiltro === 'menor' ? precoA - precoB : precoB - precoA;
+                    });
+                    
+                    // Reordenar no DOM
+                    produtosVisiveis.forEach(produto => {
+                        container.appendChild(produto);
+                    });
+                }
+                
+                // Adicione um feedback visual quando não houver resultados
+                const semResultados = document.getElementById('sem-resultados');
+                if (produtosVisiveis.length === 0) {
+                    if (!semResultados) {
+                        const mensagem = document.createElement('div');
+                        mensagem.id = 'sem-resultados';
+                        mensagem.className = 'alert alert-info mt-4 text-center';
+                        mensagem.innerHTML = `Nenhum produto encontrado. <button class="btn btn-sm btn-link" onclick="limparFiltros()">Limpar filtros</button>`;
+                        document.querySelector('#produtos').appendChild(mensagem);
+                    }
+                } else if (semResultados) {
+                    semResultados.remove();
+                }
+            }
+            // Botão voltar ao topo
+            const backToTopButton = document.querySelector('.back-to-top');
+            
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.add('show');
+                } else {
+                    backToTopButton.classList.remove('show');
+                }
+            });
+            
+            document.getElementById('back-to-top-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+
+
+            // Função para limpar os filtros
+            window.limparFiltros = function() {
+                filtroCategoriaEl.value = '';
+                filtroPrecoEl.value = '';
+                buscaProdutoEl.value = '';
+                aplicarFiltros();
+            };
+            
+            // Adicionar event listeners
+            filtroCategoriaEl.addEventListener('change', aplicarFiltros);
+            filtroPrecoEl.addEventListener('change', aplicarFiltros);
+            
+            // Para busca, aplicamos o filtro quando o usuário para de digitar
+            let timeout = null;
+            buscaProdutoEl.addEventListener('keyup', function() {
+                clearTimeout(timeout);
+                timeout = setTimeout(aplicarFiltros, 300); // Reduzido para 300ms para resposta mais rápida
+            });
+            
+            // Também aplicar filtro ao pressionar Enter no campo de busca
+            buscaProdutoEl.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    aplicarFiltros();
+                }
+            });
+            
+            // Aplicar botão de busca
+            document.querySelector('.input-group button').addEventListener('click', aplicarFiltros);
+        });
+        
+        // Script para o formulário de contato (mantido do script original)
+        document.getElementById('contato-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Obrigado pelo contato! Responderemos em breve.');
+            this.reset();
+        });
+    </script>
+</body>
+</html>

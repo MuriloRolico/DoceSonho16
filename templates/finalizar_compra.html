@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doce Sonho - Finalizar Compra</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --primary-color: #d23f72;
+            --primary-dark: #b22d5d;
+            --secondary-color: #ffd6e0;
+            --accent-color: #ffb3c6;
+            --text-color: #2d2d2d;
+            --light-text: #ffffff;
+            --background-color: #fff8fa;
+            --container-bg: #ffffff;
+            --border-color: #f1c2ce;
+            --shadow: 0 8px 20px rgba(210, 63, 114, 0.08);
+            --radius: 10px;
+        }
+
+        body, html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.8;
+            background-color: var(--background-color);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--primary-color) !important;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-color) !important;
+            margin: 0 12px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            background: transparent;
+            border: none;
+        }
+
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: var(--primary-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover:after {
+            width: 70%;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+            transform: translateY(-2px);
+            background-color: transparent;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+        }
+
+        .navbar-nav .badge {
+            background-color: var(--primary-color) !important;
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform: translate(25%, -25%);
+        }
+
+        .card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: none;
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+
+        .card-header.bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.2);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th, .table td {
+            padding: 12px 15px;
+            vertical-align: middle;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .alert {
+            border-radius: 10px;
+            padding: 15px 20px;
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 99;
+        }
+
+        .whatsapp-float a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #25D366;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-float a:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #2d2d2d !important;
+            color: #f8f8f8 !important;
+            padding: 80px 0 30px;
+            position: relative;
+        }
+
+        footer:before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-color: white;
+            clip-path: ellipse(50% 50px at 50% 50px);
+        }
+
+        .footer-heading {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-heading:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 0;
+        }
+
+        .footer-text {
+            color: #aaa;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .footer-social {
+            margin-top: 25px;
+        }
+
+        .footer-social a {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .footer-links {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #aaa;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-contact li {
+            color: #aaa;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-contact-icon {
+            margin-right: 15px;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .footer-form .form-control {
+            background-color: rgba(255,255,255,0.08);
+            border: none;
+            color: white;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .footer-form .form-control::placeholder {
+            color: #aaa;
+        }
+
+        .footer-form .form-control:focus {
+            background-color: rgba(255,255,255,0.12);
+            box-shadow: none;
+        }
+
+        .footer-form .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-form .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            padding-left: 30px;
+            padding-top: 30px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-copyright {
+            color: #aaa;
+        }
+
+        .footer-policy a {
+            color: #aaa;
+            margin-left: 20px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .footer-policy a:hover {
+            color: white;
+        }
+
+        .social-icons a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(210, 63, 114, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        /* Estilo para o aviso de prazo de entrega */
+        .prazo-entrega-aviso {
+            background: #F57C00 ;
+            border: 2px solid #000000ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-align: center;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .prazo-entrega-aviso i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: white;
+        }
+
+        
+
+        @media (max-width: 768px) {
+            .d-md-flex {
+                display: grid !important;
+                grid-gap: 10px;
+            }
+            
+            .prazo-entrega-aviso {
+                font-size: 1rem;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegação -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Doce Sonho</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if 'usuario_id' in session %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('order.pedidos') }}">Meus Pedidos</a>
+                    </li>
+                    {% if is_admin() %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.admin_produtos') }}">Admin</a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cart.carrinho') }}">
+                            Carrinho
+                            {% if itens %}
+                            <span class="badge bg-danger">{{ itens|length }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% if 'usuario_id' in session %}
+                    <!-- Botões para usuário logado -->
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.registro') }}">Registrar</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mensagens Flash -->
+    <div class="container mt-3">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div class="container my-5">
+        <h1 class="mb-4">Finalizar Compra</h1>
+
+        {% if itens %}
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Resumo do Pedido</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Quantidade</th>
+                                    <th>Preço Unitário</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in itens %}
+                                <tr>
+                                    <td>{{ item.nome }}</td>
+                                    <td>{{ item.quantidade }}</td>
+                                    <td>R$ {{ "%.2f"|format(item.preco) }}</td>
+                                    <td class="text-end">R$ {{ "%.2f"|format(item.subtotal) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot id="resumo-valores">
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Subtotal</strong></td>
+                                    <td class="text-end"><strong>R$ {{ "%.2f"|format(total) }}</strong></td>
+                                </tr>
+                                <tr id="linha-frete" style="display: none;">
+                                    <td colspan="3" class="text-end">Taxa de Entrega</td>
+                                    <td class="text-end">R$ 12,00</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total</strong></td>
+                                    <td class="text-end"><strong id="valor-total">R$ {{ "%.2f"|format(total) }}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Opções de Entrega</h2>
+                </div>
+                <div class="card-body">
+                    <form id="entrega-form">
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo_entrega" id="entrega_retirada" value="retirada" checked>
+                                <label class="form-check-label" for="entrega_retirada">
+                                    Retirada na loja
+                                </label>
+                                <p class="text-muted small">Retire seu pedido diretamente em nossa loja sem custo adicional.</p>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo_entrega" id="entrega_frete" value="frete">
+                                <label class="form-check-label" for="entrega_frete">
+                                    Entrega no endereço cadastrado (+ R$ 12,00)
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Aviso de prazo de entrega -->
+                        <div id="prazo-entrega-aviso" class="prazo-entrega-aviso" style="display: none;">
+                            <i class="bi bi-clock-history"></i>
+                            <strong>ATENÇÃO:</strong> A entrega será realizada em 1 dia útil a partir da confirmação do pagamento.
+                        </div>
+                        
+                        <div id="endereco-entrega" class="mb-3 border p-3 rounded" style="display: none;">
+                            <h5>Endereço de Entrega</h5>
+                            {% if usuario is defined and usuario.endereco_rua %}
+                                <p class="mb-1"><strong>Endereço:</strong> {{ usuario.endereco_rua }}, {{ usuario.endereco_numero }}</p>
+                                {% if usuario.endereco_complemento %}
+                                    <p class="mb-1"><strong>Complemento:</strong> {{ usuario.endereco_complemento }}</p>
+                                {% endif %}
+                                <p class="mb-1"><strong>Bairro:</strong> {{ usuario.endereco_bairro }}</p>
+                                <p class="mb-1"><strong>Cidade/Estado:</strong> {{ usuario.endereco_cidade }}/{{ usuario.endereco_estado }}</p>
+                                <p class="mb-1"><strong>CEP:</strong> {{ usuario.endereco_cep }}</p>
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    Você não possui um endereço cadastrado. 
+                                    <a href="{{ url_for('user.perfil') }}" class="alert-link">Cadastre um endereço</a> antes de continuar.
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="observacoes" class="form-label">Observações (opcional)</label>
+                            <textarea class="form-control" id="observacoes" name="observacoes" rows="3" placeholder="Instruções para entrega, referências, etc."></textarea>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Confirmar Pedido</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('order.finalizar_compra') }}">
+                        <input type="hidden" name="tipo_entrega" id="tipo_entrega_hidden" value="retirada">
+                        <input type="hidden" name="observacoes" id="observacoes_hidden" value="">
+                        
+                        <div class="alert alert-info">
+                            <p>Ao clicar em "Confirmar Pedido", você será redirecionado para o Mercado Pago para finalizar o pagamento de forma segura.</p>
+                            <p class="mb-0">Você concorda com os termos de compra e pagamento.</p>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-credit-card"></i> Confirmar e Pagar
+                            </button>
+                            <a href="{{ url_for('cart.carrinho') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Voltar ao Carrinho
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-warning">
+                <p>Seu carrinho está vazio.</p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary mt-2">Continuar Comprando</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="footer-heading">Doce Sonho Confeitaria</h4>
+                    <p class="footer-text">Transformamos ingredientes selecionados em momentos doces e inesquecíveis desde 2015. Nossa paixão é adoçar sua vida com sabores especiais.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-whatsapp"></i></a>
+                        <a href="#"><i class="bi bi-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h4 class="footer-heading">Links Rápidos</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('index') }}">Início</a></li>
+                        <li><a href="{{ url_for('product.todos_produtos') }}">Produtos</a></li>
+                        <li><a href="{{ url_for('product.montar_bolo') }}">Monte seu Bolo</a></li>
+                        <li><a href="{{ url_for('sobrenos.sobrenos') }}">Sobre Nós</a></li>                      
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="footer-heading">Contato</h4>
+                    <ul class="footer-links footer-contact">
+                        <li>
+                            <i class="bi bi-geo-alt footer-contact-icon"></i>
+                            Rua das Flores, 123 - Centro
+                        </li>
+                        <li>
+                            <i class="bi bi-telephone footer-contact-icon"></i>
+                            (11) 9999-9999
+                        </li>
+                        <li>
+                            <i class="bi bi-envelope footer-contact-icon"></i>
+                            contato@docesonho.com.br
+                        </li>
+                        <li>
+                            <i class="bi bi-clock footer-contact-icon"></i>
+                            Seg-Sex: 9h às 18h | Sáb: 9h às 14h
+                        </li>
+                    </ul>
+                </div>
+               
+            </div>
+            <div class="footer-bottom">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="footer-copyright">&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
+                    </div>
+                    <div class="col-md-6 text-md-end footer-policy">
+                         <a  href="{{ url_for('auth.politica_privacidade') }}">Política de Privacidade</a>
+                     
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botão de WhatsApp flutuante -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/5511999999999" target="_blank" class="btn btn-success rounded-circle position-fixed bottom-0 end-0 m-4 p-3">
+            <i class="bi bi-whatsapp fs-4"></i>
+        </a>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script para o formulário de contato -->
+    <script>
+        document.getElementById('contato-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Obrigado pelo contato! Responderemos em breve.');
+            this.reset();
+        });
+    </script>
+
+    <!-- Script para opções de entrega -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const enderecoEntrega = document.getElementById('endereco-entrega');
+            const linhaFrete = document.getElementById('linha-frete');
+            const prazoEntregaAviso = document.getElementById('prazo-entrega-aviso');
+            const valorTotal = document.getElementById('valor-total');
+            const radioRetirada = document.getElementById('entrega_retirada');
+            const radioFrete = document.getElementById('entrega_frete');
+            const tipoEntregaHidden = document.getElementById('tipo_entrega_hidden');
+            const observacoesInput = document.getElementById('observacoes');
+            const observacoesHidden = document.getElementById('observacoes_hidden');
+            const submitForm = document.querySelector('form[method="POST"]');
+            
+            // Valor base (sem frete)
+            const valorBase = {{ total }};
+            // Valor do frete
+            const valorFrete = 12.00;
+            
+            // Função para atualizar o total
+            function atualizarTotal() {
+                if (radioFrete.checked) {
+                    linhaFrete.style.display = 'table-row';
+                    enderecoEntrega.style.display = 'block';
+                    prazoEntregaAviso.style.display = 'block';
+                    valorTotal.textContent = `R$ ${(valorBase + valorFrete).toFixed(2)}`.replace('.', ',');
+                    tipoEntregaHidden.value = 'frete';
+                } else {
+                    linhaFrete.style.display = 'none';
+                    enderecoEntrega.style.display = 'none';
+                    prazoEntregaAviso.style.display = 'none';
+                    valorTotal.textContent = `R$ ${valorBase.toFixed(2)}`.replace('.', ',');
+                    tipoEntregaHidden.value = 'retirada';
+                }
+            }
+            
+            // Adicionar listeners para os radio buttons
+            radioRetirada.addEventListener('change', atualizarTotal);
+            radioFrete.addEventListener('change', atualizarTotal);
+            
+            // Sincronizar campos de observações
+            observacoesInput.addEventListener('input', function() {
+                observacoesHidden.value = this.value;
+            });
+            
+            // Configurar envio do formulário
+            submitForm.addEventListener('submit', function(e) {
+                // Verificar se selecionou entrega e se tem endereço cadastrado
+                if (radioFrete.checked && !{{ 'true' if usuario is defined and usuario.endereco_rua else 'false' }}) {
+                    e.preventDefault();
+                    alert('Você precisa cadastrar um endereço para receber a entrega em domicílio.');
+                    return false;
+                }
+                
+                // Atualizar campo oculto com as observações
+                observacoesHidden.value = observacoesInput.value;
+                
+                // Log para debug - pode remover depois
+                console.log('Tipo entrega enviado:', tipoEntregaHidden.value);
+            });
+            
+            // Inicializar o estado
+            atualizarTotal();
+        });
+    </script>
+</body>
+</html>

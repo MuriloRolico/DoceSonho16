@@ -1,0 +1,50 @@
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
+
+# Banco de dados MySQL (escolha só um driver!)
+PyMySQL==1.1.0
+mysql-connector-python==8.1.0 
+mysqlclient==2.2.4
+
+
+# Segurança e autenticação
+Werkzeug==2.3.7
+PyJWT==2.9.0
+
+# Requisições HTTP para APIs
+requests==2.31.0
+
+# SDK do Mercado Pago
+mercadopago==2.2.1
+
+# Manipulação de datas
+python-dateutil==2.8.2
+
+# Configuração de variáveis de ambiente
+python-dotenv==1.0.0
+python-decouple==3.8
+
+# Flask e extensões
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
+
+# Driver MySQL (escolha só um)
+PyMySQL==1.1.0
+# mysql-connector-python==8.1.0  # Se quiser usar outro driver, mas escolha só um
+
+# Requisições HTTP
+requests==2.31.0
+
+# SDK MercadoPago
+mercadopago==2.2.1
+
+# Manipulação de datas
+python-dateutil==2.8.2
+
+# Variáveis de ambiente
+python-dotenv==1.0.0
+python-decouple==3.8
+
+# Segurança
+Werkzeug==2.3.7
+Flask-Mail==0.9.1

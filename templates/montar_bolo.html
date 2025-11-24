@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doce Sonho - Confeitaria | Monte seu Bolo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/base.css') }}">
+    <style>
+        :root {
+            --primary-color: #d23f72;
+            --primary-dark: #b22d5d;
+            --secondary-color: #ffd6e0;
+            --accent-color: #ffb3c6;
+            --text-color: #2d2d2d;
+            --light-text: #ffffff;
+            --background-color: #fff8fa;
+            --container-bg: #ffffff;
+            --border-color: #f1c2ce;
+            --shadow: 0 8px 20px rgba(210, 63, 114, 0.08);
+            --radius: 10px;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.8;
+            background-color: var(--background-color);
+        }
+
+        /* Navbar Styles */
+       .navbar {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--primary-color) !important;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-color) !important;
+            margin: 0 12px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            background: transparent;
+            border: none;
+        }
+
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: var(--primary-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover:after {
+            width: 70%;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+            transform: translateY(-2px);
+            background-color: transparent;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+        }
+
+        .navbar-nav .badge {
+            background-color: var(--primary-color) !important;
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform: translate(25%, -25%);
+        }
+
+        /* Section headers */
+        .section-header {
+            margin-bottom: 50px;
+            position: relative;
+            text-align: center;
+        }
+
+        .display-5 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+            color: var(--primary-dark);
+        }
+
+        .display-5:after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .intro-message {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 700px;
+            margin: 20px auto 0;
+        }
+
+        /* Cake Builder Styles */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--border-color);
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background-color: var(--container-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-number {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .step-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        .step.active .step-title {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Selector Styles */
+        .selector-item {
+            background-color: var(--container-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 100%;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+
+        .selector-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(210, 63, 114, 0.15);
+        }
+
+        .selector-item.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(255, 214, 224, 0.3);
+        }
+
+        .selector-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: calc(var(--radius) - 5px);
+            margin-bottom: 15px;
+        }
+
+        .selector-item h5 {
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .selector-item p {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        .price-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        /* Preview Styles */
+        .preview-container {
+            background-color: var(--container-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            height: 100%;
+            position: sticky;
+            top: 20px;
+        }
+
+        .preview-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .cake-preview-container {
+            text-align: center;
+            padding: 20px 0;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cake {
+            position: relative;
+            width: 180px;
+            height: 220px;
+            margin: 0 auto;
+        }
+
+        .cake-plate {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .cake-stand {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 10px;
+            background-color: #bdbdbd;
+            border-radius: 10px;
+            z-index: 2;
+        }
+
+        .cake-base {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 40px;
+            background-color: #f5e9be;
+            border-radius: 5px 5px 0 0;
+            z-index: 3;
+        }
+
+        .cake-filling-bottom {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 10px;
+            background-color: #d4a76a;
+            z-index: 4;
+        }
+
+        .cake-middle {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 40px;
+            background-color: #f5e9be;
+            z-index: 5;
+        }
+
+        .cake-filling-top {
+            position: absolute;
+            bottom: 110px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 10px;
+            background-color: #d4a76a;
+            z-index: 6;
+        }
+
+        .cake-top {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 40px;
+            background-color: #f5e9be;
+            border-radius: 5px 5px 0 0;
+            z-index: 7;
+        }
+
+        .cake-frosting {
+            position: absolute;
+            bottom: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 170px;
+            height: 25px;
+            background-color: #f8bbd0;
+            border-radius: 5px 5px 0 0;
+            z-index: 8;
+        }
+
+        .frosting-drip {
+            position: absolute;
+            bottom: 145px;
+            width: 15px;
+            height: 20px;
+            background-color: #f8bbd0;
+            border-radius: 0 0 50% 50%;
+            z-index: 9;
+        }
+
+        .cake-decoration {
+            position: absolute;
+            bottom: 165px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            z-index: 10;
+        }
+
+        .cake-candle {
+            position: absolute;
+            bottom: 165px;
+            width: 4px;
+            height: 25px;
+            background: linear-gradient(#fff, #ffeb3b);
+            z-index: 11;
+            border-radius: 2px;
+        }
+
+        .cake-candle::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 0;
+            width: 4px;
+            height: 8px;
+            background: #ff5722;
+            border-radius: 50% 50% 0 0;
+        }
+
+        /* Summary Styles */
+        .summary-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--secondary-color);
+            border-radius: var(--radius);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .summary-value {
+            color: var(--primary-dark);
+        }
+
+        .total-price {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border-color);
+            text-align: center;
+        }
+
+        .total-price-label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .total-price-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .total-price-note {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        /* Button Styles */
+        .btn-controller {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            font-weight: 600;
+            padding: 10px 25px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-prev {
+            background-color: var(--container-bg);
+            border: 2px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        .btn-prev:hover {
+            background-color: var(--border-color);
+            color: var(--text-color);
+        }
+
+        .btn-next, .btn-submit {
+            background-color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            color: white;
+        }
+
+        .btn-next:hover, .btn-submit:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(210, 63, 114, 0.2);
+        }
+
+        /* Section Styles */
+        .section-title {
+            color: var(--primary-dark);
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .step-content {
+            margin-bottom: 30px;
+        }
+
+               /* Footer */
+        footer {
+            background-color: #2d2d2d !important;
+            color: #f8f8f8 !important;
+            padding: 80px 0 30px;
+            position: relative;
+        }
+
+        footer:before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-color: white;
+            clip-path: ellipse(50% 50px at 50% 50px);
+        }
+
+        .footer-heading {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-heading:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 0;
+        }
+
+        .footer-text {
+            color: #aaa;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .footer-social {
+            margin-top: 25px;
+        }
+
+        .footer-social a {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .footer-links {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #aaa;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-contact li {
+            color: #aaa;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-contact-icon {
+            margin-right: 15px;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .footer-form .form-control {
+            background-color: rgba(255,255,255,0.08);
+            border: none;
+            color: white;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .footer-form .form-control::placeholder {
+            color: #aaa;
+        }
+
+        .footer-form .form-control:focus {
+            background-color: rgba(255,255,255,0.12);
+            box-shadow: none;
+        }
+
+        .footer-form .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-form .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            padding-left: 30px;
+            padding-top: 30px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-copyright {
+            color: #aaa;
+        }
+
+        .footer-policy a {
+            color: #aaa;
+            margin-left: 20px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .footer-policy a:hover {
+            color: white;
+        }
+
+
+        /* Responsive Adjustments */
+        @media (max-width: 991px) {
+            .preview-container {
+                position: static;
+                margin-top: 30px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .step-indicator {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .step {
+                margin: 0 15px 20px;
+            }
+            
+            .selector-item {
+                margin-bottom: 20px;
+            }
+            
+            .btn-controller {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegação -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Doce Sonho</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                   
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('product.todos_produtos') }}">Produtos</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('sobrenos.sobrenos') }}">Sobre Nós</a>
+                    </li>
+                    {% if 'usuario_id' in session %}
+                  
+                    
+                    {% if is_admin() %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.admin_produtos') }}">Admin</a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+
+                        <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('product.meus_bolos') }}">Meus Bolos</a>
+                    </li>
+                        <a class="nav-link" href="{{ url_for('cart.carrinho') }}">
+                            <i class="bi bi-cart3"></i>
+                            {% if 'carrinho' in session and session['carrinho'] %}
+                            <span class="badge bg-danger">{{ session['carrinho']|length }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% if 'usuario_id' in session %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('user.perfil') }}"> <i class="bi bi-person"></i> Perfil</a>
+                    </li>
+                   
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.registro') }}">Registrar</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mensagens Flash -->
+    <div class="container mt-3">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="container my-5">
+        <h1 class="text-center page-title">Monte o seu Bolo Personalizado</h1>
+        
+        <form id="montagem-bolo-form" method="post" action="{{ url_for('product.salvar_bolo_personalizado') }}">
+            <!-- Indicadores de etapas -->
+            <div class="step-indicator">
+                <div class="step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Tipo de Massa</div>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Recheios</div>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Cobertura</div>
+                </div>
+                <div class="step" data-step="4">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Finalização</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Coluna da prévia do bolo -->
+                <div class="col-lg-4 order-lg-1 order-2 mb-4">
+    <div class="preview-container">
+        <h4 class="preview-title">Seu Bolo Personalizado</h4>
+        
+        <div class="cake-preview-container">
+            <div class="cake" id="cake-preview">
+                <div class="cake-plate"></div>
+                <div class="cake-stand"></div>
+                <div class="cake-base"></div>
+                <div class="cake-filling-bottom"></div>
+                <div class="cake-middle"></div>
+                <div class="cake-filling-top"></div>
+                <div class="cake-top"></div>
+                <div class="cake-frosting"></div>
+                <div class="frosting-drip" style="left: 10px;"></div>
+                <div class="frosting-drip" style="left: 45px;"></div>
+                <div class="frosting-drip" style="left: 80px;"></div>
+                <div class="frosting-drip" style="left: 115px;"></div>
+                <div class="frosting-drip" style="left: 150px;"></div>
+                <div class="cake-decoration" id="cake-decoration"></div>
+                <div class="cake-candle" style="left: 80px;"></div>
+                <div class="cake-candle" style="left: 110px;"></div>
+            </div>
+        </div>
+        
+        <div class="summary-container">
+            <div class="summary-item">
+                <span class="summary-label">Massa:</span>
+                <span class="summary-value" id="massa-selecionada">-</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Recheios:</span>
+                <span class="summary-value" id="recheios-selecionados">-</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Cobertura:</span>
+                <span class="summary-value" id="cobertura-selecionada">-</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Finalização:</span>
+                <span class="summary-value" id="finalizacao-selecionada">-</span>
+            </div>
+            
+            <div class="total-price">
+                <div class="total-price-label">Total Estimado:</div>
+                <div class="total-price-value" id="preco-total">R$ 50,00</div>
+                <div class="total-price-note">* Preço base do bolo: R$ 50,00</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Coluna das opções -->
+<div class="col-lg-8 order-lg-2 order-1">
+    <!-- Step 1: Tipo de Massa -->
+    <div class="step-content active" id="step-1">
+        <h3 class="section-title">Escolha o tipo de massa</h3>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="chocolate" data-type="massa" data-display="Chocolate">
+                    <div class="price-tag">+ R$ 25,00</div>
+                    <img src="static/uploads/bolochocolate.png" alt="Massa de Chocolate">
+                    <h5>Chocolate</h5>
+                    <p>Massa macia de chocolate belga</p>
+                    <input type="radio" name="massa" value="chocolate" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="baunilha" data-type="massa" data-display="Baunilha">
+                    <div class="price-tag">+ R$ 20,00</div>
+                    <img src="static/uploads/bolobaunilha.png" alt="Massa de Baunilha">
+                    <h5>Baunilha</h5>
+                    <p>Massa leve e macia de baunilha</p>
+                    <input type="radio" name="massa" value="baunilha" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="red_velvet" data-type="massa" data-display="Red Velvet">
+                    <div class="price-tag">+ R$ 30,00</div>
+                    <img src="static/uploads/redvevelt.png" alt="Red Velvet">
+                    <h5>Red Velvet</h5>
+                    <p>Massa vermelha aveludada com toque de cacau</p>
+                    <input type="radio" name="massa" value="red_velvet" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="limao" data-type="massa" data-display="Limão">
+                    <div class="price-tag">+ R$ 22,00</div>
+                    <img src="static/uploads/bololimao.png" alt="Massa de Limão">
+                    <h5>Limão</h5>
+                    <p>Massa leve com toque cítrico de limão</p>
+                    <input type="radio" name="massa" value="limao" class="visually-hidden">
+                </div>
+            </div>
+        </div>
+        <div class="btn-controller">
+            <button type="button" class="btn btn-next">Próximo <i class="bi bi-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <!-- Step 2: Recheios -->
+    <div class="step-content" id="step-2" style="display: none;">
+        <h3 class="section-title">Escolha até 2 recheios (um por andar)</h3>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="brigadeiro" data-type="recheio" data-display="Brigadeiro">
+                    <div class="price-tag">+ R$ 15,00</div>
+                    <img src="static/uploads/recheiochocolate.png" alt="Brigadeiro">
+                    <h5>Brigadeiro</h5>
+                    <p>Recheio cremoso de chocolate</p>
+                    <input type="checkbox" name="recheios" value="brigadeiro" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="morango" data-type="recheio" data-display="Morango">
+                    <div class="price-tag">+ R$ 18,00</div>
+                    <img src="static/uploads/recheiomorango.png" alt="Morango">
+                    <h5>Morango</h5>
+                    <p>Creme de confeiteiro com pedaços de morango</p>
+                    <input type="checkbox" name="recheios" value="morango" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="doce_de_leite" data-type="recheio" data-display="Doce de Leite">
+                    <div class="price-tag">+ R$ 12,00</div>
+                    <img src="static/uploads/recheiodocedeleite.png" alt="Doce de Leite">
+                    <h5>Doce de Leite</h5>
+                    <p>Camada generosa de doce de leite argentino</p>
+                    <input type="checkbox" name="recheios" value="doce_de_leite" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="chocolate_branco" data-type="recheio" data-display="Chocolate Branco">
+                    <div class="price-tag">+ R$ 16,00</div>
+                    <img src="static/uploads/recheiobaunilha.png" alt="Chocolate Branco">
+                    <h5>Chocolate Branco</h5>
+                    <p>Creme aveludado de chocolate branco</p>
+                    <input type="checkbox" name="recheios" value="chocolate_branco" class="visually-hidden">
+                </div>
+            </div>
+        </div>
+        <div class="btn-controller">
+            <button type="button" class="btn btn-prev"><i class="bi bi-arrow-left"></i> Voltar</button>
+            <button type="button" class="btn btn-next">Próximo <i class="bi bi-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <!-- Step 3: Cobertura -->
+    <div class="step-content" id="step-3" style="display: none;">
+        <h3 class="section-title">Escolha a cobertura</h3>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="chantilly" data-type="cobertura" data-display="Chantilly">
+                    <div class="price-tag">+ R$ 18,00</div>
+                    <img src="static/uploads/chantily.png" alt="Chantilly">
+                    <h5>Chantilly</h5>
+                    <p>Cobertura leve e cremosa</p>
+                    <input type="radio" name="cobertura" value="chantilly" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="ganache" data-type="cobertura" data-display="Ganache">
+                    <div class="price-tag">+ R$ 20,00</div>
+                    <img src="static/uploads/ganache.png" alt="Ganache">
+                    <h5>Ganache</h5>
+                    <p>Cobertura rica de chocolate meio amargo</p>
+                    <input type="radio" name="cobertura" value="ganache" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="pasta_americana" data-type="cobertura" data-display="Pasta Americana">
+                    <div class="price-tag">+ R$ 25,00</div>
+                    <img src="static/uploads/pastaamericana.png" alt="Pasta Americana">
+                    <h5>Pasta Americana</h5>
+                    <p>Cobertura lisa e elegante</p>
+                    <input type="radio" name="cobertura" value="pasta_americana" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="cream_cheese" data-type="cobertura" data-display="Cream Cheese">
+                    <div class="price-tag">+ R$ 22,00</div>
+                    <img src="static/uploads/creamchesse.png" alt="Cream Cheese">
+                    <h5>Cream Cheese</h5>
+                    <p>Cobertura cremosa com leve acidez</p>
+                    <input type="radio" name="cobertura" value="cream_cheese" class="visually-hidden">
+                </div>
+            </div>
+        </div>
+        <div class="btn-controller">
+            <button type="button" class="btn btn-prev"><i class="bi bi-arrow-left"></i> Voltar</button>
+            <button type="button" class="btn btn-next">Próximo <i class="bi bi-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <!-- Step 4: Finalização -->
+    <div class="step-content" id="step-4" style="display: none;">
+        <h3 class="section-title">Finalização do Bolo</h3>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="morangos" data-type="finalizacao" data-display="Morangos Frescos">
+                    <div class="price-tag">+ R$ 12,00</div>
+                    <img src="static/uploads/morangos.jpg" alt="Morangos Frescos">
+                    <h5>Morangos Frescos</h5>
+                    <p>Decoração com morangos frescos</p>
+                    <input type="checkbox" name="finalizacao" value="morangos" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="chocolate_raspas" data-type="finalizacao" data-display="Raspas de Chocolate">
+                    <div class="price-tag">+ R$ 8,00</div>
+                    <img src="static/uploads/raspas.jpg" alt="Raspas de Chocolate">
+                    <h5>Raspas de Chocolate</h5>
+                    <p>Finalização com raspas de chocolate belga</p>
+                    <input type="checkbox" name="finalizacao" value="chocolate_raspas" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="mm" data-type="finalizacao" data-display="M&M's">
+                    <div class="price-tag">+ R$ 10,00</div>
+                    <img src="static/uploads/mms.jpg" alt="M&M">
+                    <h5>M&M's</h5>
+                    <p>Decoração colorida com confeitos de chocolate</p>
+                    <input type="checkbox" name="finalizacao" value="mm" class="visually-hidden">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="selector-item position-relative" data-value="confete" data-type="finalizacao" data-display="Confetes Coloridos">
+                    <div class="price-tag">+ R$ 5,00</div>
+                    <img src="static/uploads/confete.jpg" alt="Confetes Coloridos">
+                    <h5>Confetes Coloridos</h5>
+                    <p>Finalização festiva com confetes açucarados</p>
+                    <input type="checkbox" name="finalizacao" value="confete" class="visually-hidden">
+                </div>
+            </div>
+        </div>
+        <div class="form-group mt-4">
+            <label for="observacoes" class="form-label">Observações Adicionais:</label>
+            <textarea class="form-control" id="observacoes" name="observacoes" rows="3" placeholder="Exemplo: mensagem no bolo, alergias ou detalhes especiais"></textarea>
+        </div>
+        <div class="btn-controller">
+            <button type="button" class="btn btn-prev"><i class="bi bi-arrow-left"></i> Voltar</button>
+            <button type="submit" class="btn btn-submit"><i class="bi bi-cart-plus"></i> Adicionar ao Carrinho</button>
+        </div>
+    </div>
+</div>
+    </div>
+        </form>
+    </div>
+
+
+    <!-- Rodapé -->
+       <footer>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="footer-heading">Doce Sonho Confeitaria</h4>
+                    <p class="footer-text">Transformamos ingredientes selecionados em momentos doces e inesquecíveis desde 2015. Nossa paixão é adoçar sua vida com sabores especiais.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-whatsapp"></i></a>
+                        <a href="#"><i class="bi bi-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h4 class="footer-heading">Links Rápidos</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('index') }}">Início</a></li>
+                        <li><a href="{{ url_for('product.todos_produtos') }}">Produtos</a></li>
+                        <li><a href="{{ url_for('product.montar_bolo') }}">Monte seu Bolo</a></li>
+                        <li><a href="{{ url_for('sobrenos.sobrenos') }}">Sobre Nós</a></li>                      
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="footer-heading">Contato</h4>
+                    <ul class="footer-links footer-contact">
+                        <li>
+                            <i class="bi bi-geo-alt footer-contact-icon"></i>
+                            Rua das Flores, 123 - Centro
+                        </li>
+                        <li>
+                            <i class="bi bi-telephone footer-contact-icon"></i>
+                            (11) 9999-9999
+                        </li>
+                        <li>
+                            <i class="bi bi-envelope footer-contact-icon"></i>
+                            contato@docesonho.com.br
+                        </li>
+                        <li>
+                            <i class="bi bi-clock footer-contact-icon"></i>
+                            Seg-Sex: 9h às 18h | Sáb: 9h às 14h
+                        </li>
+                    </ul>
+                </div>
+               
+            </div>
+            <div class="footer-bottom">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="footer-copyright">&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
+                    </div>
+                    <div class="col-md-6 text-md-end footer-policy">
+                         <a  href="{{ url_for('auth.politica_privacidade') }}">Política de Privacidade</a>
+                     
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script personalizado -->
+    <script>
+        // Dicionário de formatação no frontend
+// Dicionário de formatação
+const formatarIngredientes = {
+    'red_velvet': 'Red Velvet',
+    'chocolate_branco': 'Chocolate Branco',
+    'pasta_americana': 'Pasta Americana',
+    'doce_de_leite': 'Doce de Leite',
+    'cream_cheese': 'Cream Cheese',
+    'chocolate_raspas': 'Raspas de Chocolate',
+    'mm': 'M&M\'s',
+    'morangos': 'Morangos Frescos',
+    'confete': 'Confetes Coloridos',
+    'baunilha': 'Baunilha',
+    'chocolate': 'Chocolate',
+    'limao': 'Limão',
+    'brigadeiro': 'Brigadeiro',
+    'morango': 'Morango',
+    'chantilly': 'Chantilly',
+    'ganache': 'Ganache'
+};
+
+function formatarNome(valor) {
+    return formatarIngredientes[valor] || valor.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Variáveis de preço
+    const precos = {
+        base: 50,
+        massa: {
+            'chocolate': 25,
+            'baunilha': 20,
+            'red_velvet': 30,
+            'limao': 22
+        },
+        recheio: {
+            'brigadeiro': 15,
+            'morango': 18,
+            'doce_de_leite': 12,
+            'chocolate_branco': 16
+        },
+        cobertura: {
+            'chantilly': 18,
+            'ganache': 20,
+            'pasta_americana': 25,
+            'cream_cheese': 22
+        },
+        finalizacao: {
+            'morangos': 12,
+            'chocolate_raspas': 8,
+            'mm': 10,
+            'confete': 5
+        }
+    };
+    
+    // Elementos do DOM
+    const steps = document.querySelectorAll('.step');
+    const stepContents = document.querySelectorAll('.step-content');
+    const nextButtons = document.querySelectorAll('.btn-next');
+    const prevButtons = document.querySelectorAll('.btn-prev');
+    const selectorItems = document.querySelectorAll('.selector-item');
+    
+    const massaSelText = document.getElementById('massa-selecionada');
+    const recheiosSelText = document.getElementById('recheios-selecionados');
+    const coberturaSelText = document.getElementById('cobertura-selecionada');
+    const finalizacaoSelText = document.getElementById('finalizacao-selecionada');
+    const precoTotal = document.getElementById('preco-total');
+    
+    // Elementos do bolo
+    const cakeBase = document.querySelector('.cake-base');
+    const cakeMiddle = document.querySelector('.cake-middle');
+    const cakeTop = document.querySelector('.cake-top');
+    const cakeFillingBottom = document.querySelector('.cake-filling-bottom');
+    const cakeFillingTop = document.querySelector('.cake-filling-top');
+    const cakeFrosting = document.querySelector('.cake-frosting');
+    const cakeDecoration = document.getElementById('cake-decoration');
+    const frostingDrips = document.querySelectorAll('.frosting-drip');
+    
+    // Cores e estilos
+    const massaCores = {
+        'chocolate': '#5d4037',
+        'baunilha': '#f5e9be',
+        'red_velvet': '#c62828',
+        'limao': '#fff176'
+    };
+    
+    const recheioCores = {
+        'brigadeiro': '#3e2723',
+        'morango': '#e57373',
+        'doce_de_leite': '#d4a76a',
+        'chocolate_branco': '#f5f5dc'
+    };
+    
+    const coberturaCores = {
+        'chantilly': '#ffffff',
+        'ganache': '#3e2723',
+        'pasta_americana': '#f8bbd0',
+        'cream_cheese': '#f5f5f5'
+    };
+    
+    const finalizacaoIcones = {
+        'morangos': '🍓',
+        'chocolate_raspas': '🍫',
+        'mm': '🍬',
+        'confete': '✨'
+    };
+    
+    // Função para validar cada etapa
+    function validateStep(stepNumber) {
+        switch(stepNumber) {
+            case 1:
+                // Validar massa
+                const massa = document.querySelector('input[name="massa"]:checked');
+                if (!massa) {
+                    alert('Por favor, selecione um tipo de massa antes de continuar.');
+                    return false;
+                }
+                return true;
+                
+            case 2:
+                // Validar recheios (pelo menos 1, máximo 2)
+                const recheios = document.querySelectorAll('input[name="recheios"]:checked');
+                if (recheios.length === 0) {
+                    alert('Por favor, selecione pelo menos um recheio antes de continuar.');
+                    return false;
+                }
+                return true;
+                
+            case 3:
+                // Validar cobertura
+                const cobertura = document.querySelector('input[name="cobertura"]:checked');
+                if (!cobertura) {
+                    alert('Por favor, selecione uma cobertura antes de continuar.');
+                    return false;
+                }
+                return true;
+                
+            default:
+                return true;
+        }
+    }
+    
+    // Funções de navegação entre etapas
+    function goToStep(stepNumber) {
+        steps.forEach((step, index) => {
+            if (index + 1 <= stepNumber) {
+                step.classList.add('active');
+            } else {
+                step.classList.remove('active');
+            }
+        });
+        
+        stepContents.forEach((content, index) => {
+            if (index + 1 === stepNumber) {
+                content.style.display = 'block';
+            } else {
+                content.style.display = 'none';
+            }
+        });
+    }
+    
+    // Adicionar eventos para navegação com validação
+    nextButtons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+            const currentStepNumber = index + 1;
+            if (validateStep(currentStepNumber)) {
+                goToStep(currentStepNumber + 1);
+            }
+        });
+    });
+    
+    prevButtons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+            goToStep(index + 1);
+        });
+    });
+    
+    // Função para atualizar o resumo e o preço
+    function updateSummaryAndPrice() {
+        let total = precos.base;
+        // Massa
+        const massaSelecionada = document.querySelector('input[name="massa"]:checked');
+        if (massaSelecionada) {
+            const massaValor = massaSelecionada.value;
+            massaSelText.textContent = formatarNome(massaValor);
+            total += precos.massa[massaValor];
+            
+            // Atualizar visualização do bolo
+            const massaCor = massaCores[massaValor];
+            if (cakeBase) cakeBase.style.backgroundColor = massaCor;
+            if (cakeMiddle) cakeMiddle.style.backgroundColor = massaCor;
+            if (cakeTop) cakeTop.style.backgroundColor = massaCor;
+        } else {
+            massaSelText.textContent = '-';
+        }
+        
+        // Recheios
+        const recheiosSelecionados = document.querySelectorAll('input[name="recheios"]:checked');
+        if (recheiosSelecionados.length > 0) {
+            const recheiosTexto = Array.from(recheiosSelecionados).map(recheio => {
+                total += precos.recheio[recheio.value];
+                // USAR FORMATAÇÃO AQUI
+                return formatarNome(recheio.value);
+            }).join(', ');
+            
+            recheiosSelText.textContent = recheiosTexto;
+            
+            // Atualizar visualização do bolo (usar o primeiro recheio)
+            if (recheiosSelecionados.length > 0) {
+                const recheioCor = recheioCores[recheiosSelecionados[0].value];
+                if (cakeFillingBottom) cakeFillingBottom.style.backgroundColor = recheioCor;
+                if (cakeFillingTop) cakeFillingTop.style.backgroundColor = recheioCor;
+            }
+        } else {
+            recheiosSelText.textContent = '-';
+            if (cakeFillingBottom) cakeFillingBottom.style.backgroundColor = '#ffffff';
+            if (cakeFillingTop) cakeFillingTop.style.backgroundColor = '#ffffff';
+        }
+        
+        // Cobertura
+        const coberturaSelecionada = document.querySelector('input[name="cobertura"]:checked');
+        if (coberturaSelecionada) {
+            const coberturaValor = coberturaSelecionada.value;
+            // USAR FORMATAÇÃO AQUI
+            coberturaSelText.textContent = formatarNome(coberturaValor);
+            total += precos.cobertura[coberturaValor];
+            
+            // Atualizar visualização do bolo
+            const coberturaCor = coberturaCores[coberturaValor];
+            if (cakeFrosting) cakeFrosting.style.backgroundColor = coberturaCor;
+            frostingDrips.forEach(drip => {
+                drip.style.backgroundColor = coberturaCor;
+            });
+        } else {
+            coberturaSelText.textContent = '-';
+        }
+        
+        // Finalização
+        const finalizacoesSelecionadas = document.querySelectorAll('input[name="finalizacao"]:checked');
+        if (finalizacoesSelecionadas.length > 0) {
+            const finalizacoesTexto = Array.from(finalizacoesSelecionadas).map(finalizacao => {
+                total += precos.finalizacao[finalizacao.value];
+                // USAR FORMATAÇÃO AQUI
+                return formatarNome(finalizacao.value);
+            }).join(', ');
+            
+            finalizacaoSelText.textContent = finalizacoesTexto;
+            
+            // Atualizar visualização do bolo
+            if (cakeDecoration) {
+                cakeDecoration.innerHTML = '';
+                finalizacoesSelecionadas.forEach(finalizacao => {
+                    cakeDecoration.innerHTML += finalizacaoIcones[finalizacao.value] || '⭐';
+                });
+            }
+        } else {
+            finalizacaoSelText.textContent = '-';
+            if (cakeDecoration) cakeDecoration.innerHTML = '';
+        }
+        
+        // Atualizar preço total
+        precoTotal.textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+    }
+    
+    // Adicionar eventos de seleção com validação de recheios
+    selectorItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const input = this.querySelector('input');
+            if (!input) return;
+            const inputType = input.type;
+            const inputName = input.name;
+            if (inputType === 'radio') {
+                // Desmarcar outras opções do mesmo grupo
+                document.querySelectorAll(`.selector-item[data-type="${this.dataset.type}"]`).forEach(otherItem => {
+                    otherItem.classList.remove('selected');
+                });
+                // Marcar este item
+                this.classList.add('selected');
+                input.checked = true;
+            } else if (inputType === 'checkbox') {
+                if (inputName === 'recheios') {
+                    // Limitar a 2 recheios
+                    const recheiosSelecionados = document.querySelectorAll('input[name="recheios"]:checked').length;
+                    if (recheiosSelecionados >= 2 && !input.checked) {
+                        alert('Você pode selecionar no máximo 2 recheios (um por andar).');
+                        return;
+                    }
+                }
+                this.classList.toggle('selected');
+                input.checked = !input.checked;
+            }
+            updateSummaryAndPrice();
+        });
+    });
+    
+    // Verificar formulário antes de enviar
+    const form = document.getElementById('montagem-bolo-form');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            // Verificar se pelo menos uma massa foi selecionada
+            const massa = document.querySelector('input[name="massa"]:checked');
+            if (!massa) {
+                event.preventDefault();
+                alert('Por favor, selecione uma massa para o bolo');
+                goToStep(1);
+                return;
+            }
+            
+            // Verificar se pelo menos um recheio foi selecionado
+            const recheios = document.querySelectorAll('input[name="recheios"]:checked');
+            if (recheios.length === 0) {
+                event.preventDefault();
+                alert('Por favor, selecione pelo menos um recheio para o bolo');
+                goToStep(2);
+                return;
+            }
+            
+            // Verificar se uma cobertura foi selecionada
+            const cobertura = document.querySelector('input[name="cobertura"]:checked');
+            if (!cobertura) {
+                event.preventDefault();
+                alert('Por favor, selecione uma cobertura para o bolo');
+                goToStep(3);
+                return;
+            }
+        });
+    }
+    
+    // Inicializar
+    updateSummaryAndPrice();
+});
+    </script>
+</body>
+</html>

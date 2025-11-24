@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Pedido #{{ pedido.id }} - Admin</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    
+    <!-- Admin Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    
+        <style>
+        :root {
+            --primary-color: #d23f72;
+            --primary-dark: #b22d5d;
+            --secondary-color: #ffd6e0;
+            --accent-color: #ffb3c6;
+            --text-color: #2d2d2d;
+            --light-text: #ffffff;
+            --background-color: #fff8fa;
+            --container-bg: #ffffff;
+            --border-color: #f1c2ce;
+            --shadow: 0 8px 20px rgba(210, 63, 114, 0.08);
+            --radius: 10px;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --secondary-dark: #6c757d;
+        }
+
+        body, html {
+            scroll-behavior: smooth;
+            background-color: var(--background-color);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.8;
+            color: var(--text-color);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.5px;
+        }
+        
+        .mt-3 {
+            margin-top: 0 !important;
+        }
+
+        /* Sidebar */
+        .admin-wrapper {
+            display: flex;
+            min-height: calc(100vh - 76px);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(to bottom, var(--primary-color), var(--primary-dark));
+            color: var(--light-text);
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            z-index: 999;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar-brand {
+            padding: 25px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-brand h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--light-text);
+        }
+
+        .sidebar-brand i {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-header {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 15px 25px 5px;
+        }
+
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 12px 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-menu a i {
+            margin-right: 15px;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-menu a:hover, 
+        .sidebar-menu a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--light-text);
+            border-left-color: var(--accent-color);
+        }
+
+        .sidebar-menu a.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+        }
+
+        .sidebar-profile {
+            padding: 20px 25px;
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-profile .profile-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .profile-role {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0;
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background-color: var(--container-bg);
+            padding: 20px 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .page-title {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        /* Cards */
+        .card {
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: none;
+            margin-bottom: 25px;
+            overflow: hidden;
+            background-color: var(--container-bg);
+        }
+
+        .card-header {
+            padding: 18px 25px;
+            background-color: var(--container-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h5 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 5px;
+            padding: 8px 16px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(210, 63, 114, 0.2);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.2);
+        }
+
+        /* Tables */
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            font-weight: 600;
+            color: var(--primary-color);
+            background-color: rgba(210, 63, 114, 0.05);
+            border-bottom: 2px solid var(--primary-color);
+            padding: 15px;
+        }
+
+        .table td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+
+        .status-badge.warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #d39e00;
+            border: 1px solid rgba(255, 193, 7, 0.2);
+        }
+
+        .status-badge.danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+
+        .status-badge.info {
+            background-color: rgba(23, 162, 184, 0.1);
+            color: var(--info-color);
+            border: 1px solid rgba(23, 162, 184, 0.2);
+        }
+
+        /* Filter buttons */
+        .btn-filter {
+            border-radius: 30px;
+            padding: 8px 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .btn-filter:hover, .btn-filter.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--light-text);
+        }
+
+        .btn-filter i {
+            margin-right: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                margin-left: -280px;
+            }
+            .sidebar.active {
+                margin-left: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            .main-content.active {
+                margin-left: 280px;
+            }
+        }
+
+        /* Mobile toggle button */
+        .sidebar-toggle {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(210, 63, 114, 0.3);
+            display: none;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar-toggle {
+                display: flex;
+            }
+        }
+
+        /* Footer */
+        .admin-footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 30px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .text-white {
+            --bs-text-opacity: 1;
+            color: #d23f72 !important;
+        }
+        
+        /* Adicionado para pedidos */
+        .badge-pendente {
+            background-color: var(--warning-color);
+            color: #000;
+        }
+        
+        .badge-preparo {
+            background-color: var(--info-color);
+            color: var(--light-text);
+        }
+        
+        .badge-pronto {
+            background-color: var(--success-color);
+            color: var(--light-text);
+        }
+        
+        .badge-entregue {
+            background-color: var(--secondary-dark);
+            color: var(--light-text);
+        }
+        
+        .badge-cancelado {
+            background-color: var(--danger-color);
+            color: var(--light-text);
+        }
+        
+        .badge {
+            padding: 0.5rem 0.8rem;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+
+        /* Status selection cards */
+        .status-option {
+            border: 2px solid #dee2e6;
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .status-option:hover {
+            border-color: var(--border-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .status-option.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(210, 63, 114, 0.05);
+        }
+        
+        .status-option .status-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .status-option .status-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .status-option .status-title {
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .status-option .status-description {
+            color: var(--secondary-dark);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        /* Timeline de status */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--border-color);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: 25px;
+        }
+        
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: -30px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+        
+        .timeline-content {
+            background-color: #f8f9fa;
+            border-radius: var(--radius);
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .timeline-date {
+            font-size: 0.8rem;
+            color: var(--secondary-dark);
+            margin-bottom: 5px;
+        }
+        
+        .timeline-body {
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mensagens Flash -->
+    <div class="container-fluid px-4 mt-3">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- Main container -->
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="bi bi-cake2"></i>
+                <a href="{{ url_for('index') }}" class="text-white text-decoration-none">
+    <h2>Doce Sonho</h2>
+</a>
+            </div>
+            <div class="sidebar-menu">
+                <p class="menu-header">Principal</p>
+                <ul>
+                    <li>
+                        <a href="{{ url_for('admin.admin_produtos') }}">
+                           <i class="bi bi-box-seam"></i> Produtos
+                        </a>
+                    </li>
+                   
+                    <li>
+                        <a href="{{ url_for('admin.admin_pedidos') }}" class="active">
+                            <i class="bi bi-bag"></i> Pedidos
+                        </a>
+                    </li>
+                   
+                </ul>
+                <p class="menu-header">Usuários</p>
+                <ul>
+                    <li>
+                        <a href="{{ url_for('admin.admin_clientes') }}">
+                            <i class="bi bi-people"></i> Clientes
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('admin.admin_usuarios') }}">
+                            <i class="bi bi-person-badge"></i> Administradores
+                        </a>
+                    </li>
+                </ul>
+                <p class="menu-header">Relatórios</p>
+                <ul>
+                    <li>
+                        <a href="{{ url_for('admin.admin_logs') }}">
+                            <i class="bi bi-journal-text"></i> Logs do Sistema
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-profile">
+                <div class="profile-info">
+                    <!-- Área do perfil do usuário -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <div class="main-content">
+            <!-- Page header -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Detalhes do Pedido #{{ pedido.id }}</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="{{ url_for('admin.admin_pedidos') }}" class="text-decoration-none">Pedidos</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Detalhes do Pedido #{{ pedido.id }}</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('admin.admin_atualizar_pedido', pedido_id=pedido.id) }}" class="btn btn-primary">
+                        <i class="bi bi-pencil-square me-1"></i> Atualizar Status
+                    </a>
+                    <a href="{{ url_for('admin.admin_pedidos') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Voltar
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Coluna da esquerda: Informações do pedido -->
+                <div class="col-lg-8">
+                    <!-- Card de Status do Pedido -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="bi bi-info-circle me-2"></i>Status do Pedido</h5>
+                            <div>
+                                {% if pedido.status == 'Pendente' %}
+                                    <span class="badge badge-pendente"><i class="bi bi-clock me-1"></i>Pendente</span>
+                                {% elif pedido.status == 'Em Preparo' %}
+                                    <span class="badge badge-preparo"><i class="bi bi-hourglass-split me-1"></i>Em Preparo</span>
+                                {% elif pedido.status == 'Pronto para Entrega' %}
+                                    <span class="badge badge-pronto"><i class="bi bi-check2-circle me-1"></i>Pronto para Entrega</span>
+                                {% elif pedido.status == 'Entregue' %}
+                                    <span class="badge badge-entregue"><i class="bi bi-truck me-1"></i>Entregue</span>
+                                {% elif pedido.status == 'Cancelado' %}
+                                    <span class="badge badge-cancelado"><i class="bi bi-x-circle me-1"></i>Cancelado</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ pedido.status }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-calendar3 me-2"></i>Data do Pedido:</p>
+                                    <p class="fw-bold">{{ pedido.data.strftime('%d/%m/%Y às %H:%M') }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-currency-dollar me-2"></i>Valor Total:</p>
+                                    <p class="fw-bold">R$ {{ "%.2f"|format(pedido.total) }}</p>
+                                </div>
+                                
+                                
+                                {% if pedido.valor_frete and pedido.valor_frete > 0 %}
+                                <div class="col-md-6 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-cash me-2"></i>Valor do Frete:</p>
+                                    <p class="fw-bold">R$ {{ "%.2f"|format(pedido.valor_frete) }}</p>
+                                </div>
+                                {% endif %}
+                                
+                                {% if pedido.tipo_entrega %}
+                                <div class="col-md-6 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-box-seam me-2"></i>Tipo de Entrega:</p>
+                                    <p class="fw-bold">{{ pedido.tipo_entrega }}</p>
+                                </div>
+                                {% endif %}
+
+                                {% if pedido.mercado_pago_transaction_id %}
+                                <div class="col-md-6 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-receipt me-2"></i>ID Transação:</p>
+                                    <p class="fw-bold">{{ pedido.mercado_pago_transaction_id }}</p>
+                                </div>
+                                {% endif %}
+                                
+                                {% if pedido.data_entrega %}
+                                <div class="col-md-12 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-calendar-check me-2"></i>Data de Entrega/Retirada:</p>
+                                    <p class="fw-bold">{{ pedido.data_entrega.strftime('%d/%m/%Y às %H:%M') }}</p>
+                                </div>
+                                {% endif %}
+                                
+                                {% if pedido.endereco_entrega %}
+                                <div class="col-md-12 mb-3">
+                                    <p class="mb-1 text-muted"><i class="bi bi-geo-alt me-2"></i>Endereço de Entrega (informado no pedido):</p>
+                                    <p class="bg-light p-3 rounded">{{ pedido.endereco_entrega }}</p>
+                                </div>
+                                {% endif %}
+                                
+                                {% if pedido.observacoes %}
+                                <div class="col-md-12">
+                                    <p class="mb-1 text-muted"><i class="bi bi-chat-left-text me-2"></i>Observações do Cliente:</p>
+                                    <p class="bg-light p-3 rounded">{{ pedido.observacoes }}</p>
+                                </div>
+                                {% endif %}
+                                {% if pedido.observacoes_admin %}
+                                <div class="col-md-12">
+                                    <p class="mb-1 text-muted"><i class="bi bi-clipboard-check me-2"></i>Observações da Administração:</p>
+                                    <p class="bg-light p-3 rounded">{{ pedido.observacoes_admin|nl2br }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card de Itens do Pedido -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="bi bi-basket me-2"></i>Itens do Pedido</h5>
+                            <span class="badge bg-light text-dark">{{ itens|length }} itens</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Quantidade</th>
+                                            <th>Preço Unitário</th>
+                                            <th>Subtotal</th>
+                                            <th>Tipo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in itens %}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ item.nome }}</strong>
+                                                {% if item.tipo == 'personalizado' %}
+                                                <button class="btn btn-sm btn-outline-primary ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#bolo{{ item.bolo_id }}" aria-expanded="false">
+                                                    <i class="bi bi-info-circle"></i> Detalhes
+                                                </button>
+                                                <div class="collapse mt-2" id="bolo{{ item.bolo_id }}">
+                                                    <div class="bolo-details">
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Massa:</span>
+                                                            <span>{{ (item.bolo.massa|capitalize) if item.bolo.massa else 'Não informado' }}</span>
+                                                        </div>
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Recheio:</span>
+                                                            <span>{{ (item.bolo.recheios|capitalize) if item.bolo.recheios else 'Não informado' }}</span>
+                                                        </div>
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Cobertura:</span>
+                                                            <span>{{ (item.bolo.cobertura|capitalize) if item.bolo.cobertura else 'Não informado' }}</span>
+                                                        </div>
+                                                        {% if item.bolo.observacoes %}
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Observações:</span>
+                                                            <span>{{ item.bolo.observacoes }}</span>
+                                                        </div>
+                                                        {% endif %}
+                                                        {% if item.bolo.finalizacao %}
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Finalização:</span>
+                                                            <span>{{ item.bolo.finalizacao }}</span>
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                {% elif item.tipo == 'regular' and item.produto %}
+                                                <div class="mt-1 small text-muted">
+                                                    {{ item.produto.descricao|truncate(50) }}
+                                                </div>
+                                                {% if item.produto.ingredientes %}
+                                                <button class="btn btn-sm btn-outline-secondary mt-1" type="button" data-bs-toggle="collapse" data-bs-target="#produto{{ item.produto.id }}" aria-expanded="false">
+                                                    <i class="bi bi-info-circle"></i> Detalhes
+                                                </button>
+                                                <div class="collapse mt-2" id="produto{{ item.produto.id }}">
+                                                    <div class="bolo-details">
+                                                        {% if item.produto.ingredientes %}
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Ingredientes:</span>
+                                                            <span>{{ item.produto.ingredientes }}</span>
+                                                        </div>
+                                                        {% endif %}
+                                                        {% if item.produto.peso %}
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Peso:</span>
+                                                            <span>{{ item.produto.peso }} kg</span>
+                                                        </div>
+                                                        {% endif %}
+                                                        {% if item.produto.informacoes_nutricionais %}
+                                                        <div class="bolo-detail-item">
+                                                            <span class="bolo-detail-label">Info. Nutricionais:</span>
+                                                            <span>{{ item.produto.informacoes_nutricionais }}</span>
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ item.quantidade }}</td>
+                                            <td>R$ {{ "%.2f"|format(item.preco_unitario) }}</td>
+                                            <td>R$ {{ "%.2f"|format(item.subtotal) }}</td>
+                                            <td>
+                                                {% if item.tipo == 'regular' %}
+                                                <span class="badge bg-info">Catálogo</span>
+                                                {% else %}
+                                                <span class="badge bg-primary">Personalizado</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot class="table-group-divider">
+                                        {% if pedido.valor_frete and pedido.valor_frete > 0 %}
+                                        <tr>
+                                            <td colspan="3" class="text-end">Subtotal:</td>
+                                            <td colspan="2">R$ {{ "%.2f"|format(pedido.total - pedido.valor_frete) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" class="text-end">Frete:</td>
+                                            <td colspan="2">R$ {{ "%.2f"|format(pedido.valor_frete) }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        <tr>
+                                            <td colspan="3" class="text-end fw-bold">Total:</td>
+                                            <td colspan="2" class="fw-bold">R$ {{ "%.2f"|format(pedido.total) }}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna da direita: Informações do cliente e histórico -->
+                <div class="col-lg-4">
+                    <!-- Card de Informações do Cliente -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="bi bi-person me-2"></i>Informações do Cliente</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="profile-pic me-3">
+                                    {{ usuario.nome[:1] }}
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">{{ usuario.nome }}</h6>
+                                    <p class="small text-muted mb-0">{{ usuario.email }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <p class="mb-1 fw-bold"><i class="bi bi-phone me-2"></i>Informações de Contato:</p>
+                                <p class="mb-0 small">
+                                    {% if usuario.telefone %}
+                                    <strong>Telefone:</strong> {{ usuario.telefone }}<br>
+                                    {% endif %}
+                                    {% if usuario.cpf_hash %}
+                                    <strong>CPF:</strong> {% if usuario.mascarar_cpf %}***.***.**-** (mascarado){% else %}{{ usuario.cpf_hash }}{% endif %}<br>
+                                    {% endif %}
+                                    <strong>Cliente desde:</strong> {{ usuario.data_registro.strftime('%d/%m/%Y') }}
+                                </p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <p class="mb-1 fw-bold"><i class="bi bi-geo-alt me-2"></i>Endereço do Cliente:</p>
+                                <address class="mb-0 small">
+                                    {% if usuario.endereco_rua %}
+                                        {{ usuario.endereco_rua }}, {{ usuario.endereco_numero }}<br>
+                                        {% if usuario.endereco_complemento %}
+                                        {{ usuario.endereco_complemento }}<br>
+                                        {% endif %}
+                                        {{ usuario.endereco_bairro }}<br>
+                                        {{ usuario.endereco_cidade }}, {{ usuario.endereco_estado }}<br>
+                                        CEP: {{ usuario.endereco_cep }}
+                                    {% else %}
+                                        <span class="text-muted">Endereço não cadastrado</span>
+                                    {% endif %}
+                                </address>
+                            </div>
+                            
+                            {% if pedido.metodo_entrega == 'Entrega' or pedido.tipo_entrega == 'delivery' %}
+                            <div class="mb-3">
+                                <p class="mb-1 fw-bold"><i class="bi bi-geo-alt-fill me-2"></i>Endereço de Entrega:</p>
+                                <address class="mb-0 small bg-light p-2 rounded">
+                                    {% if pedido.endereco_entrega %}
+                                        {{ pedido.endereco_entrega }}
+                                    {% elif usuario.endereco_rua %}
+                                        {{ usuario.endereco_rua }}, {{ usuario.endereco_numero }}<br>
+                                        {% if usuario.endereco_complemento %}
+                                        {{ usuario.endereco_complemento }}<br>
+                                        {% endif %}
+                                        {{ usuario.endereco_bairro }}<br>
+                                        {{ usuario.endereco_cidade }}, {{ usuario.endereco_estado }}<br>
+                                        CEP: {{ usuario.endereco_cep }}
+                                    {% else %}
+                                        <span class="text-muted">Endereço não informado</span>
+                                    {% endif %}
+                                </address>
+                            </div>
+                            {% endif %}
+                            
+                           
+                        </div>
+                    </div>
+
+                    <!-- Card de Histórico de Status -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="bi bi-clock-history me-2"></i>Histórico de Status</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if historico_status %}
+                            <div class="timeline">
+                                {% for log in historico_status %}
+                                <div class="timeline-item">
+                                    <div class="timeline-dot">
+                                        <i class="bi bi-check-lg"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-date">
+                                            {{ log.data.strftime('%d/%m/%Y às %H:%M') }}
+                                        </div>
+                                        <div class="timeline-body">
+                                            {{ log.descricao }}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                <!-- Item para a criação do pedido -->
+                                <div class="timeline-item">
+                                    <div class="timeline-dot">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-date">
+                                            {{ pedido.data.strftime('%d/%m/%Y às %H:%M') }}
+                                        </div>
+                                        <div class="timeline-body">
+                                            Pedido criado com status: <strong>Pendente</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-dot">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-date">
+                                            {{ pedido.data.strftime('%d/%m/%Y às %H:%M') }}
+                                        </div>
+                                        <div class="timeline-body">
+                                            Pedido criado com status: <strong>{{ pedido.status }}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Card de Pagamento (se tiver informações disponíveis) -->
+                    {% if pedido.forma_pagamento or pedido.mercado_pago_transaction_id %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="bi bi-credit-card me-2"></i>Detalhes do Pagamento</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <p class="mb-1 text-muted">Forma de Pagamento:</p>
+                                <p class="fw-bold">{{ pedido.forma_pagamento }}</p>
+                            </div>
+                            
+                            {% if pedido.mercado_pago_transaction_id %}
+                            <div class="mb-2">
+                                <p class="mb-1 text-muted">ID da Transação (Mercado Pago):</p>
+                                <p class="fw-bold">{{ pedido.mercado_pago_transaction_id }}</p>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="mb-0">
+                                <p class="mb-1 text-muted">Valor Total Pago:</p>
+                                <p class="fw-bold">R$ {{ "%.2f"|format(pedido.total) }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="admin-footer">
+                <p>&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar toggle for mobile -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Admin scripts -->
+    <script>
+        // Toggle sidebar on mobile
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.main-content').classList.toggle('active');
+        });
+
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+
+        // Script para converter JSON em texto legível na página de detalhes do pedido
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    /**
+     * Função para detectar e converter JSON em texto formatado
+     */
+    function converterJSONParaTexto(elemento) {
+        const texto = elemento.textContent.trim();
+        
+        // Verificar se o texto parece ser JSON
+        if ((texto.startsWith('{') && texto.endsWith('}')) || 
+            (texto.startsWith('[') && texto.endsWith(']'))) {
+            try {
+                const dados = JSON.parse(texto);
+                const textoFormatado = formatarDados(dados);
+                elemento.innerHTML = textoFormatado;
+            } catch (e) {
+                // Não é JSON válido, manter texto original
+                console.log('Não foi possível converter:', texto.substring(0, 50));
+            }
+        }
+    }
+    
+    /**
+     * Formatar dados recursivamente em HTML legível
+     */
+    function formatarDados(dados, nivel = 0) {
+        const indent = '  '.repeat(nivel);
+        
+        if (Array.isArray(dados)) {
+            if (dados.length === 0) return '<span class="text-muted">Nenhum item</span>';
+            
+            let html = '<ul class="list-unstyled mb-0">';
+            dados.forEach(item => {
+                html += '<li class="mb-1">';
+                html += formatarDados(item, nivel + 1);
+                html += '</li>';
+            });
+            html += '</ul>';
+            return html;
+        }
+        
+        if (typeof dados === 'object' && dados !== null) {
+            let html = '<div class="ms-' + (nivel > 0 ? '3' : '0') + '">';
+            
+            for (let chave in dados) {
+                const rotulo = formatarRotulo(chave);
+                const valor = dados[chave];
+                
+                html += '<div class="mb-2">';
+                html += '<strong class="text-primary">' + rotulo + ':</strong> ';
+                
+                if (typeof valor === 'object' && valor !== null) {
+                    html += formatarDados(valor, nivel + 1);
+                } else {
+                    html += formatarValor(valor);
+                }
+                
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            return html;
+        }
+        
+        return formatarValor(dados);
+    }
+    
+    /**
+     * Formatar rótulo (chave do objeto)
+     */
+    function formatarRotulo(chave) {
+        // Remover underscores e converter para título
+        return chave
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, l => l.toUpperCase());
+    }
+    
+    /**
+     * Formatar valor individual
+     */
+    function formatarValor(valor) {
+        if (valor === null || valor === undefined) {
+            return '<span class="text-muted">Não informado</span>';
+        }
+        
+        if (typeof valor === 'boolean') {
+            return valor 
+                ? '<span class="badge bg-success">Sim</span>' 
+                : '<span class="badge bg-secondary">Não</span>';
+        }
+        
+        if (typeof valor === 'number') {
+            // Verificar se parece ser um valor monetário
+            if (valor % 1 !== 0 || valor > 10) {
+                return 'R$ ' + valor.toFixed(2).replace('.', ',');
+            }
+            return valor;
+        }
+        
+        if (typeof valor === 'string') {
+            // Verificar se é uma data ISO
+            if (/^\d{4}-\d{2}-\d{2}/.test(valor)) {
+                try {
+                    const data = new Date(valor);
+                    return data.toLocaleDateString('pt-BR') + ' às ' + 
+                           data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                } catch (e) {
+                    return valor;
+                }
+            }
+            
+            // Verificar se é URL
+            if (valor.startsWith('http://') || valor.startsWith('https://')) {
+                return '<a href="' + valor + '" target="_blank" class="text-decoration-none">' + 
+                       valor + ' <i class="bi bi-box-arrow-up-right"></i></a>';
+            }
+            
+            return valor;
+        }
+        
+        return String(valor);
+    }
+    
+    /**
+     * Processar todos os elementos que podem conter JSON
+     */
+    function processarPagina() {
+        // Áreas onde JSON pode aparecer
+        const seletores = [
+            '.bg-light.p-3.rounded',           // Observações e endereços
+            '.bolo-details span:not(.bolo-detail-label)', // Detalhes de bolos
+            '.small.text-muted',               // Descrições
+            'td',                              // Células de tabela
+            'address',                         // Endereços
+            'p:not(.mb-1):not(.fw-bold)'      // Parágrafos de conteúdo
+        ];
+        
+        seletores.forEach(seletor => {
+            const elementos = document.querySelectorAll(seletor);
+            elementos.forEach(elemento => {
+                // Evitar processar elementos que já foram processados
+                if (!elemento.hasAttribute('data-json-processado')) {
+                    converterJSONParaTexto(elemento);
+                    elemento.setAttribute('data-json-processado', 'true');
+                }
+            });
+        });
+    }
+    
+    /**
+     * Observar mudanças no DOM (útil para conteúdo carregado dinamicamente)
+     */
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes.length) {
+                processarPagina();
+            }
+        });
+    });
+    
+    // Configurar o observador
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    // Processar a página inicialmente
+    processarPagina();
+    
+    console.log('✅ Conversor JSON ativado - Detalhes do Pedido');
+});
+
+// Adicionar estilos para melhorar a apresentação dos dados convertidos
+const style = document.createElement('style');
+style.textContent = `
+    .json-convertido {
+        background-color: #f8f9fa;
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .json-convertido strong {
+        color: #0d6efd;
+        font-weight: 600;
+    }
+    
+    .json-convertido ul {
+        margin-top: 0.5rem;
+        padding-left: 1rem;
+    }
+    
+    .json-convertido li {
+        padding: 0.25rem 0;
+    }
+`;
+document.head.appendChild(style);
+    </script>
+</body>
+</html>

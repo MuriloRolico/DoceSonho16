@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualizar Pedido #{{ pedido.id }} - Doce Sonho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --primary-color: #d23f72;
+            --primary-dark: #b22d5d;
+            --secondary-color: #ffd6e0;
+            --accent-color: #ffb3c6;
+            --text-color: #2d2d2d;
+            --light-text: #ffffff;
+            --background-color: #fff8fa;
+            --container-bg: #ffffff;
+            --border-color: #f1c2ce;
+            --shadow: 0 8px 20px rgba(210, 63, 114, 0.08);
+            --radius: 10px;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --secondary-dark: #6c757d;
+        }
+
+        body, html {
+            scroll-behavior: smooth;
+            background-color: var(--background-color);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.8;
+            color: var(--text-color);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.5px;
+        }
+        
+        .mt-3 {
+            margin-top: 0 !important;
+        }
+
+        /* Sidebar */
+        .admin-wrapper {
+            display: flex;
+            min-height: calc(100vh - 76px);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(to bottom, var(--primary-color), var(--primary-dark));
+            color: var(--light-text);
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            z-index: 999;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar-brand {
+            padding: 25px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-brand h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--light-text);
+        }
+
+        .sidebar-brand i {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-header {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 15px 25px 5px;
+        }
+
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 12px 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-menu a i {
+            margin-right: 15px;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-menu a:hover, 
+        .sidebar-menu a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--light-text);
+            border-left-color: var(--accent-color);
+        }
+
+        .sidebar-menu a.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+        }
+
+        .sidebar-profile {
+            padding: 20px 25px;
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-profile .profile-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .profile-role {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0;
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background-color: var(--container-bg);
+            padding: 20px 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .page-title {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        /* Cards */
+        .card {
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: none;
+            margin-bottom: 25px;
+            overflow: hidden;
+            background-color: var(--container-bg);
+        }
+
+        .card-header {
+            padding: 18px 25px;
+            background-color: var(--container-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h5 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 5px;
+            padding: 8px 16px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(210, 63, 114, 0.2);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.2);
+        }
+
+        /* Tables */
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            font-weight: 600;
+            color: var(--primary-color);
+            background-color: rgba(210, 63, 114, 0.05);
+            border-bottom: 2px solid var(--primary-color);
+            padding: 15px;
+        }
+
+        .table td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+
+        .status-badge.warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #d39e00;
+            border: 1px solid rgba(255, 193, 7, 0.2);
+        }
+
+        .status-badge.danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+
+        .status-badge.info {
+            background-color: rgba(23, 162, 184, 0.1);
+            color: var(--info-color);
+            border: 1px solid rgba(23, 162, 184, 0.2);
+        }
+
+        /* Filter buttons */
+        .btn-filter {
+            border-radius: 30px;
+            padding: 8px 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .btn-filter:hover, .btn-filter.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--light-text);
+        }
+
+        .btn-filter i {
+            margin-right: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                margin-left: -280px;
+            }
+            .sidebar.active {
+                margin-left: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            .main-content.active {
+                margin-left: 280px;
+            }
+        }
+
+        /* Mobile toggle button */
+        .sidebar-toggle {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(210, 63, 114, 0.3);
+            display: none;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar-toggle {
+                display: flex;
+            }
+        }
+
+        /* Footer */
+        .admin-footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 30px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .text-white {
+            --bs-text-opacity: 1;
+            color: #d23f72 !important;
+        }
+        
+        /* Adicionado para pedidos */
+        .badge-pendente {
+            background-color: var(--warning-color);
+            color: #000;
+        }
+        
+        .badge-preparo {
+            background-color: var(--info-color);
+            color: var(--light-text);
+        }
+        
+        .badge-pronto {
+            background-color: var(--success-color);
+            color: var(--light-text);
+        }
+        
+        .badge-entregue {
+            background-color: var(--secondary-dark);
+            color: var(--light-text);
+        }
+        
+        .badge-cancelado {
+            background-color: var(--danger-color);
+            color: var(--light-text);
+        }
+        
+        .badge {
+            padding: 0.5rem 0.8rem;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+
+        /* Status selection cards */
+        .status-option {
+            border: 2px solid #dee2e6;
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .status-option:hover {
+            border-color: var(--border-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .status-option.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(210, 63, 114, 0.05);
+        }
+        
+        .status-option .status-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .status-option .status-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .status-option .status-title {
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .status-option .status-description {
+            color: var(--secondary-dark);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        /* Timeline de status */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--border-color);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: 25px;
+        }
+        
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: -30px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+        
+        .timeline-content {
+            background-color: #f8f9fa;
+            border-radius: var(--radius);
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .timeline-date {
+            font-size: 0.8rem;
+            color: var(--secondary-dark);
+            margin-bottom: 5px;
+        }
+        
+        .timeline-body {
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mensagens Flash -->
+    <div class="container-fluid px-4 mt-3">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- Main container -->
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="bi bi-cake2"></i>
+                <a href="{{ url_for('index') }}" class="text-white text-decoration-none">
+    <h2>Doce Sonho</h2>
+</a>
+            </div>
+            <div class="sidebar-menu">
+                <p class="menu-header">Principal</p>
+                <ul>
+                    <li>
+                        <a href="{{ url_for('admin.admin_produtos') }}">
+                           <i class="bi bi-box-seam"></i> Produtos
+                        </a>
+                    </li>
+                   
+                    <li>
+                        <a href="{{ url_for('admin.admin_pedidos') }}" class="active">
+                            <i class="bi bi-bag"></i> Pedidos
+                        </a>
+                    </li>
+                   
+                </ul>
+                <p class="menu-header">Usuários</p>
+                <ul>
+                    <li>
+                        <a href="{{ url_for('admin.admin_clientes') }}">
+                            <i class="bi bi-people"></i> Clientes
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('admin.admin_usuarios') }}">
+                            <i class="bi bi-person-badge"></i> Administradores
+                        </a>
+                    </li>
+                </ul>
+                <p class="menu-header">Relatórios</p>
+                <ul>
+                    <li>
+                        <a href="{{ url_for('admin.admin_logs') }}">
+                            <i class="bi bi-journal-text"></i> Logs do Sistema
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-profile">
+                <div class="profile-info">
+                    <!-- Área do perfil do usuário -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <div class="main-content">
+            <!-- Page header -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Atualizar Pedido #{{ pedido.id }}</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="{{ url_for('admin.admin_pedidos') }}" class="text-decoration-none">Pedidos</a></li>
+                            <li class="breadcrumb-item"><a href="{{ url_for('admin.admin_detalhes_pedido', pedido_id=pedido.id) }}" class="text-decoration-none">Detalhes do Pedido #{{ pedido.id }}</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Atualizar Status</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div>
+                    <a href="{{ url_for('admin.admin_pedidos', pedido_id=pedido.id) }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Voltar
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Coluna da esquerda: Formulário de atualização -->
+                <div class="col-lg-8">
+                    <!-- Card de Status do Pedido -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="bi bi-pencil-square me-2"></i>Atualizar Status do Pedido</h5>
+                            <div>
+                                {% if pedido.status == 'Pendente' %}
+                                    <span class="badge badge-pendente"><i class="bi bi-clock me-1"></i>Pendente</span>
+                                {% elif pedido.status == 'Em Preparo' %}
+                                    <span class="badge badge-preparo"><i class="bi bi-hourglass-split me-1"></i>Em Preparo</span>
+                                {% elif pedido.status == 'Pronto para Entrega' %}
+                                    <span class="badge badge-pronto"><i class="bi bi-check2-circle me-1"></i>Pronto para Entrega</span>
+                                {% elif pedido.status == 'Entregue' %}
+                                    <span class="badge badge-entregue"><i class="bi bi-truck me-1"></i>Entregue</span>
+                                {% elif pedido.status == 'Cancelado' %}
+                                    <span class="badge badge-cancelado"><i class="bi bi-x-circle me-1"></i>Cancelado</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ pedido.status }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ url_for('admin.admin_atualizar_pedido', pedido_id=pedido.id) }}" method="POST">
+                                <!-- Opções de status com cards -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Selecione o novo status:</label>
+                                    
+                                    <div class="status-option {% if pedido.status == 'Pendente' %}selected{% endif %}" data-status="Pendente">
+                                        <div class="status-header">
+                                            <div class="status-icon" style="background-color: #ffeeba; color: #856404;">
+                                                <i class="bi bi-clock"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="status-title">Pendente</h6>
+                                                <p class="status-description">Pedido recebido, aguardando processamento</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="status-option {% if pedido.status == 'Em Preparo' %}selected{% endif %}" data-status="Em Preparo">
+                                        <div class="status-header">
+                                            <div class="status-icon" style="background-color: #bee5eb; color: #0c5460;">
+                                                <i class="bi bi-hourglass-split"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="status-title">Em Preparo</h6>
+                                                <p class="status-description">Pedido está sendo preparado pela confeitaria</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="status-option {% if pedido.status == 'Pronto para Entrega' %}selected{% endif %}" data-status="Pronto para Entrega">
+                                        <div class="status-header">
+                                            <div class="status-icon" style="background-color: #c3e6cb; color: #155724;">
+                                                <i class="bi bi-check2-circle"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="status-title">Pronto para Entrega</h6>
+                                                <p class="status-description">Pedido pronto e aguardando entrega ou retirada</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="status-option {% if pedido.status == 'Entregue' %}selected{% endif %}" data-status="Entregue">
+                                        <div class="status-header">
+                                            <div class="status-icon" style="background-color: #d6d8db; color: #383d41;">
+                                                <i class="bi bi-truck"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="status-title">Entregue</h6>
+                                                <p class="status-description">Pedido entregue ou retirado com sucesso</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="status-option {% if pedido.status == 'Cancelado' %}selected{% endif %}" data-status="Cancelado">
+                                        <div class="status-header">
+                                            <div class="status-icon" style="background-color: #f5c6cb; color: #721c24;">
+                                                <i class="bi bi-x-circle"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="status-title">Cancelado</h6>
+                                                <p class="status-description">Pedido foi cancelado</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Campo oculto para armazenar o status selecionado -->
+                                    <input type="hidden" name="status" id="selectedStatus" value="{{ pedido.status }}">
+                                </div>
+                                
+                                <!-- Observações da atualização -->
+                                <div class="mb-4">
+                                    <label for="observacoes" class="form-label fw-bold">Observações (opcional):</label>
+                                    <textarea class="form-control" id="observacoes" name="observacoes" rows="4" placeholder="Adicione informações adicionais sobre esta atualização de status..."></textarea>
+                                    <div class="form-text">Estas observações serão visíveis apenas para administradores.</div>
+                                </div>
+                                
+                                <!-- Botões de ação -->
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{{ url_for('admin.admin_detalhes_pedido', pedido_id=pedido.id) }}" class="btn btn-outline-secondary">
+                                        Cancelar
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-check2 me-1"></i> Salvar Alterações
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Resumo do Pedido -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="bi bi-list-check me-2"></i>Resumo do Pedido</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Qtd</th>
+                                            <th>Preço</th>
+                                            <th>Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in itens %}
+                                        <tr>
+                                            <td>{{ item.nome }}</td>
+                                            <td>{{ item.quantidade }}</td>
+                                            <td>R$ {{ "%.2f"|format(item.preco_unitario) }}</td>
+                                            <td>R$ {{ "%.2f"|format(item.subtotal) }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot class="table-group-divider">
+                                        <tr>
+                                            <td colspan="3" class="text-end fw-bold">Total:</td>
+                                            <td class="fw-bold">R$ {{ "%.2f"|format(pedido.total) }}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+
+                <!-- Coluna da direita: Informações do cliente e histórico -->
+                <div class="col-lg-4">
+                    <!-- Card de Informações do Cliente -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="bi bi-person me-2"></i>Informações do Cliente</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="profile-pic me-3">
+                                    {{ usuario.nome[:1] }}
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">{{ usuario.nome }}</h6>
+                                    <p class="small text-muted mb-0">{{ usuario.email }}</p>
+                                </div>
+                            </div>
+                            
+                            {% if pedido.metodo_entrega == 'Entrega' %}
+                            <div class="mb-3">
+                                <p class="mb-1 fw-bold"><i class="bi bi-geo-alt me-2"></i>Endereço de Entrega:</p>
+                                <address class="mb-0">
+                                    {{ usuario.endereco_rua }}, {{ usuario.endereco_numero }}<br>
+                                    {% if usuario.endereco_complemento %}
+                                    {{ usuario.endereco_complemento }}<br>
+                                    {% endif %}
+                                    {{ usuario.endereco_bairro }}<br>
+                                    {{ usuario.endereco_cidade }}, {{ usuario.endereco_estado }}<br>
+                                    CEP: {{ usuario.endereco_cep }}
+                                </address>
+                            </div>
+                            {% endif %}
+                            
+                            <a href="{{ url_for('admin.admin_ver_cliente', cliente_id=usuario.id) }}" class="btn btn-outline-primary btn-sm w-100">
+                                <i class="bi bi-eye me-1"></i> Ver Perfil Completo
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Card de Histórico de Status -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="bi bi-clock-history me-2"></i>Histórico de Status</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if historico_status %}
+                            <div class="timeline">
+                                {% for log in historico_status %}
+                                <div class="timeline-item">
+                                    <div class="timeline-dot">
+                                        <i class="bi bi-check-lg"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-date">
+                                            {{ log.data.strftime('%d/%m/%Y às %H:%M') }}
+                                        </div>
+                                        <div class="timeline-body">
+                                            {{ log.descricao }}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                <!-- Item para a criação do pedido -->
+                                <div class="timeline-item">
+                                    <div class="timeline-dot">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-date">
+                                            {{ pedido.data.strftime('%d/%m/%Y às %H:%M') }}
+                                        </div>
+                                        <div class="timeline-body">
+                                            Pedido criado com status: <strong>Pendente</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-dot">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-date">
+                                            {{ pedido.data.strftime('%d/%m/%Y às %H:%M') }}
+                                        </div>
+                                        <div class="timeline-body">
+                                            Pedido criado com status: <strong>{{ pedido.status }}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="admin-footer">
+                <p>&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar toggle for mobile -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Admin scripts -->
+    <script>
+        // Toggle sidebar on mobile
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.main-content').classList.toggle('active');
+        });
+
+        // Inicializar a seleção de status
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusOptions = document.querySelectorAll('.status-option');
+            const selectedStatusInput = document.getElementById('selectedStatus');
+            
+            // Adicionar evento de clique a cada opção de status
+            statusOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remover a classe selected de todas as opções
+                    statusOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Adicionar a classe selected à opção clicada
+                    this.classList.add('selected');
+                    
+                    // Atualizar o valor do input hidden
+                    selectedStatusInput.value = this.dataset.status;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

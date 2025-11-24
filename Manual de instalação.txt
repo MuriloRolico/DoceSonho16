@@ -1,0 +1,110 @@
+Sistema Doce Sonho Confeitaria
+
+Sistema completo de e-commerce para confeitaria desenvolvido em Python Flask com MySQL.
+Requisitos
+
+Python 3.8+
+MySQL 5.7+ ou MariaDB 10.3+
+pip
+
+###Instalação Rápida###
+
+1. Clone o Repositório
+
+bashgit clone <url-do-repositorio>
+cd DOCERIA-21
+
+Ou baixe ele diretamente do github e descompacte
+
+
+2. Crie o Ambiente Virtual
+
+Windows:
+python -m venv venv            
+
+venv\Scripts\activate
+
+
+macOS/Linux:
+bashpython3 -m venv venv
+
+source venv/bin/activate
+
+
+3. Instale as Dependências
+pip install -r requirements.txt
+
+
+4. Configure o Banco de Dados
+Crie o banco no MySQL:
+copie e execute em ordem o conteúdo do arquivo Banco de dados no MySQL
+
+
+5. Configure as Variáveis de Ambiente
+Crie um arquivo .env na raiz do projeto:
+
+# Configurações de Email - Gmail
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=docesonhopro@gmail.com
+EMAIL_PASSWORD=cbpw xbvt cvvn ykag
+EMAIL_FROM=Doce Sonho <docesonhopro@gmail.com>
+
+ATENÇÂO:  CONFIGURE PARA AS SUAS INFORMAÇÕES CASO DESEJE USAR O SERVIÇO DE E-MAIL
+
+6. Execute a Aplicação
+python app.py
+
+
+Acesse: http://localhost:5000
+
+## Credenciais Padrão
+
+Após executar o codigo SQL, use estas credenciais para login, elas sao de administrador padrão:
+
+- **Email:** Rolico@gmail.com
+- **Senha:** 1234
+
+## Funcionalidades Principais
+
+- Sistema de autenticação completo
+- Catálogo de produtos
+- Montador de bolos personalizados
+- Carrinho de compras
+- Integração com Mercado Pago
+- Painel administrativo
+- Sistema de pedidos
+- Recuperação de senha
+- Exportação de dados (LGPD)
+
+## Estrutura do Projeto
+```
+DOCERIA-21/
+├── routes/          # Rotas da aplicação
+├── models/          # Modelos do banco de dados
+├── templates/       # Templates HTML
+├── static/          # Arquivos estáticos
+├── utils/           # Funções auxiliares
+├── app.py           # Arquivo principal
+├── database.py      # Configuração do banco
+├── schema.sql       # Script SQL
+└── requirements.txt # Dependências
+Problemas Comuns
+Erro de conexão MySQL:
+
+Verifique se o MySQL está rodando
+Também verifique se a sua senha do MySQL está correta no arquivo app.py
+
+Módulo não encontrado:
+pip install -r requirements.txt --force-reinstall
+Porta 5000 em uso:
+flask run --port=5001
+
+Tecnologias:
+
+Flask 2.3.3
+Flask-SQLAlchemy 3.0.5
+MySQL/MariaDB
+Mercado Pago SDK 2.2.1
+Werkzeug (autenticação)
+PyJWT 2.9.0

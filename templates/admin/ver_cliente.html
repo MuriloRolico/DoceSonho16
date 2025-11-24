@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Cliente - Doce Sonho</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <style>
+  :root {
+            --primary-color: #d23f72;
+            --primary-dark: #b22d5d;
+            --secondary-color: #ffd6e0;
+            --accent-color: #ffb3c6;
+            --text-color: #2d2d2d;
+            --light-text: #ffffff;
+            --background-color: #fff8fa;
+            --container-bg: #ffffff;
+            --border-color: #f1c2ce;
+            --shadow: 0 8px 20px rgba(210, 63, 114, 0.08);
+            --radius: 10px;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --secondary-dark: #6c757d;
+        }
+
+body, html {
+    scroll-behavior: smooth;
+    background-color: var(--background-color);
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1.8;
+    color: var(--text-color);
+}
+         .mt-3 {
+        margin-top: 0 !important
+            }
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 0.5px;
+}
+
+/* Sidebar */
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 280px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: var(--light-text);
+    position: fixed;
+    height: 100%;
+    overflow-y: auto;
+    z-index: 999;
+    transition: all 0.3s;
+    box-shadow: var(--shadow);
+}
+
+.sidebar-brand {
+    padding: 25px 20px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-brand h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: var(--light-text);
+}
+
+.sidebar-brand i {
+    font-size: 2rem;
+    margin-right: 15px;
+}
+
+.sidebar-menu {
+    padding: 20px 0;
+}
+
+.menu-header {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 15px 25px 5px;
+}
+
+.sidebar-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 2px;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    padding: 12px 25px;
+    transition: all 0.3s;
+    font-weight: 500;
+    border-left: 4px solid transparent;
+}
+
+.sidebar-menu a i {
+    margin-right: 15px;
+    font-size: 1.2rem;
+}
+
+.sidebar-menu a:hover, 
+.sidebar-menu a.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--light-text);
+    border-left-color: var(--secondary-color);
+}
+
+.sidebar-menu a.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+}
+
+.sidebar-profile {
+    padding: 20px 25px;
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-profile .profile-info {
+    display: flex;
+    align-items: center;
+}
+
+/* Main content */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 30px;
+    transition: all 0.3s;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    background-color: var(--container-bg);
+    padding: 22px 28px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border-left: 5px solid var(--primary-color);
+}
+
+.page-title {
+    margin: 0;
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+/* Cards */
+.card {
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: none;
+    margin-bottom: 25px;
+    overflow: hidden;
+    background-color: var(--container-bg);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 12px 25px rgba(142, 68, 173, 0.12);
+}
+
+.card-header {
+    padding: 20px 25px;
+    background-color: var(--container-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h5 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.card-header h5 i {
+    margin-right: 10px;
+    font-size: 1.3rem;
+}
+
+.card-body {
+    padding: 25px;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(142, 68, 173, 0.25);
+}
+
+.btn-outline-secondary {
+    color: var(--secondary-dark);
+    border-color: var(--secondary-dark);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--secondary-dark);
+    color: var(--light-text);
+    transform: translateY(-2px);
+}
+
+/* Forms */
+.form-control, .form-select {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--container-bg);
+    transition: all 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(142, 68, 173, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 8px;
+}
+
+.input-group .btn {
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+}
+
+/* Status badges */
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.success {
+    background-color: rgba(39, 174, 96, 0.15);
+    color: var(--success-color);
+    border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.status-badge.warning {
+    background-color: rgba(243, 156, 18, 0.15);
+    color: var(--warning-color);
+    border: 1px solid rgba(243, 156, 18, 0.3);
+}
+
+.status-badge.danger {
+    background-color: rgba(231, 76, 60, 0.15);
+    color: var(--danger-color);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.status-badge.primary {
+    background-color: rgba(142, 68, 173, 0.15);
+    color: var(--primary-color);
+    border: 1px solid rgba(142, 68, 173, 0.3);
+}
+
+/* Tables */
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    font-weight: 600;
+    color: var(--primary-color);
+    background-color: rgba(142, 68, 173, 0.05);
+    border-bottom: 2px solid var(--primary-color);
+    padding: 15px;
+}
+
+.table td {
+    padding: 15px;
+    vertical-align: middle;
+    border-color: var(--border-color);
+}
+
+.table tr:hover {
+    background-color: rgba(142, 68, 173, 0.03);
+}
+
+.table img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+/* Profile image in card */
+.card .rounded-circle {
+    border: 4px solid var(--secondary-color);
+    box-shadow: 0 5px 15px rgba(142, 68, 173, 0.2);
+}
+
+/* Footer */
+.admin-footer {
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 30px;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: var(--secondary-dark);
+}
+
+/* Alert messages */
+.alert {
+    border-radius: var(--radius);
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 15px 20px;
+    margin-bottom: 25px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .sidebar {
+        margin-left: -280px;
+    }
+    .sidebar.active {
+        margin-left: 0;
+    }
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    .main-content.active {
+        margin-left: 280px;
+    }
+}
+
+/* Mobile toggle button */
+.sidebar-toggle {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+    box-shadow: 0 5px 15px rgba(142, 68, 173, 0.3);
+    display: none;
+    font-size: 1.5rem;
+}
+
+@media (max-width: 992px) {
+    .sidebar-toggle {
+        display: flex;
+    }
+}
+
+/* Cliente details specific styles */
+.mb-3 .text-muted {
+    display: inline-block;
+    min-width: 120px;
+    color: var(--secondary-dark) !important;
+}
+
+.mb-3 .fw-bold {
+    color: var(--text-color);
+}
+
+/* Badge overrides */
+.badge.bg-success {
+    background-color: var(--success-color) !important;
+}
+
+.badge.bg-danger {
+    background-color: var(--danger-color) !important;
+}
+
+/* Flash messages */
+.flash-messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
+}
+
+.flash-messages .alert {
+    margin-bottom: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid var(--primary-color);
+}
+
+.flash-messages .alert-success {
+    border-left-color: var(--success-color);
+}
+
+.flash-messages .alert-danger {
+    border-left-color: var(--danger-color);
+}
+
+.flash-messages .alert-warning {
+    border-left-color: var(--warning-color);
+}
+
+/* Smooth transitions */
+*, *:before, *:after {
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+/* Empty state styling */
+.text-center.p-4 {
+    padding: 40px !important;
+}
+
+.text-center.p-4 i {
+    font-size: 3.5rem !important;
+    color: var(--border-color) !important;
+    margin-bottom: 15px;
+}
+
+.text-center.p-4 p {
+    font-size: 1.1rem;
+    color: var(--secondary-dark) !important;
+}
+
+/* Form validation */
+.is-invalid {
+    border-color: var(--danger-color) !important;
+}
+
+.invalid-feedback {
+    color: var(--danger-color);
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+/* New Product form specific */
+.navbar {
+    background-color: var(--container-bg) !important;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: var(--primary-color) !important;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+}
+
+footer {
+    background-color: #2c3e50 !important;
+    color: var(--light-text) !important;
+}
+
+footer h4 {
+    color: var(--light-text);
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+footer h4:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 50px;
+    height: 2px;
+    background-color: var(--primary-color);
+}
+
+footer .social-icons a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s;
+}
+
+footer .social-icons a:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-3px);
+}
+
+.whatsapp-float .btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+}
+
+.whatsapp-float .btn:hover {
+    transform: scale(1.1);
+}
+
+/* Dark mode toggle (optional feature) */
+.dark-mode-toggle {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    z-index: 1000;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: var(--container-bg);
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    color: var(--primary-color);
+}
+</style>
+</head>
+<body>
+    <!-- Mensagens Flash -->
+    <div class="container-fluid px-4 mt-3">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- Main container -->
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="bi bi-cake2"></i>
+                <h2>Doce Sonho</h2>
+            </div>
+            <div class="sidebar-menu">
+                <p class="menu-header">Principal</p>
+                <ul>
+                    <li>
+                        <a href="{{ url_for('admin.admin_produtos') }}">
+                            <i class="bi bi-box-seam"></i> Produtos
+                        </a>
+                    </li>
+                   
+                    <li>
+                        <a href="{{ url_for('admin.admin_pedidos') }}">
+                            <i class="bi bi-bag"></i> Pedidos
+                        </a>
+                    </li>
+                   
+                </ul>
+                <p class="menu-header">Usuários</p>
+                <ul>
+                    <li>
+                        <a href="{{ url_for('admin.admin_clientes') }}" class="active">
+                            <i class="bi bi-people"></i> Clientes
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('admin.admin_usuarios') }}">
+                            <i class="bi bi-person-badge"></i> Administradores
+                        </a>
+                    </li>
+                </ul>
+                <p class="menu-header">Relatórios</p>
+                <ul>
+                   
+                    <li>
+                        <a href="{{ url_for('admin.admin_logs') }}">
+                            <i class="bi bi-journal-text"></i> Logs do Sistema
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-profile">
+                <div class="profile-info">
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <div class="main-content">
+            <!-- Page header -->
+            <div class="page-header">
+                <h1 class="page-title">Cliente: {{ cliente.nome }}</h1>
+                <div>
+                    <a href="{{ url_for('admin.admin_clientes') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Voltar para Clientes
+                    </a>
+                </div>
+            </div>
+
+            <!-- Cliente info -->
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="bi bi-person me-2"></i>Informações Pessoais</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-center mb-4">
+                                {% if cliente.foto_perfil %}
+                                <img src="{{ cliente.foto_perfil }}" alt="{{ cliente.nome }}" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                                {% else %}
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
+                                    <i class="bi bi-person-circle" style="font-size: 80px; color: #ccc;"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <span class="text-muted">ID:</span>
+                                <span class="fw-bold ms-2">{{ cliente.id }}</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <span class="text-muted">Nome:</span>
+                                <span class="fw-bold ms-2">{{ cliente.nome }}</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <span class="text-muted">Email:</span>
+                                <span class="fw-bold ms-2">{{ cliente.email }}</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <span class="text-muted">Data de Registro:</span>
+                                <span class="fw-bold ms-2">{{ cliente.data_registro.strftime('%d/%m/%Y') }}</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <span class="text-muted">Último Acesso:</span>
+                                <span class="fw-bold ms-2">
+                                    {% if cliente.ultimo_acesso %}
+                                    {{ cliente.ultimo_acesso.strftime('%d/%m/%Y %H:%M') }}
+                                    {% else %}
+                                    Nunca acessou
+                                    {% endif %}
+                                </span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <span class="text-muted">Status:</span>
+                                <span class="badge {{ 'bg-success' if cliente.status == 'ativo' else 'bg-danger' }} ms-2">
+                                    {{ cliente.status }}
+                                </span>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <a href="{{ url_for('admin.admin_editar_usuario', usuario_id=cliente.id) }}" class="btn btn-primary w-100">
+                                    <i class="bi bi-pencil"></i> Editar Cliente
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="bi bi-geo-alt me-2"></i>Endereço</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if cliente.endereco_rua %}
+                            <p>
+                                {{ cliente.endereco_rua }}, {{ cliente.endereco_numero }}
+                                {% if cliente.endereco_complemento %} - {{ cliente.endereco_complemento }}{% endif %}<br>
+                                {{ cliente.endereco_bairro }}<br>
+                                {{ cliente.endereco_cidade }}/{{ cliente.endereco_estado }} - CEP: {{ cliente.endereco_cep }}
+                            </p>
+                            {% else %}
+                            <p class="text-muted">Nenhum endereço cadastrado</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5><i class="bi bi-bag me-2"></i>Histórico de Pedidos</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            {% if pedidos %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Data</th>
+                                            <th>Total</th>
+                                            <th>Status</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for pedido in pedidos %}
+                                        <tr>
+                                            <td>#{{ pedido.id }}</td>
+                                            <td>{{ pedido.data.strftime('%d/%m/%Y %H:%M') }}</td>
+                                            <td>R$ {{ "%.2f"|format(pedido.total) }}</td>
+                                            <td>
+                                                <span class="status-badge {{ 'success' if pedido.status == 'Entregue' else ('warning' if pedido.status == 'Em processamento' else 'danger' if pedido.status == 'Cancelado' else 'primary') }}">
+                                                    {{ pedido.status }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('admin.admin_detalhes_pedido', pedido_id=pedido.id) }}" class="btn btn-sm btn-info">
+                                                    <i class="bi bi-eye"></i> Ver
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="text-center p-4">
+                                <i class="bi bi-bag-x" style="font-size: 3rem; color: #ccc;"></i>
+                                <p class="mt-3 text-muted">Este cliente ainda não realizou nenhum pedido.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="admin-footer">
+                <p>&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar toggle for mobile -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Admin scripts -->
+    <script>
+        // Toggle sidebar on mobile
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.main-content').classList.toggle('active');
+        });
+
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+        // Toggle sidebar on mobile
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+    document.querySelector('.sidebar').classList.toggle('active');
+    document.querySelector('.main-content').classList.toggle('active');
+});
+
+// Initialize tooltips
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+});
+
+// Auto-hide flash messages after 5 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    const flashMessages = document.querySelectorAll('.alert');
+    flashMessages.forEach(message => {
+        setTimeout(function() {
+            const bsAlert = new bootstrap.Alert(message);
+            bsAlert.close();
+        }, 5000);
+    });
+});
+
+// Toggle password visibility for novo_usuario.html
+if(document.getElementById('togglePassword')) {
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const senha = document.getElementById('senha');
+        const type = senha.getAttribute('type') === 'password' ? 'text' : 'password';
+        senha.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('bi-eye');
+        this.querySelector('i').classList.toggle('bi-eye-slash');
+    });
+}
+
+if(document.getElementById('toggleConfirmPassword')) {
+    document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+        const confirmarSenha = document.getElementById('confirmar_senha');
+        const type = confirmarSenha.getAttribute('type') === 'password' ? 'text' : 'password';
+        confirmarSenha.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('bi-eye');
+        this.querySelector('i').classList.toggle('bi-eye-slash');
+    });
+}
+
+// Senha validation for novo_usuario.html
+if(document.getElementById('senha') && document.getElementById('confirmar_senha')) {
+    const senha = document.getElementById('senha');
+    const confirmarSenha = document.getElementById('confirmar_senha');
+    const senhaFeedback = document.getElementById('senha-feedback');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    function validarSenhas() {
+        if (confirmarSenha.value && senha.value !== confirmarSenha.value) {
+            senhaFeedback.classList.remove('d-none');
+            confirmarSenha.classList.add('is-invalid');
+            submitBtn.disabled = true;
+        } else {
+            senhaFeedback.classList.add('d-none');
+            confirmarSenha.classList.remove('is-invalid');
+            submitBtn.disabled = false;
+        }
+    }
+    
+    senha.addEventListener('input', validarSenhas);
+    confirmarSenha.addEventListener('input', validarSenhas);
+}
+
+// CEP API integration for novo_usuario.html when tipo == 'cliente'
+if(document.getElementById('cep')) {
+    const cepInput = document.getElementById('cep');
+    
+    cepInput.addEventListener('blur', function() {
+        const cep = this.value.replace(/\D/g, '');
+        
+        if (cep.length !== 8) {
+            return;
+        }
+        
+        // Show loading indicator
+        const enderecoFields = document.querySelectorAll('#rua, #bairro, #cidade, #estado');
+        enderecoFields.forEach(field => {
+            field.value = 'Carregando...';
+            field.disabled = true;
+        });
+        
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+                // Remove loading indicator
+                enderecoFields.forEach(field => {
+                    field.disabled = false;
+                });
+                
+                if (!data.erro) {
+                    document.getElementById('rua').value = data.logradouro;
+                    document.getElementById('bairro').value = data.bairro;
+                    document.getElementById('cidade').value = data.localidade;
+                    document.getElementById('estado').value = data.uf;
+                    // Focus on numero after filling address
+                    document.getElementById('numero').focus();
+                } else {
+                    // Clear fields if CEP not found
+                    enderecoFields.forEach(field => {
+                        field.value = '';
+                    });
+                    alert('CEP não encontrado. Por favor, preencha os campos manualmente.');
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar CEP:', error);
+                // Clear loading indicator
+                enderecoFields.forEach(field => {
+                    field.disabled = false;
+                    field.value = '';
+                });
+                alert('Erro ao buscar CEP. Por favor, preencha os campos manualmente.');
+            });
+    });
+    
+    // Format CEP as it's typed
+    cepInput.addEventListener('input', function() {
+        let cep = this.value.replace(/\D/g, '');
+        if (cep.length > 5) {
+            cep = cep.substring(0, 5) + '-' + cep.substring(5);
+        }
+        this.value = cep.substring(0, 9);
+    });
+}
+
+// For novo_produto.html - Image preview
+if(document.getElementById('imagem')) {
+    const imagemInput = document.getElementById('imagem');
+    
+    imagemInput.addEventListener('change', function() {
+        // Check if an image preview container already exists, otherwise create one
+        let previewContainer = document.querySelector('.image-preview-container');
+        
+        if (!previewContainer) {
+            previewContainer = document.createElement('div');
+            previewContainer.classList.add('image-preview-container', 'mb-3', 'mt-2');
+            imagemInput.parentNode.appendChild(previewContainer);
+        } else {
+            // Clear existing preview
+            previewContainer.innerHTML = '';
+        }
+        
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const preview = document.createElement('div');
+                preview.classList.add('image-preview');
+                preview.style.width = '150px';
+                preview.style.height = '150px';
+                preview.style.backgroundImage = `url('${e.target.result}')`;
+                preview.style.backgroundSize = 'cover';
+                preview.style.backgroundPosition = 'center';
+                preview.style.borderRadius = '8px';
+                preview.style.border = '1px solid var(--border-color)';
+                
+                previewContainer.appendChild(preview);
+            }
+            
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+}
+
+// Animated scroll to top for long pages
+window.addEventListener('scroll', function() {
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+    
+    if (!scrollToTopBtn && window.pageYOffset > 300) {
+        const newScrollToTopBtn = document.createElement('button');
+        newScrollToTopBtn.id = 'scrollToTopBtn';
+        newScrollToTopBtn.innerHTML = '<i class="bi bi-arrow-up"></i>';
+        newScrollToTopBtn.className = 'btn btn-primary rounded-circle position-fixed';
+        newScrollToTopBtn.style.bottom = '90px';
+        newScrollToTopBtn.style.right = '30px';
+        newScrollToTopBtn.style.width = '45px';
+        newScrollToTopBtn.style.height = '45px';
+        newScrollToTopBtn.style.padding = '0';
+        newScrollToTopBtn.style.display = 'flex';
+        newScrollToTopBtn.style.alignItems = 'center';
+        newScrollToTopBtn.style.justifyContent = 'center';
+        newScrollToTopBtn.style.zIndex = '999';
+        newScrollToTopBtn.style.opacity = '0';
+        newScrollToTopBtn.style.transition = 'opacity 0.3s';
+        
+        document.body.appendChild(newScrollToTopBtn);
+        
+        newScrollToTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Fade in the button
+        setTimeout(() => {
+            newScrollToTopBtn.style.opacity = '1';
+        }, 100);
+    } else if (scrollToTopBtn) {
+        if (window.pageYOffset > 300) {
+            scrollToTopBtn.style.opacity = '1';
+        } else {
+            scrollToTopBtn.style.opacity = '0';
+        }
+    }
+});
+
+// Form validation for the new product form
+if (document.querySelector('form')) {
+    const form = document.querySelector('form');
+    
+    form.addEventListener('submit', function(event) {
+        const requiredFields = form.querySelectorAll('[required]');
+        let hasErrors = false;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                
+                if (!field.nextElementSibling || !field.nextElementSibling.classList.contains('invalid-feedback')) {
+                    const feedback = document.createElement('div');
+                    feedback.classList.add('invalid-feedback');
+                    feedback.textContent = 'Este campo é obrigatório.';
+                    field.parentNode.insertBefore(feedback, field.nextSibling);
+                }
+                
+                hasErrors = true;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        if (hasErrors) {
+            event.preventDefault();
+            // Scroll to the first error
+            const firstError = form.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
+            }
+        }
+    });
+    
+    // Remove validation errors when field is corrected
+    form.querySelectorAll('input, textarea, select').forEach(field => {
+        field.addEventListener('input', function() {
+            if (this.value.trim()) {
+                this.classList.remove('is-invalid');
+            }
+        });
+    });
+}
+
+// Contact form in product page footer
+if (document.getElementById('contato-form')) {
+    document.getElementById('contato-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Animated success message
+        const successMessage = document.createElement('div');
+        successMessage.className = 'alert alert-success fade show';
+        successMessage.innerHTML = '<i class="bi bi-check-circle me-2"></i> Obrigado pelo contato! Responderemos em breve.';
+        successMessage.style.position = 'fixed';
+        successMessage.style.top = '20px';
+        successMessage.style.right = '20px';
+        successMessage.style.zIndex = '9999';
+        successMessage.style.maxWidth = '400px';
+        successMessage.style.boxShadow = '0 5px 15px rgba(39, 174, 96, 0.3)';
+        successMessage.style.opacity = '0';
+        successMessage.style.transform = 'translateY(-20px)';
+        successMessage.style.transition = 'all 0.3s ease';
+        
+        document.body.appendChild(successMessage);
+        
+        // Fade in
+        setTimeout(() => {
+            successMessage.style.opacity = '1';
+            successMessage.style.transform = 'translateY(0)';
+        }, 100);
+        
+        // Fade out after 5 seconds
+        setTimeout(() => {
+            successMessage.style.opacity = '0';
+            successMessage.style.transform = 'translateY(-20px)';
+            
+            // Remove from DOM after animation
+            setTimeout(() => {
+                document.body.removeChild(successMessage);
+            }, 300);
+        }, 5000);
+        
+        this.reset();
+    });
+}
+    </script>
+    
+</body>
+</html>
