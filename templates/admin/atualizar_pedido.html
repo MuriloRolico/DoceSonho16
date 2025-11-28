@@ -719,13 +719,7 @@
                                     <input type="hidden" name="status" id="selectedStatus" value="{{ pedido.status }}">
                                 </div>
                                 
-                                <!-- Observações da atualização -->
-                                <div class="mb-4">
-                                    <label for="observacoes" class="form-label fw-bold">Observações (opcional):</label>
-                                    <textarea class="form-control" id="observacoes" name="observacoes" rows="4" placeholder="Adicione informações adicionais sobre esta atualização de status..."></textarea>
-                                    <div class="form-text">Estas observações serão visíveis apenas para administradores.</div>
-                                </div>
-                                
+                            
                                 <!-- Botões de ação -->
                                 <div class="d-flex justify-content-end gap-2">
                                     <a href="{{ url_for('admin.admin_detalhes_pedido', pedido_id=pedido.id) }}" class="btn btn-outline-secondary">

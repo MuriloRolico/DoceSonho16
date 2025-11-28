@@ -1,10 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
 from database import db
 from models.models import Produto, Log, Pedido, ItemPedido, ItemPedidoPersonalizado, BoloPersonalizado, Usuario
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from werkzeug.utils import secure_filename
 import os
 from utils.helpers import is_admin, allowed_file, registrar_log
+ 
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -569,12 +570,26 @@ def admin_editar_produto(produto_id):
         flash('Acesso negado. Apenas administradores podem acessar esta área.', 'danger')
         return redirect(url_for('index'))
     
+    
+    
     produto = Produto.query.get_or_404(produto_id)
     
     if request.method == 'POST':
         produto.nome = request.form.get('nome')
         produto.descricao = request.form.get('descricao')
-        produto.preco = float(request.form.get('preco'))
+        
+        # Validação de preço
+        preco_str = request.form.get('preco')
+        if preco_str:
+            try:
+                produto.preco = float(preco_str)
+            except (ValueError, TypeError):
+                flash('Valor de preço inválido!', 'danger')
+                return render_template('admin/editar_produto.html', produto=produto)
+        else:
+            flash('O preço é obrigatório!', 'danger')
+            return render_template('admin/editar_produto.html', produto=produto)
+        
         produto.categoria = request.form.get('categoria')
         
         # Novos campos
@@ -584,20 +599,31 @@ def admin_editar_produto(produto_id):
                 produto.peso = float(request.form.get('peso'))
             except ValueError:
                 flash('Valor de peso inválido!', 'danger')
+                return render_template('admin/editar_produto.html', produto=produto)
         
         produto.ingredientes = request.form.get('ingredientes')
         
+        # Validação de data
         data_validade_str = request.form.get('data_validade')
         if data_validade_str:
             try:
-                produto.data_validade = datetime.strptime(data_validade_str, '%Y-%m-%d')
+                data_validade = datetime.strptime(data_validade_str, '%d/%m/%Y').date()
+                
+                # Validação: não permitir data no passado
+                if data_validade < date.today():
+                    flash('A data de validade não pode ser anterior a hoje!', 'danger')
+                    return render_template('admin/editar_produto.html', produto=produto)
+                
+                produto.data_validade = datetime.strptime(data_validade_str, '%d/%m/%Y')
             except ValueError:
                 flash('Formato de data de validade inválido!', 'danger')
+                return render_template('admin/editar_produto.html', produto=produto)
+        else:
+            produto.data_validade = None
         
         produto.informacoes_nutricionais = request.form.get('informacoes_nutricionais')
         
         # Upload da imagem (se fornecida)
-        
         if 'imagem' in request.files:
             arquivo = request.files['imagem']
             if arquivo.filename != '':
@@ -623,6 +649,10 @@ def admin_editar_produto(produto_id):
         
         flash('Produto atualizado com sucesso!', 'success')
         return redirect(url_for('admin.admin_produtos'))
+    
+
+    
+    
     
     return render_template('admin/editar_produto.html', produto=produto)
 

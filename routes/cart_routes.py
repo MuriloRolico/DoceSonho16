@@ -34,26 +34,35 @@ def formatar_lista_json(valor):
         return valor.replace('_', ' ').title() if valor else ""
 
 def formatar_campo_simples(valor):
-
     if not valor:
         return ""
     return valor.replace('_', ' ').title()
 
-@cart_bp.route('/carrinho')
-def carrinho():
-    # Inicializar variáveis
+def calcular_totais_carrinho(usuario_id=None):
+    """
+    Calcula os totais do carrinho e valida preços e quantidades
+    Retorna: (itens_regulares, itens_personalizados, total, erros)
+    """
     itens_regulares = []
     itens_personalizados = []
     total = 0
+    erros = []
     
-    # Verificar se o usuário está logado para recuperar carrinho persistente
-    if 'usuario_id' in session:
-        usuario_id = session['usuario_id']
+    if usuario_id:
         # Buscar itens regulares do banco de dados
         itens_db = CarrinhoItem.query.filter_by(usuario_id=usuario_id).all()
         for item in itens_db:
             produto = Produto.query.get(item.produto_id)
-            if produto:
+            if produto and produto.ativo:
+                # Validar quantidade
+                if item.quantidade <= 0:
+                    erros.append(f"Quantidade inválida para {produto.nome}")
+                    continue
+                if item.quantidade > 10:
+                    item.quantidade = 10
+                    db.session.commit()
+                    erros.append(f"Quantidade de {produto.nome} ajustada para o máximo permitido (10)")
+                
                 subtotal = produto.preco * item.quantidade
                 total += subtotal
                 itens_regulares.append({
@@ -64,12 +73,26 @@ def carrinho():
                     'subtotal': subtotal,
                     'tipo': 'regular'
                 })
+            else:
+                # Produto não existe ou está inativo, remover do carrinho
+                db.session.delete(item)
+                db.session.commit()
+                erros.append(f"Produto ID {item.produto_id} removido do carrinho (não disponível)")
         
         # Buscar bolos personalizados do banco de dados
         bolos_db = CarrinhoBoloPersonalizado.query.filter_by(usuario_id=usuario_id).all()
         for item in bolos_db:
             bolo = BoloPersonalizado.query.get(item.bolo_personalizado_id)
             if bolo:
+                # Validar quantidade
+                if item.quantidade <= 0:
+                    erros.append(f"Quantidade inválida para bolo personalizado")
+                    continue
+                if item.quantidade > 10:
+                    item.quantidade = 10
+                    db.session.commit()
+                    erros.append(f"Quantidade de bolo personalizado ajustada para o máximo permitido (10)")
+                
                 subtotal = bolo.preco * item.quantidade
                 total += subtotal
                 itens_personalizados.append({
@@ -85,39 +108,115 @@ def carrinho():
                     'subtotal': subtotal,
                     'tipo': 'personalizado'
                 })
+            else:
+                # Bolo não existe, remover do carrinho
+                db.session.delete(item)
+                db.session.commit()
+                erros.append(f"Bolo personalizado ID {item.bolo_personalizado_id} removido do carrinho (não disponível)")
     else:
-        
-        # Manter a funcionalidade do carrinho na sessão para usuários não logados
+        # Carrinho na sessão para usuários não logados
         if 'carrinho' in session and session['carrinho']:
-            for item in session['carrinho'].values():
-                subtotal = item['preco'] * item['quantidade']
-                total += subtotal
-                itens_regulares.append({
-                    'id': item['id'],
-                    'nome': item['nome'],
-                    'preco': item['preco'],
-                    'quantidade': item['quantidade'],
-                    'subtotal': subtotal,
-                    'tipo': 'regular'
-                })
+            carrinho_atualizado = {}
+            for item_id, item in session['carrinho'].items():
+                produto = Produto.query.filter_by(id=item['id'], ativo=True).first()
+                if produto:
+                    # Validar e ajustar quantidade
+                    quantidade = item['quantidade']
+                    if quantidade <= 0:
+                        continue
+                    if quantidade > 10:
+                        quantidade = 10
+                        erros.append(f"Quantidade de {produto.nome} ajustada para o máximo permitido (10)")
+                    
+                    # Validar preço
+                    if item['preco'] != produto.preco:
+                        erros.append(f"Preço de {produto.nome} atualizado")
+                    
+                    subtotal = produto.preco * quantidade
+                    total += subtotal
+                    
+                    carrinho_atualizado[item_id] = {
+                        'id': produto.id,
+                        'nome': produto.nome,
+                        'preco': produto.preco,
+                        'quantidade': quantidade
+                    }
+                    
+                    itens_regulares.append({
+                        'id': produto.id,
+                        'nome': produto.nome,
+                        'preco': produto.preco,
+                        'quantidade': quantidade,
+                        'subtotal': subtotal,
+                        'tipo': 'regular'
+                    })
+                else:
+                    erros.append(f"Produto removido do carrinho (não disponível)")
+            
+            session['carrinho'] = carrinho_atualizado
         
         if 'carrinho_personalizado' in session and session['carrinho_personalizado']:
-            for item in session['carrinho_personalizado'].values():
-                subtotal = item['preco'] * item['quantidade']
-                total += subtotal
-                itens_personalizados.append({
-                    'id': item['id'],
-                    'nome': item['nome'],
-                    'massa': formatar_campo_simples(item.get('massa', '')),
-                    'recheios': formatar_lista_json(item.get('recheios', '')),
-                    'cobertura': formatar_campo_simples(item.get('cobertura', '')),
-                    'finalizacao': formatar_lista_json(item.get('finalizacao', '')),
-                    'observacoes': item.get('observacoes', ''),
-                    'preco': item['preco'],
-                    'quantidade': item['quantidade'],
-                    'subtotal': subtotal,
-                    'tipo': 'personalizado'
-                })
+            carrinho_personalizado_atualizado = {}
+            for item_id, item in session['carrinho_personalizado'].items():
+                bolo = BoloPersonalizado.query.get(item['id'])
+                if bolo:
+                    # Validar e ajustar quantidade
+                    quantidade = item['quantidade']
+                    if quantidade <= 0:
+                        continue
+                    if quantidade > 10:
+                        quantidade = 10
+                        erros.append(f"Quantidade de bolo personalizado ajustada para o máximo permitido (10)")
+                    
+                    # Validar preço
+                    if item['preco'] != bolo.preco:
+                        erros.append(f"Preço de bolo personalizado atualizado")
+                    
+                    subtotal = bolo.preco * quantidade
+                    total += subtotal
+                    
+                    carrinho_personalizado_atualizado[item_id] = {
+                        'id': bolo.id,
+                        'nome': item['nome'],
+                        'massa': item.get('massa', ''),
+                        'recheios': item.get('recheios', ''),
+                        'cobertura': item.get('cobertura', ''),
+                        'finalizacao': item.get('finalizacao', ''),
+                        'observacoes': item.get('observacoes', ''),
+                        'preco': bolo.preco,
+                        'quantidade': quantidade
+                    }
+                    
+                    itens_personalizados.append({
+                        'id': bolo.id,
+                        'nome': item['nome'],
+                        'massa': formatar_campo_simples(item.get('massa', '')),
+                        'recheios': formatar_lista_json(item.get('recheios', '')),
+                        'cobertura': formatar_campo_simples(item.get('cobertura', '')),
+                        'finalizacao': formatar_lista_json(item.get('finalizacao', '')),
+                        'observacoes': item.get('observacoes', ''),
+                        'preco': bolo.preco,
+                        'quantidade': quantidade,
+                        'subtotal': subtotal,
+                        'tipo': 'personalizado'
+                    })
+                else:
+                    erros.append(f"Bolo personalizado removido do carrinho (não disponível)")
+            
+            session['carrinho_personalizado'] = carrinho_personalizado_atualizado
+    
+    return itens_regulares, itens_personalizados, total, erros
+
+@cart_bp.route('/carrinho')
+def carrinho():
+    usuario_id = session.get('usuario_id')
+    
+    # Calcular totais e validar carrinho
+    itens_regulares, itens_personalizados, total, erros = calcular_totais_carrinho(usuario_id)
+    
+    # Mostrar erros se houver
+    for erro in erros:
+        flash(erro, 'warning')
     
     # Combinar os dois tipos de itens
     todos_itens = itens_regulares + itens_personalizados
@@ -128,7 +227,6 @@ def carrinho():
 def adicionar_ao_carrinho(produto_id):
     # Verificar se produto existe e está ativo
     produto = Produto.query.filter_by(id=produto_id, ativo=True).first_or_404()
-    # resto do código...
     
     # Se o usuário estiver logado, salvar no banco de dados
     if 'usuario_id' in session:
@@ -140,8 +238,13 @@ def adicionar_ao_carrinho(produto_id):
         ).first()
         
         if item_existente:
-            # Atualizar quantidade
-            item_existente.quantidade += 1
+            # Verificar limite de quantidade
+            if item_existente.quantidade >= 10:
+                flash(f'Quantidade máxima de {produto.nome} atingida (10 unidades)', 'warning')
+            else:
+                item_existente.quantidade += 1
+                db.session.commit()
+                flash(f'{produto.nome} adicionado ao carrinho!', 'success')
         else:
             # Criar novo item
             novo_item = CarrinhoItem(
@@ -150,8 +253,9 @@ def adicionar_ao_carrinho(produto_id):
                 quantidade=1
             )
             db.session.add(novo_item)
+            db.session.commit()
+            flash(f'{produto.nome} adicionado ao carrinho!', 'success')
         
-        db.session.commit()
         registrar_log("INFO", f"Produto adicionado ao carrinho: ID {produto_id}", usuario_id)
     else:
         # Manter o comportamento da sessão para usuários não logados
@@ -162,7 +266,11 @@ def adicionar_ao_carrinho(produto_id):
         produto_id_str = str(produto_id)
         
         if produto_id_str in carrinho:
-            carrinho[produto_id_str]['quantidade'] += 1
+            if carrinho[produto_id_str]['quantidade'] >= 10:
+                flash(f'Quantidade máxima de {produto.nome} atingida (10 unidades)', 'warning')
+            else:
+                carrinho[produto_id_str]['quantidade'] += 1
+                flash(f'{produto.nome} adicionado ao carrinho!', 'success')
         else:
             carrinho[produto_id_str] = {
                 'id': produto_id,
@@ -170,10 +278,10 @@ def adicionar_ao_carrinho(produto_id):
                 'preco': produto.preco,
                 'quantidade': 1
             }
+            flash(f'{produto.nome} adicionado ao carrinho!', 'success')
         
         session['carrinho'] = carrinho
     
-    flash(f'{produto.nome} adicionado ao carrinho!', 'success')
     return redirect(url_for('index'))
 
 @cart_bp.route('/bolo-personalizado/<int:bolo_id>/adicionar')
@@ -197,8 +305,13 @@ def adicionar_bolo_personalizado_ao_carrinho(bolo_id):
     ).first()
     
     if item_existente:
-        # Atualizar quantidade
-        item_existente.quantidade += 1
+        # Verificar limite de quantidade
+        if item_existente.quantidade >= 10:
+            flash(f'Quantidade máxima de bolo personalizado atingida (10 unidades)', 'warning')
+        else:
+            item_existente.quantidade += 1
+            db.session.commit()
+            flash(f'Bolo personalizado adicionado ao carrinho!', 'success')
     else:
         # Criar novo item
         novo_item = CarrinhoBoloPersonalizado(
@@ -207,11 +320,11 @@ def adicionar_bolo_personalizado_ao_carrinho(bolo_id):
             quantidade=1
         )
         db.session.add(novo_item)
+        db.session.commit()
+        flash(f'Bolo personalizado adicionado ao carrinho!', 'success')
     
-    db.session.commit()
     registrar_log("INFO", f"Bolo personalizado adicionado ao carrinho: ID {bolo_id}", usuario_id)
     
-    flash(f'Bolo personalizado adicionado ao carrinho!', 'success')
     return redirect(url_for('cart.carrinho'))
 
 @cart_bp.route('/remover_do_carrinho/<int:produto_id>')
@@ -276,92 +389,141 @@ def remover_bolo_personalizado(bolo_id):
     
     return redirect(url_for('cart.carrinho'))
 
-@cart_bp.route('/atualizar_carrinho', methods=['POST'])
-def atualizar_carrinho():
-    # Verificar se é uma requisição AJAX
-    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-    
-    # Atualizar carrinhos no banco de dados para usuários logados
-    if 'usuario_id' in session:
-        usuario_id = session['usuario_id']
+@cart_bp.route('/atualizar_quantidade', methods=['POST'])
+def atualizar_quantidade():
+    """
+    Endpoint para atualização automática de quantidade via AJAX
+    """
+    try:
+        data = request.get_json()
+        item_id = data.get('item_id')
+        item_tipo = data.get('item_tipo')
+        nova_quantidade = int(data.get('quantidade'))
         
-        # Atualizar produtos regulares
-        for produto_id, quantidade in request.form.items():
-            if produto_id.startswith('quantidade_regular_'):
-                produto_id_real = int(produto_id.replace('quantidade_regular_', ''))
-                try:
-                    nova_quantidade = int(quantidade)
-                    if nova_quantidade > 0:
-                        item = CarrinhoItem.query.filter_by(
-                            usuario_id=usuario_id,
-                            produto_id=produto_id_real
-                        ).first()
-                        if item:
-                            item.quantidade = nova_quantidade
-                except ValueError:
-                    pass
+        # Validar quantidade
+        if nova_quantidade < 1:
+            return jsonify({
+                'status': 'error',
+                'message': 'Quantidade mínima é 1'
+            }), 400
         
-        # Atualizar bolos personalizados
-        for bolo_id, quantidade in request.form.items():
-            if bolo_id.startswith('quantidade_personalizado_'):
-                bolo_id_real = int(bolo_id.replace('quantidade_personalizado_', ''))
-                try:
-                    nova_quantidade = int(quantidade)
-                    if nova_quantidade > 0:
-                        item = CarrinhoBoloPersonalizado.query.filter_by(
-                            usuario_id=usuario_id,
-                            bolo_personalizado_id=bolo_id_real
-                        ).first()
-                        if item:
-                            item.quantidade = nova_quantidade
-                except ValueError:
-                    pass
+        if nova_quantidade > 10:
+            return jsonify({
+                'status': 'error',
+                'message': 'Quantidade máxima é 10'
+            }), 400
         
-        db.session.commit()
-        registrar_log("INFO", f"Carrinho atualizado", usuario_id)
-    else:
-        # Manter o comportamento da sessão para usuários não logados
-        # Atualizar carrinho regular
-        if 'carrinho' in session:
-            carrinho = session['carrinho']
+        if 'usuario_id' in session:
+            usuario_id = session['usuario_id']
             
-            for produto_id, quantidade in request.form.items():
-                if produto_id.startswith('quantidade_regular_'):
-                    produto_id_real = produto_id.replace('quantidade_regular_', '')
-                    try:
-                        nova_quantidade = int(quantidade)
-                        if nova_quantidade > 0 and produto_id_real in carrinho:
-                            carrinho[produto_id_real]['quantidade'] = nova_quantidade
-                    except ValueError:
-                        pass
-            
-            session['carrinho'] = carrinho
+            if item_tipo == 'regular':
+                item = CarrinhoItem.query.filter_by(
+                    usuario_id=usuario_id,
+                    produto_id=item_id
+                ).first()
+                
+                if item:
+                    item.quantidade = nova_quantidade
+                    db.session.commit()
+                    
+                    # Calcular novo subtotal
+                    produto = Produto.query.get(item_id)
+                    subtotal = produto.preco * nova_quantidade
+                    
+                    # Recalcular total do carrinho
+                    _, _, total, _ = calcular_totais_carrinho(usuario_id)
+                    
+                    return jsonify({
+                        'status': 'success',
+                        'subtotal': subtotal,
+                        'total': total
+                    })
+            else:  # personalizado
+                item = CarrinhoBoloPersonalizado.query.filter_by(
+                    usuario_id=usuario_id,
+                    bolo_personalizado_id=item_id
+                ).first()
+                
+                if item:
+                    item.quantidade = nova_quantidade
+                    db.session.commit()
+                    
+                    # Calcular novo subtotal
+                    bolo = BoloPersonalizado.query.get(item_id)
+                    subtotal = bolo.preco * nova_quantidade
+                    
+                    # Recalcular total do carrinho
+                    _, _, total, _ = calcular_totais_carrinho(usuario_id)
+                    
+                    return jsonify({
+                        'status': 'success',
+                        'subtotal': subtotal,
+                        'total': total
+                    })
+        else:
+            # Atualizar sessão
+            if item_tipo == 'regular' and 'carrinho' in session:
+                item_id_str = str(item_id)
+                if item_id_str in session['carrinho']:
+                    session['carrinho'][item_id_str]['quantidade'] = nova_quantidade
+                    session.modified = True
+                    
+                    # Calcular novo subtotal
+                    produto = Produto.query.get(item_id)
+                    subtotal = produto.preco * nova_quantidade
+                    
+                    # Recalcular total
+                    _, _, total, _ = calcular_totais_carrinho()
+                    
+                    return jsonify({
+                        'status': 'success',
+                        'subtotal': subtotal,
+                        'total': total
+                    })
+            elif item_tipo == 'personalizado' and 'carrinho_personalizado' in session:
+                item_id_str = str(item_id)
+                if item_id_str in session['carrinho_personalizado']:
+                    session['carrinho_personalizado'][item_id_str]['quantidade'] = nova_quantidade
+                    session.modified = True
+                    
+                    # Calcular novo subtotal
+                    bolo = BoloPersonalizado.query.get(item_id)
+                    subtotal = bolo.preco * nova_quantidade
+                    
+                    # Recalcular total
+                    _, _, total, _ = calcular_totais_carrinho()
+                    
+                    return jsonify({
+                        'status': 'success',
+                        'subtotal': subtotal,
+                        'total': total
+                    })
         
-        # Atualizar carrinho personalizado
-        if 'carrinho_personalizado' in session:
-            carrinho_personalizado = session['carrinho_personalizado']
-            
-            for bolo_id, quantidade in request.form.items():
-                if bolo_id.startswith('quantidade_personalizado_'):
-                    bolo_id_real = bolo_id.replace('quantidade_personalizado_', '')
-                    try:
-                        nova_quantidade = int(quantidade)
-                        if nova_quantidade > 0 and bolo_id_real in carrinho_personalizado:
-                            carrinho_personalizado[bolo_id_real]['quantidade'] = nova_quantidade
-                    except ValueError:
-                        pass
-            
-            session['carrinho_personalizado'] = carrinho_personalizado
-    
-    # Se for AJAX, retornar JSON sem redirect
-    if is_ajax:
         return jsonify({
-            'status': 'success',
-            'message': 'Carrinho atualizado'
-        })
+            'status': 'error',
+            'message': 'Item não encontrado'
+        }), 404
+        
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+@cart_bp.route('/validar_carrinho', methods=['GET'])
+def validar_carrinho():
+    """
+    Endpoint para validação completa do carrinho
+    """
+    usuario_id = session.get('usuario_id')
+    _, _, total, erros = calcular_totais_carrinho(usuario_id)
     
-    # Comportamento padrão (com redirect e sem mensagem)
-    return redirect(url_for('cart.carrinho'))
+    return jsonify({
+        'status': 'success',
+        'total': total,
+        'erros': erros,
+        'valido': len(erros) == 0
+    })
 
 # Quando um usuário faz login, transferir o carrinho da sessão para o banco de dados
 @cart_bp.route('/sincronizar_carrinho')
@@ -384,14 +546,15 @@ def sincronizar_carrinho():
             ).first()
             
             if item_existente:
-                # Somar as quantidades
-                item_existente.quantidade += quantidade
+                # Somar as quantidades (respeitando o limite)
+                nova_quantidade = min(item_existente.quantidade + quantidade, 10)
+                item_existente.quantidade = nova_quantidade
             else:
                 # Criar novo item
                 novo_item = CarrinhoItem(
                     usuario_id=usuario_id,
                     produto_id=produto_id,
-                    quantidade=quantidade
+                    quantidade=min(quantidade, 10)
                 )
                 db.session.add(novo_item)
         
@@ -411,14 +574,15 @@ def sincronizar_carrinho():
             ).first()
             
             if item_existente:
-                # Somar as quantidades
-                item_existente.quantidade += quantidade
+                # Somar as quantidades (respeitando o limite)
+                nova_quantidade = min(item_existente.quantidade + quantidade, 10)
+                item_existente.quantidade = nova_quantidade
             else:
                 # Criar novo item
                 novo_item = CarrinhoBoloPersonalizado(
                     usuario_id=usuario_id,
                     bolo_personalizado_id=bolo_id,
-                    quantidade=quantidade
+                    quantidade=min(quantidade, 10)
                 )
                 db.session.add(novo_item)
         

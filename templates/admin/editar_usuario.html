@@ -689,6 +689,9 @@ footer .social-icons a:hover {
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
+                                <small class="form-text text-muted">
+            <i class="bi bi-info-circle me-1"></i>Senhas nesta seção podem ser diferentes das exigidas no sistema.
+        </small>
                             </div>
                             <div class="col-md-6">
                                 <label for="confirmar_senha" class="form-label">Confirmar Nova Senha</label>
@@ -771,74 +774,430 @@ footer .social-icons a:hover {
     
     <!-- Admin scripts -->
     <script>
-        // Toggle sidebar on mobile
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('active');
-            document.querySelector('.main-content').classList.toggle('active');
-        });
-        
-        // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const senha = document.getElementById('senha');
-            const type = senha.getAttribute('type') === 'password' ? 'text' : 'password';
-            senha.setAttribute('type', type);
-            this.querySelector('i').classList.toggle('bi-eye');
-            this.querySelector('i').classList.toggle('bi-eye-slash');
-        });
-        
-        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
-            const confirmarSenha = document.getElementById('confirmar_senha');
-            const type = confirmarSenha.getAttribute('type') === 'password' ? 'text' : 'password';
-            confirmarSenha.setAttribute('type', type);
-            this.querySelector('i').classList.toggle('bi-eye');
-            this.querySelector('i').classList.toggle('bi-eye-slash');
-        });
-        
-        // Validação de senha
+// Toggle sidebar on mobile
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+    document.querySelector('.sidebar').classList.toggle('active');
+    document.querySelector('.main-content').classList.toggle('active');
+});
+
+// Toggle password visibility
+const togglePassword = document.getElementById('togglePassword');
+const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+
+if (togglePassword) {
+    togglePassword.addEventListener('click', function() {
         const senha = document.getElementById('senha');
+        const type = senha.getAttribute('type') === 'password' ? 'text' : 'password';
+        senha.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('bi-eye');
+        this.querySelector('i').classList.toggle('bi-eye-slash');
+    });
+}
+
+if (toggleConfirmPassword) {
+    toggleConfirmPassword.addEventListener('click', function() {
         const confirmarSenha = document.getElementById('confirmar_senha');
-        const senhaFeedback = document.getElementById('senha-feedback');
-        const submitBtn = document.getElementById('submitBtn');
-        
-        function validarSenhas() {
-            if (senha.value && confirmarSenha.value && senha.value !== confirmarSenha.value) {
-                senhaFeedback.classList.remove('d-none');
-                confirmarSenha.classList.add('is-invalid');
-                submitBtn.disabled = true;
-            } else {
-                senhaFeedback.classList.add('d-none');
-                confirmarSenha.classList.remove('is-invalid');
-                submitBtn.disabled = false;
-            }
+        const type = confirmarSenha.getAttribute('type') === 'password' ? 'text' : 'password';
+        confirmarSenha.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('bi-eye');
+        this.querySelector('i').classList.toggle('bi-eye-slash');
+    });
+}
+
+// Validação de senha
+const senha = document.getElementById('senha');
+const confirmarSenha = document.getElementById('confirmar_senha');
+const senhaFeedback = document.getElementById('senha-feedback');
+const submitBtn = document.getElementById('submitBtn');
+
+if (senha && confirmarSenha) {
+    function validarSenhas() {
+        if (senha.value && confirmarSenha.value && senha.value !== confirmarSenha.value) {
+            senhaFeedback.classList.remove('d-none');
+            confirmarSenha.classList.add('is-invalid');
+            submitBtn.disabled = true;
+        } else {
+            senhaFeedback.classList.add('d-none');
+            confirmarSenha.classList.remove('is-invalid');
+            submitBtn.disabled = false;
         }
-        
-        senha.addEventListener('input', validarSenhas);
-        confirmarSenha.addEventListener('input', validarSenhas);
-        
-        // Para clientes: busca de CEP via API
-        {% if not usuario.is_admin %}
-        const cepInput = document.getElementById('cep');
-        
-        cepInput.addEventListener('blur', function() {
-            const cep = this.value.replace(/\D/g, '');
+    }
+    
+    senha.addEventListener('input', validarSenhas);
+    confirmarSenha.addEventListener('input', validarSenhas);
+}
+
+// Sistema de Validação de Email
+(function() {
+    // Domínios populares para sugestões
+    const popularDomains = [
+        'gmail.com', 'hotmail.com', 'yahoo.com.br', 'yahoo.com', 'outlook.com',
+        'uol.com.br', 'bol.com.br', 'terra.com.br', 'globo.com', 'r7.com',
+        'live.com', 'icloud.com', 'me.com', 'aol.com', 'msn.com'
+    ];
+
+    // Correções automáticas para erros comuns
+    const domainCorrections = {
+        'gmal.com': 'gmail.com',
+        'gmial.com': 'gmail.com',
+        'gmail.co': 'gmail.com',
+        'gmail.cm': 'gmail.com',
+        'gmai.com': 'gmail.com',
+        'hotmial.com': 'hotmail.com',
+        'hotmai.com': 'hotmail.com',
+        'hotmail.co': 'hotmail.com',
+        'yahoo.co': 'yahoo.com',
+        'yahoo.cm': 'yahoo.com',
+        'yahooo.com': 'yahoo.com',
+        'yaho.com': 'yahoo.com',
+        'outlok.com': 'outlook.com',
+        'outlook.co': 'outlook.com',
+        'uol.com': 'uol.com.br',
+        'bol.com': 'bol.com.br',
+        'terra.com': 'terra.com.br'
+    };
+
+    function initEmailValidator() {
+        const emailInput = document.getElementById('email');
+        if (!emailInput) return;
+
+        // Criar container para sugestões
+        const container = document.createElement('div');
+        container.className = 'email-input-container position-relative';
+        emailInput.parentNode.insertBefore(container, emailInput);
+        container.appendChild(emailInput);
+
+        // Criar dropdown para sugestões
+        const suggestionsDropdown = document.createElement('div');
+        suggestionsDropdown.className = 'email-suggestions position-absolute bg-white border border-top-0 rounded-bottom w-100';
+        suggestionsDropdown.style.top = '100%';
+        suggestionsDropdown.style.left = '0';
+        suggestionsDropdown.style.zIndex = '1000';
+        suggestionsDropdown.style.display = 'none';
+        suggestionsDropdown.style.maxHeight = '200px';
+        suggestionsDropdown.style.overflowY = 'auto';
+        suggestionsDropdown.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+        container.appendChild(suggestionsDropdown);
+
+        // Criar feedback de validação
+        const feedback = document.createElement('div');
+        feedback.className = 'email-validation-feedback mt-1';
+        feedback.style.fontSize = '0.875rem';
+        container.appendChild(feedback);
+
+        let selectedSuggestionIndex = -1;
+        let currentSuggestions = [];
+
+        // Função para validar sintaxe de email
+        function isValidEmailSyntax(email) {
+            const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return regex.test(email);
+        }
+
+        // Função para calcular distância de Levenshtein
+        function levenshteinDistance(str1, str2) {
+            const matrix = [];
+            for (let i = 0; i <= str2.length; i++) {
+                matrix[i] = [i];
+            }
+            for (let j = 0; j <= str1.length; j++) {
+                matrix[0][j] = j;
+            }
+            for (let i = 1; i <= str2.length; i++) {
+                for (let j = 1; j <= str1.length; j++) {
+                    if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(
+                            matrix[i - 1][j - 1] + 1,
+                            matrix[i][j - 1] + 1,
+                            matrix[i - 1][j] + 1
+                        );
+                    }
+                }
+            }
+            return matrix[str2.length][str1.length];
+        }
+
+        // Função para sugerir correção de domínio
+        function suggestDomainCorrection(domain) {
+            if (domainCorrections[domain.toLowerCase()]) {
+                return domainCorrections[domain.toLowerCase()];
+            }
+
+            let bestMatch = null;
+            let bestDistance = Infinity;
             
-            if (cep.length !== 8) {
+            popularDomains.forEach(popularDomain => {
+                const distance = levenshteinDistance(domain.toLowerCase(), popularDomain);
+                if (distance < bestDistance && distance <= 2) {
+                    bestDistance = distance;
+                    bestMatch = popularDomain;
+                }
+            });
+
+            return bestMatch;
+        }
+
+        // Função para gerar sugestões de autocomplete
+        function generateAutocompleteSuggestions(email) {
+            const [localPart, domain] = email.split('@');
+            if (!domain || !localPart) return [];
+
+            const suggestions = [];
+            const domainLower = domain.toLowerCase();
+
+            popularDomains.forEach(popularDomain => {
+                if (popularDomain.toLowerCase().startsWith(domainLower) && 
+                    popularDomain.toLowerCase() !== domainLower) {
+                    suggestions.push(`${localPart}@${popularDomain}`);
+                }
+            });
+
+            return suggestions.slice(0, 5);
+        }
+
+        // Função para mostrar sugestões
+        function showSuggestions(suggestions, type = 'autocomplete') {
+            if (suggestions.length === 0) {
+                hideSuggestions();
                 return;
             }
+
+            currentSuggestions = suggestions;
+            selectedSuggestionIndex = -1;
             
-            fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.erro) {
-                        document.getElementById('rua').value = data.logradouro;
-                        document.getElementById('bairro').value = data.bairro;
-                        document.getElementById('cidade').value = data.localidade;
-                        document.getElementById('estado').value = data.uf;
+            suggestionsDropdown.innerHTML = '';
+            
+            suggestions.forEach((suggestion, index) => {
+                const item = document.createElement('div');
+                item.className = 'suggestion-item p-2';
+                item.style.cursor = 'pointer';
+                item.style.borderBottom = '1px solid #f0f0f0';
+                item.style.transition = 'background-color 0.2s';
+                
+                if (type === 'correction') {
+                    item.innerHTML = `
+                        <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                        Você quis dizer: <strong>${suggestion}</strong>?
+                    `;
+                } else {
+                    item.innerHTML = `
+                        <i class="bi bi-at me-2"></i>
+                        ${suggestion}
+                    `;
+                }
+                
+                item.addEventListener('click', () => {
+                    emailInput.value = suggestion;
+                    hideSuggestions();
+                    validateEmail();
+                    emailInput.focus();
+                });
+                
+                item.addEventListener('mouseenter', () => {
+                    selectedSuggestionIndex = index;
+                    updateSuggestionSelection();
+                });
+                
+                suggestionsDropdown.appendChild(item);
+            });
+            
+            suggestionsDropdown.style.display = 'block';
+        }
+
+        // Função para esconder sugestões
+        function hideSuggestions() {
+            suggestionsDropdown.style.display = 'none';
+            currentSuggestions = [];
+            selectedSuggestionIndex = -1;
+        }
+
+        // Função para atualizar seleção visual
+        function updateSuggestionSelection() {
+            const items = suggestionsDropdown.querySelectorAll('.suggestion-item');
+            items.forEach((item, index) => {
+                if (index === selectedSuggestionIndex) {
+                    item.style.backgroundColor = '#f8f9fa';
+                } else {
+                    item.style.backgroundColor = '';
+                }
+            });
+        }
+
+        // Função principal de validação
+        function validateEmail() {
+            const email = emailInput.value.trim();
+            
+            if (!email) {
+                feedback.innerHTML = '';
+                emailInput.classList.remove('is-valid', 'is-invalid');
+                hideSuggestions();
+                return;
+            }
+
+            if (!email.includes('@')) {
+                feedback.innerHTML = '<i class="bi bi-info-circle text-muted me-1"></i>Digite o email completo';
+                feedback.className = 'email-validation-feedback mt-1 text-muted';
+                emailInput.classList.remove('is-valid', 'is-invalid');
+                
+                if (email.length >= 2) {
+                    const suggestions = popularDomains
+                        .slice(0, 3)
+                        .map(domain => `${email}@${domain}`);
+                    showSuggestions(suggestions);
+                }
+                return;
+            }
+
+            const [localPart, domain] = email.split('@');
+            
+            if (!isValidEmailSyntax(email)) {
+                feedback.innerHTML = '<i class="bi bi-exclamation-circle text-danger me-1"></i>Formato de email inválido';
+                feedback.className = 'email-validation-feedback mt-1 text-danger';
+                emailInput.classList.remove('is-valid');
+                emailInput.classList.add('is-invalid');
+                
+                if (domain) {
+                    const suggestion = suggestDomainCorrection(domain);
+                    if (suggestion) {
+                        const correctedEmail = `${localPart}@${suggestion}`;
+                        showSuggestions([correctedEmail], 'correction');
                     }
-                })
-                .catch(error => console.error('Erro ao buscar CEP:', error));
+                }
+                return;
+            }
+
+            const domainSuggestion = suggestDomainCorrection(domain);
+            if (domainSuggestion && domainSuggestion !== domain) {
+                const correctedEmail = `${localPart}@${domainSuggestion}`;
+                feedback.innerHTML = `<i class="bi bi-exclamation-triangle text-warning me-1"></i>Você quis dizer <a href="#" class="text-warning fw-bold" onclick="event.preventDefault(); document.getElementById('email').value='${correctedEmail}'; this.closest('.email-input-container').querySelector('.email-validation-feedback').previousElementSibling.focus();">${correctedEmail}</a>?`;
+                feedback.className = 'email-validation-feedback mt-1 text-warning';
+                emailInput.classList.remove('is-valid', 'is-invalid');
+                return;
+            }
+
+            feedback.innerHTML = '<i class="bi bi-check-circle text-success me-1"></i>Email válido';
+            feedback.className = 'email-validation-feedback mt-1 text-success';
+            emailInput.classList.remove('is-invalid');
+            emailInput.classList.add('is-valid');
+            hideSuggestions();
+        }
+
+        // Event listeners
+        emailInput.addEventListener('input', function() {
+            const email = this.value;
+            validateEmail();
+            
+            if (email.includes('@') && !email.endsWith('@')) {
+                const suggestions = generateAutocompleteSuggestions(email);
+                if (suggestions.length > 0) {
+                    showSuggestions(suggestions);
+                }
+            }
         });
-        {% endif %}
+
+        emailInput.addEventListener('blur', function() {
+            setTimeout(() => {
+                if (!suggestionsDropdown.matches(':hover')) {
+                    hideSuggestions();
+                }
+            }, 150);
+        });
+
+        emailInput.addEventListener('keydown', function(e) {
+            if (suggestionsDropdown.style.display === 'none') return;
+            
+            switch (e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    selectedSuggestionIndex = Math.min(
+                        selectedSuggestionIndex + 1, 
+                        currentSuggestions.length - 1
+                    );
+                    updateSuggestionSelection();
+                    break;
+                    
+                case 'ArrowUp':
+                    e.preventDefault();
+                    selectedSuggestionIndex = Math.max(selectedSuggestionIndex - 1, 0);
+                    updateSuggestionSelection();
+                    break;
+                    
+                case 'Enter':
+                    if (selectedSuggestionIndex >= 0) {
+                        e.preventDefault();
+                        emailInput.value = currentSuggestions[selectedSuggestionIndex];
+                        hideSuggestions();
+                        validateEmail();
+                    }
+                    break;
+                    
+                case 'Escape':
+                    hideSuggestions();
+                    break;
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!container.contains(e.target)) {
+                hideSuggestions();
+            }
+        });
+    }
+
+    // Inicializar validador de email
+    initEmailValidator();
+})();
+
+// Busca de CEP via API (para clientes)
+const cepInput = document.getElementById('cep');
+
+if (cepInput) {
+    cepInput.addEventListener('blur', function() {
+        const cep = this.value.replace(/\D/g, '');
+        
+        if (cep.length !== 8) {
+            return;
+        }
+        
+        // Adicionar feedback visual
+        const ruaInput = document.getElementById('rua');
+        const bairroInput = document.getElementById('bairro');
+        const cidadeInput = document.getElementById('cidade');
+        const estadoInput = document.getElementById('estado');
+        
+        // Mostrar loading
+        this.classList.add('loading');
+        
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+                this.classList.remove('loading');
+                
+                if (!data.erro) {
+                    if (ruaInput) ruaInput.value = data.logradouro;
+                    if (bairroInput) bairroInput.value = data.bairro;
+                    if (cidadeInput) cidadeInput.value = data.localidade;
+                    if (estadoInput) estadoInput.value = data.uf;
+                    
+                    // Feedback visual de sucesso
+                    this.classList.add('is-valid');
+                    setTimeout(() => this.classList.remove('is-valid'), 2000);
+                } else {
+                    // CEP não encontrado
+                    this.classList.add('is-invalid');
+                    setTimeout(() => this.classList.remove('is-invalid'), 2000);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar CEP:', error);
+                this.classList.remove('loading');
+                this.classList.add('is-invalid');
+                setTimeout(() => this.classList.remove('is-invalid'), 2000);
+            });
+    });
+}
     </script>
 </body>
 </html>

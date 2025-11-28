@@ -745,7 +745,7 @@
                                             <td>
                                                 <strong>{{ item.nome }}</strong>
                                                 {% if item.tipo == 'personalizado' %}
-                                                <button class="btn btn-sm btn-outline-primary ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#bolo{{ item.bolo_id }}" aria-expanded="false">
+                                                <button class="btn btn-sm btn-primary ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#bolo{{ item.bolo_id }}" aria-expanded="false">
                                                     <i class="bi bi-info-circle"></i> Detalhes
                                                 </button>
                                                 <div class="collapse mt-2" id="bolo{{ item.bolo_id }}">
@@ -781,7 +781,7 @@
                                                     {{ item.produto.descricao|truncate(50) }}
                                                 </div>
                                                 {% if item.produto.ingredientes %}
-                                                <button class="btn btn-sm btn-outline-secondary mt-1" type="button" data-bs-toggle="collapse" data-bs-target="#produto{{ item.produto.id }}" aria-expanded="false">
+                                                <button class="btn btn-sm btn-primary mt-1" type="button" data-bs-toggle="collapse" data-bs-target="#produto{{ item.produto.id }}" aria-expanded="false">
                                                     <i class="bi bi-info-circle"></i> Detalhes
                                                 </button>
                                                 <div class="collapse mt-2" id="produto{{ item.produto.id }}">
@@ -863,14 +863,12 @@
                             </div>
                             
                             <div class="mb-3">
-                                <p class="mb-1 fw-bold"><i class="bi bi-phone me-2"></i>Informações de Contato:</p>
+                             
                                 <p class="mb-0 small">
                                     {% if usuario.telefone %}
                                     <strong>Telefone:</strong> {{ usuario.telefone }}<br>
                                     {% endif %}
-                                    {% if usuario.cpf_hash %}
-                                    <strong>CPF:</strong> {% if usuario.mascarar_cpf %}***.***.**-** (mascarado){% else %}{{ usuario.cpf_hash }}{% endif %}<br>
-                                    {% endif %}
+                                    
                                     <strong>Cliente desde:</strong> {{ usuario.data_registro.strftime('%d/%m/%Y') }}
                                 </p>
                             </div>
@@ -1021,44 +1019,139 @@
     
     <!-- Admin scripts -->
     <script>
-        // Toggle sidebar on mobile
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('active');
-            document.querySelector('.main-content').classList.toggle('active');
-        });
+// Toggle sidebar on mobile
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+    document.querySelector('.sidebar').classList.toggle('active');
+    document.querySelector('.main-content').classList.toggle('active');
+});
 
-        // Initialize tooltips
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        });
+// Initialize tooltips
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+});
 
-        // Script para converter JSON em texto legível na página de detalhes do pedido
-
+// Script para converter JSON em texto legível na página de detalhes do pedido
 document.addEventListener('DOMContentLoaded', function() {
     
     /**
-     * Função para detectar e converter JSON em texto formatado
+     * Limpa JSON e retorna apenas texto legível
      */
-    function converterJSONParaTexto(elemento) {
-        const texto = elemento.textContent.trim();
+    function limparJSON(texto) {
+        // Se não parece JSON, retornar como está
+        if (!texto.includes('{') && !texto.includes('[')) {
+            return texto;
+        }
         
-        // Verificar se o texto parece ser JSON
-        if ((texto.startsWith('{') && texto.endsWith('}')) || 
-            (texto.startsWith('[') && texto.endsWith(']'))) {
-            try {
-                const dados = JSON.parse(texto);
-                const textoFormatado = formatarDados(dados);
-                elemento.innerHTML = textoFormatado;
-            } catch (e) {
-                // Não é JSON válido, manter texto original
-                console.log('Não foi possível converter:', texto.substring(0, 50));
-            }
+        try {
+            const dados = JSON.parse(texto.trim());
+            return extrairTextoLimpo(dados);
+        } catch (e) {
+            // Não é JSON válido, retornar original
+            return texto;
         }
     }
     
     /**
-     * Formatar dados recursivamente em HTML legível
+     * Extrai apenas o texto útil do JSON
+     */
+    function extrairTextoLimpo(dados) {
+        // Null ou undefined
+        if (dados == null) {
+            return 'Não informado';
+        }
+        
+        // Array
+        if (Array.isArray(dados)) {
+            if (dados.length === 0) return 'Nenhum';
+            
+            // Se todos são strings, juntar com vírgula
+            if (dados.every(x => typeof x === 'string')) {
+                return dados.map(limparUnderscores).join(', ');
+            }
+            
+            // Se são objetos, extrair texto de cada um
+            return dados.map(extrairTextoLimpo).filter(x => x).join(', ');
+        }
+
+        
+        // Objeto
+        if (typeof dados === 'object') {
+            // Campos prioritários para mostrar
+            const campos = ['nome', 'descricao', 'valor', 'texto', 'title', 'label', 'name', 'description'];
+            
+            // Tentar encontrar campo prioritário
+            for (let campo of campos) {
+                if (dados[campo]) {
+                    return limparUnderscores(String(dados[campo]));
+                }
+            }
+            
+            // Se não encontrou, pegar todos os valores não-objeto
+            const valores = Object.values(dados)
+                .filter(v => v != null && v !== '' && typeof v !== 'object')
+                .map(v => limparUnderscores(String(v)));
+            
+            if (valores.length > 0) {
+                return valores.join(', ');
+            }
+            
+            // Se só tem objetos aninhados, tentar extrair deles
+            const valoresAninhados = Object.values(dados)
+                .filter(v => v != null)
+                .map(extrairTextoLimpo)
+                .filter(x => x && x !== 'Não informado');
+            
+            if (valoresAninhados.length > 0) {
+                return valoresAninhados.join(', ');
+            }
+            
+            return 'Não informado';
+        }
+        
+        // String, número ou boolean
+        return limparUnderscores(String(dados));
+    }
+    
+function limparUnderscores(texto) {
+    return texto
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, l => l.toUpperCase());
+}
+
+    /**
+     * Função para detectar e converter JSON em texto formatado
+     */
+function converterJSONParaTexto(elemento) {
+    const texto = elemento.textContent.trim();
+    
+    // Pular elementos vazios
+    if (!texto) return;
+    
+    // Verificar se o texto parece ser JSON
+    if ((texto.startsWith('{') && texto.endsWith('}')) || 
+        (texto.startsWith('[') && texto.endsWith(']'))) {
+        try {
+            const textoLimpo = limparJSON(texto);
+            
+            if (textoLimpo !== texto && textoLimpo !== 'Não informado') {
+                elemento.textContent = textoLimpo;
+                console.log('✅ JSON limpo:', texto.substring(0, 30) + '... → ' + textoLimpo);
+            }
+        } catch (e) {
+            console.log('Não foi possível converter:', texto.substring(0, 50));
+        }
+    } else {
+        // Mesmo que não seja JSON, limpar underscores de textos normais
+        const textoSemUnderscore = texto.replace(/_/g, ' ');
+        if (textoSemUnderscore !== texto) {
+            elemento.textContent = textoSemUnderscore;
+        }
+    }
+}
+    
+    /**
+     * Formatar dados recursivamente em HTML legível (fallback)
      */
     function formatarDados(dados, nivel = 0) {
         const indent = '  '.repeat(nivel);
@@ -1163,14 +1256,15 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function processarPagina() {
         // Áreas onde JSON pode aparecer
-        const seletores = [
-            '.bg-light.p-3.rounded',           // Observações e endereços
-            '.bolo-details span:not(.bolo-detail-label)', // Detalhes de bolos
-            '.small.text-muted',               // Descrições
-            'td',                              // Células de tabela
-            'address',                         // Endereços
-            'p:not(.mb-1):not(.fw-bold)'      // Parágrafos de conteúdo
-        ];
+       const seletores = [
+    '.bg-light.p-3.rounded',                          // Observações e endereços
+    '.bolo-details span:not(.bolo-detail-label)',     // Detalhes de bolos
+    '.bolo-detail-item span:last-child',              // Valores dos detalhes de bolos
+    '.small.text-muted',                              // Descrições
+    'td:not(:has(button))',                           // Células de tabela (exceto as com botões)
+    'address',                                        // Endereços
+    'p:not(.mb-1):not(.fw-bold):not(.menu-header)'   // Parágrafos de conteúdo
+];
         
         seletores.forEach(seletor => {
             const elementos = document.querySelectorAll(seletor);

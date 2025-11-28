@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style/base.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    
 </head>
  <style>
   :root {
@@ -660,6 +662,101 @@ h1, h2, h3, h4, h5, h6 {
     border: none;
     color: var(--primary-color);
 }
+ /* Customização do Flatpickr */
+    .flatpickr-calendar {
+        background: var(--container-bg);
+        border: 2px solid var(--border-color);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+    }
+    
+    /* Cabeçalho do calendário */
+    .flatpickr-months {
+        background: var(--primary-color);
+        border-radius: var(--radius) var(--radius) 0 0;
+    }
+    
+    .flatpickr-months .flatpickr-month,
+    .flatpickr-current-month .flatpickr-monthDropdown-months,
+    .flatpickr-current-month input.cur-year {
+        color: var(--light-text);
+    }
+    
+    /* Setas de navegação */
+    .flatpickr-months .flatpickr-prev-month svg,
+    .flatpickr-months .flatpickr-next-month svg {
+        fill: var(--light-text);
+    }
+    
+    .flatpickr-months .flatpickr-prev-month:hover svg,
+    .flatpickr-months .flatpickr-next-month:hover svg {
+        fill: var(--secondary-color);
+    }
+    
+    /* Dias da semana */
+    .flatpickr-weekdays {
+        background: var(--secondary-color);
+    }
+    
+    span.flatpickr-weekday {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+    
+    /* Dias do calendário */
+    .flatpickr-day {
+        color: var(--text-color);
+        border-radius: 6px;
+    }
+    
+    .flatpickr-day:hover {
+        background: var(--secondary-color);
+        border-color: var(--accent-color);
+        color: var(--primary-color);
+    }
+    
+    /* Dia selecionado */
+    .flatpickr-day.selected,
+    .flatpickr-day.selected:hover {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: var(--light-text);
+    }
+    
+    /* Dia atual (hoje) */
+    .flatpickr-day.today {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+    
+    .flatpickr-day.today:hover {
+        background: var(--accent-color);
+        color: var(--primary-dark);
+    }
+    
+    /* Dias desabilitados (passados) */
+    .flatpickr-day.disabled,
+    .flatpickr-day.disabled:hover {
+        color: #000000ff;
+        background: transparent;
+        cursor: not-allowed;
+    }
+    .flatpickr-day.flatpickr-disabled {
+    color: #b3a5a5ff !important;
+    background: #fafafa !important;
+}
+    /* Input do campo */
+    #data_validade {
+        border: 2px solid var(--border-color);
+        border-radius: var(--radius);
+        color: var(--text-color);
+    }
+    
+    #data_validade:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(210, 63, 114, 0.25);
+    }
 </style>
 <body>
     <!-- Barra de navegação -->
@@ -738,10 +835,11 @@ h1, h2, h3, h4, h5, h6 {
                     <textarea class="form-control" id="descricao" name="descricao" rows="3">{{ produto.descricao }}</textarea>
                 </div>
                 
-                <div class="form-group mb-3">
-                    <label for="preco">Preço (R$)</label>
-                    <input type="number" step="0.01" class="form-control" id="preco" name="preco" value="{{ produto.preco }}" required>
-                </div>
+      <div class="form-group mb-3">
+    <label for="preco">Preço (R$)</label>
+    <input type="number" step="0.01" class="form-control" id="preco" name="preco" 
+           value="{{ '%.2f'|format(produto.preco) if produto.preco is not none else '' }}" required>
+</div>
                 
                 <div class="form-group mb-3">
                     <label for="categoria">Categoria</label>
@@ -749,21 +847,24 @@ h1, h2, h3, h4, h5, h6 {
                 </div>
                 
                 <!-- Novos campos -->
-                <div class="form-group mb-3">
-                    <label for="peso">Peso (kg)</label>
-                    <input type="number" step="0.01" class="form-control" id="peso" name="peso" value="{{ produto.peso or '' }}">
-                </div>
+               <div class="form-group mb-3">
+    <label for="peso">Peso (kg)</label>
+    <input type="number" step="0.01" class="form-control" id="peso" name="peso" 
+           value="{{ '%.2f'|format(produto.peso) if produto.peso is not none else '' }}">
+</div>
                 
                 <div class="form-group mb-3">
                     <label for="ingredientes">Ingredientes</label>
                     <textarea class="form-control" id="ingredientes" name="ingredientes" rows="3">{{ produto.ingredientes or '' }}</textarea>
                 </div>
                 
-                <div class="form-group mb-3">
-                    <label for="data_validade">Data de Validade</label>
-                    <input type="date" class="form-control" id="data_validade" name="data_validade" 
-                           value="{{ produto.data_validade.strftime('%Y-%m-%d') if produto.data_validade else '' }}">
-                </div>
+                
+<div class="form-group mb-3">
+    <label for="data_validade">Data de Validade</label>
+    <input type="text" class="form-control" id="data_validade" name="data_validade" 
+           value="{{ produto.data_validade.strftime('%d/%m/%Y') if produto.data_validade else '' }}"
+           placeholder="Selecione a data">
+</div>
                 
                 <div class="form-group mb-3">
                     <label for="informacoes_nutricionais">Informações Nutricionais</label>
@@ -819,5 +920,16 @@ h1, h2, h3, h4, h5, h6 {
             this.reset();
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+<script>
+    flatpickr("#data_validade", {
+        dateFormat: "d/m/Y",  // Formato brasileiro
+        minDate: "today",     // Bloqueia seleção de datas passadas
+        locale: "pt",         // Português
+        disableMobile: true,  // Força usar o calendário do Flatpickr no mobile
+        allowInput: false     // Impede digitação manual
+    });
+</script>
 </body>
 </html>
