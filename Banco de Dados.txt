@@ -6,53 +6,8 @@ USE doce_sonho;
 -- Sincronizado com models.py
 -- ================================================
 
-
-ALTER TABLE pedido ADD COLUMN criado_manualmente BOOLEAN DEFAULT FALSE;
-ALTER TABLE pedido ADD COLUMN criado_por_funcionario_id INTEGER;
-ALTER TABLE pedido ADD COLUMN observacoes_admin TEXT;
-
-ALTER TABLE usuario MODIFY COLUMN foto_perfil VARCHAR(255);
-ALTER TABLE usuario ADD COLUMN cpf VARCHAR(14) NULL;
-select * from usuario;
-ALTER TABLE usuario DROP COLUMN cpf_hash;
--- Script SQL para adicionar os novos campos na tabela usuario
-
--- Adicionar campo para contar tentativas de login
-ALTER TABLE usuario 
-ADD COLUMN tentativas_login INT DEFAULT 0;
-
--- Adicionar campo para data/hora do bloqueio
-ALTER TABLE usuario 
-ADD COLUMN bloqueado_ate DATETIME NULL;
-
--- Adicionar campo para registrar última tentativa
-ALTER TABLE usuario 
-ADD COLUMN ultima_tentativa_login DATETIME NULL;
-
--- Atualizar usuários existentes para garantir que não tenham valores NULL problemáticos
-UPDATE usuario 
-SET tentativas_login = 0 
-WHERE tentativas_login IS NULL;
-
-
-
-
-
-CREATE DATABASE IF NOT EXISTS doce_sonho;
-USE doce_sonho;
-
 -- Desabilitar verificação de chaves estrangeiras temporariamente
 SET FOREIGN_KEY_CHECKS = 0;
-
-
-select	* from bolo_personalizado;
-select	* from carrinho_personalizado;
-
-
-select	* from produto;
-select	* from usuario;
-select	* from pedido;
-
 
 -- Remover tabelas existentes (caso queira recriar do zero)
 DROP TABLE IF EXISTS item_pedido_personalizado;
@@ -75,12 +30,13 @@ CREATE TABLE usuario (
     email VARCHAR(100) UNIQUE NOT NULL,
     senha VARCHAR(200) NOT NULL,
     is_admin BOOLEAN DEFAULT FALSE,
-    foto_perfil VARCHAR(100) NULL,
+    is_funcionario BOOLEAN DEFAULT FALSE,
+    foto_perfil VARCHAR(255) NULL,
     data_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
     concordou_politica BOOLEAN DEFAULT FALSE,
     
     -- Campos de endereço e segurança
-    cpf_hash VARCHAR(200) NULL,
+    cpf VARCHAR(14) NULL,
     endereco_cep VARCHAR(10) NULL,
     endereco_rua VARCHAR(200) NULL,
     endereco_numero VARCHAR(20) NULL,
@@ -99,6 +55,11 @@ CREATE TABLE usuario (
     mascarar_email BOOLEAN DEFAULT TRUE,
     mascarar_cpf BOOLEAN DEFAULT TRUE,
     mascarar_endereco BOOLEAN DEFAULT TRUE,
+    
+    -- Campos de controle de tentativas de login
+    tentativas_login INT DEFAULT 0,
+    bloqueado_ate DATETIME NULL,
+    ultima_tentativa_login DATETIME NULL,
     
     INDEX idx_usuario_email (email),
     INDEX idx_usuario_status (status)
@@ -149,9 +110,6 @@ CREATE TABLE produto (
 -- ================================================
 -- TABELA: bolo_personalizado
 -- ================================================
-
-
-select * from bolo_personalizado;
 CREATE TABLE bolo_personalizado (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
@@ -183,12 +141,19 @@ CREATE TABLE pedido (
     valor_frete FLOAT DEFAULT 0.0,
     endereco_entrega TEXT NULL,
     observacoes TEXT NULL,
+    observacoes_admin TEXT NULL,
     mercado_pago_transaction_id VARCHAR(255) NULL,
     
+    -- Campos para pedidos criados manualmente por funcionários
+    criado_manualmente BOOLEAN DEFAULT FALSE,
+    criado_por_funcionario_id INT NULL,
+    
     FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE,
+    FOREIGN KEY (criado_por_funcionario_id) REFERENCES usuario(id) ON DELETE SET NULL,
     INDEX idx_pedido_usuario_id (usuario_id),
     INDEX idx_pedido_status (status),
-    INDEX idx_pedido_data (data)
+    INDEX idx_pedido_data (data),
+    INDEX idx_pedido_funcionario_id (criado_por_funcionario_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ================================================
@@ -282,9 +247,6 @@ SET FOREIGN_KEY_CHECKS = 1;
 INSERT INTO usuario (nome, email, senha, is_admin, concordou_politica) VALUES
 ('Admin', 'Rolico@gmail.com', CONCAT('mysql_hash:', SHA2('1234', 256)), TRUE, TRUE);
 
-select * from usuario;
-
-
 -- Produtos
 INSERT INTO produto (nome, descricao, preco, categoria, peso, ingredientes, data_validade, informacoes_nutricionais) VALUES
 ('Bolo de Chocolate', 'Delicioso bolo de chocolate com cobertura de ganache', 45.90, 'Bolos', 1.2,
@@ -328,6 +290,41 @@ DATE_ADD(NOW(), INTERVAL 2 DAY),
 'Porção de 50g: Calorias: 180, Carboidratos: 12g, Proteínas: 8g, Gorduras: 13g');
 
 -- ================================================
+-- SCRIPTS DE MIGRAÇÃO (Para quem já tem banco existente)
+-- ================================================
+
+/*
+-- Execute estes comandos se você já tem o banco criado e quer adicionar os novos campos:
+
+-- Adicionar is_funcionario na tabela usuario
+ALTER TABLE usuario ADD COLUMN is_funcionario BOOLEAN DEFAULT FALSE;
+
+-- Adicionar campos de controle de login na tabela usuario
+ALTER TABLE usuario ADD COLUMN tentativas_login INT DEFAULT 0;
+ALTER TABLE usuario ADD COLUMN bloqueado_ate DATETIME NULL;
+ALTER TABLE usuario ADD COLUMN ultima_tentativa_login DATETIME NULL;
+
+-- Adicionar campos de pedido manual na tabela pedido
+ALTER TABLE pedido ADD COLUMN criado_manualmente BOOLEAN DEFAULT FALSE;
+ALTER TABLE pedido ADD COLUMN criado_por_funcionario_id INT NULL;
+ALTER TABLE pedido ADD COLUMN observacoes_admin TEXT NULL;
+ALTER TABLE pedido ADD FOREIGN KEY (criado_por_funcionario_id) REFERENCES usuario(id) ON DELETE SET NULL;
+
+-- Modificar tamanho do campo foto_perfil
+ALTER TABLE usuario MODIFY COLUMN foto_perfil VARCHAR(255);
+
+-- Adicionar CPF (sem hash)
+ALTER TABLE usuario ADD COLUMN cpf VARCHAR(14) NULL;
+
+-- Se você tinha cpf_hash antes, pode remover:
+-- ALTER TABLE usuario DROP COLUMN cpf_hash;
+
+-- Atualizar usuários existentes para garantir valores padrão
+UPDATE usuario SET tentativas_login = 0 WHERE tentativas_login IS NULL;
+UPDATE usuario SET is_funcionario = FALSE WHERE is_funcionario IS NULL;
+*/
+
+-- ================================================
 -- COMANDOS ÚTEIS PARA MANUTENÇÃO
 -- ================================================
 
@@ -350,9 +347,8 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- Para verificar estrutura das tabelas
 -- DESCRIBE usuario;
 -- DESCRIBE produto;
-select * from pedido;
--- etc...
-select * from usuario;
+-- DESCRIBE pedido;
+
 -- Para ver todas as tabelas
 -- SHOW TABLES;
 
