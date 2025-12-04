@@ -14,12 +14,13 @@ class Usuario(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     senha = db.Column(db.String(200), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
+    is_funcionario = db.Column(db.Boolean, default=False)
     foto_perfil = db.Column(db.String(100), nullable=True)
     data_registro = db.Column(db.DateTime, default=datetime.utcnow)
     concordou_politica = db.Column(db.Boolean, default=False)
     
     # Campos de endereço e segurança
-    cpf_hash = db.Column(db.String(200), nullable=True)
+    cpf = db.Column(db.String(14), nullable=True)
     endereco_cep = db.Column(db.String(10), nullable=True)
     endereco_rua = db.Column(db.String(200), nullable=True)
     endereco_numero = db.Column(db.String(20), nullable=True)
@@ -38,10 +39,17 @@ class Usuario(db.Model):
     mascarar_email = db.Column(db.Boolean, default=True)
     mascarar_cpf = db.Column(db.Boolean, default=True)
     mascarar_endereco = db.Column(db.Boolean, default=True)
+    tentativas_login = db.Column(db.Integer, default=0)
+    bloqueado_ate = db.Column(db.DateTime, nullable=True)
+    ultima_tentativa_login = db.Column(db.DateTime, nullable=True)
   
     
     # Relationships
-    pedidos = db.relationship('Pedido', backref='cliente', lazy=True)
+    pedidos = db.relationship('Pedido', 
+                             foreign_keys='Pedido.usuario_id',
+                             backref='cliente', 
+                             lazy=True)
+    
     bolos_personalizados = db.relationship('BoloPersonalizado', backref='usuario', lazy=True)
     logs = db.relationship('Log', backref='usuario', lazy=True)
     tokens = db.relationship('Token', backref='usuario', lazy=True)
@@ -54,24 +62,75 @@ class Usuario(db.Model):
         """Verifica se a senha está correta"""
         return check_password_hash(self.senha, password)
     
-    def set_cpf(self, cpf):
-        """Criptografa o CPF antes de armazenar"""
-        if cpf:
-            salt = current_app.config.get('HASH_SALT', 'default-salt')
-            self.cpf_hash = hashlib.sha256((cpf + salt).encode()).hexdigest()
+    def registrar_tentativa_falha(self):
+        """Registra uma tentativa de login falha e aplica bloqueio progressivo"""
+        self.tentativas_login = (self.tentativas_login or 0) + 1
+        self.ultima_tentativa_login = datetime.utcnow()
+        
+        # Sistema de bloqueio progressivo
+        if self.tentativas_login == 5:
+            # 5 tentativas: bloqueia por 15 minutos
+            self.bloqueado_ate = datetime.utcnow() + timedelta(minutes=15)
+        elif self.tentativas_login == 10:
+            # 10 tentativas: bloqueia por 1 hora
+            self.bloqueado_ate = datetime.utcnow() + timedelta(hours=1)
+        elif self.tentativas_login >= 15:
+            # 15+ tentativas: bloqueia por 24 horas
+            self.bloqueado_ate = datetime.utcnow() + timedelta(hours=24)
+        
+        db.session.commit()
     
-    def check_cpf(self, cpf):
-        """Verifica se o CPF fornecido corresponde ao armazenado"""
-        if not cpf or not self.cpf_hash:
-            return False
-        salt = current_app.config.get('HASH_SALT', 'default-salt')
-        return self.cpf_hash == hashlib.sha256((cpf + salt).encode()).hexdigest()
+    def resetar_tentativas_login(self):
+        """Reseta o contador de tentativas após login bem-sucedido"""
+        self.tentativas_login = 0
+        self.bloqueado_ate = None
+        self.ultima_tentativa_login = None
+        db.session.commit()
     
-    def get_cpf_masked(self):
-        """Retorna o CPF mascarado para exibição"""
-        if self.cpf_hash:
-            return "***.***.***-**"
-        return None
+    def esta_bloqueado(self):
+        """Verifica se o usuário está bloqueado"""
+        if not self.bloqueado_ate:
+            return False, None
+        
+        agora = datetime.utcnow()
+        if agora < self.bloqueado_ate:
+            tempo_restante = self.bloqueado_ate - agora
+            return True, tempo_restante
+        else:
+            # Bloqueio expirou, resetar
+            self.bloqueado_ate = None
+            db.session.commit()
+            return False, None
+    
+    def obter_tempo_bloqueio_formatado(self):
+        """Retorna o tempo de bloqueio em formato legível"""
+        bloqueado, tempo_restante = self.esta_bloqueado()
+        if not bloqueado:
+            return None
+        
+        total_segundos = int(tempo_restante.total_seconds())
+        horas = total_segundos // 3600
+        minutos = (total_segundos % 3600) // 60
+        segundos = total_segundos % 60
+        
+        if horas > 0:
+            return f"{horas}h {minutos}min"
+        elif minutos > 0:
+            return f"{minutos}min {segundos}s"
+        else:
+            return f"{segundos}s"
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     def gerar_token_recuperacao(self):
         """Gera um token para recuperação de senha"""
@@ -194,11 +253,15 @@ class Pedido(db.Model):
     valor_frete = db.Column(db.Float, default=0.0)
     endereco_entrega = db.Column(db.Text, nullable=True)
     observacoes = db.Column(db.Text, nullable=True)
+    observacoes_admin = db.Column(db.Text, nullable=True)
     mercado_pago_transaction_id = db.Column(db.String(255), nullable=True)
     
+    criado_manualmente = db.Column(db.Boolean, default=False)
+    criado_por_funcionario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=True)
     # Relationships
     itens = db.relationship('ItemPedido', backref='pedido', lazy=True)
     itens_personalizados = db.relationship('ItemPedidoPersonalizado', backref='pedido', lazy=True)
+    funcionario_criador = db.relationship('Usuario', foreign_keys=[criado_por_funcionario_id], backref='pedidos_criados')
     
     def calcular_total(self):
         """Calcula o total do pedido"""

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - Doce Sonho</title>
-     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
     <style>
@@ -37,17 +37,15 @@
             line-height: 1.8;
             color: var(--text-color);
         }
-                 .mt-3 {
-        margin-top: 0 !important
-            }
 
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Playfair Display', serif;
             letter-spacing: 0.5px;
         }
-         .mt-3 {
-        margin-top: 0 !important
-            }
+        
+        .mt-3 {
+            margin-top: 0 !important;
+        }
 
         /* Sidebar */
         .admin-wrapper {
@@ -195,131 +193,7 @@
             color: var(--primary-color);
         }
 
-        /* Navbar */
-        .navbar {
-            background-color: var(--container-bg) !important;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
-            padding: 12px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .navbar-brand {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            color: var(--primary-color) !important;
-            font-size: 1.8rem;
-            letter-spacing: 1px;
-        }
-
-        .nav-link {
-            font-weight: 500;
-            color: var(--text-color) !important;
-            padding: 8px 16px;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .nav-link:hover {
-            color: var(--primary-color) !important;
-        }
-
-        .navbar-nav .badge {
-            background-color: var(--primary-color) !important;
-            position: absolute;
-            top: 0;
-            right: 0;
-            transform: translate(25%, -25%);
-        }
-
         /* Cards */
-        .stat-card {
-            background-color: var(--container-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 25px;
-            margin-bottom: 25px;
-            transition: all 0.3s;
-            border-top: 3px solid var(--primary-color);
-            height: 100%;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(210, 63, 114, 0.12);
-        }
-
-        .stat-card.pending {
-            border-top-color: var(--warning-color);
-        }
-
-        .stat-card.delivered {
-            border-top-color: var(--success-color);
-        }
-
-        .stat-card.products {
-            border-top-color: var(--info-color);
-        }
-
-        .stat-card.today {
-            border-top-color: var(--primary-color);
-        }
-
-        .stat-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-            color: var(--light-text);
-        }
-
-        .stat-icon.pending {
-            background-color: var(--warning-color);
-        }
-
-        .stat-icon.delivered {
-            background-color: var(--success-color);
-        }
-
-        .stat-icon.products {
-            background-color: var(--info-color);
-        }
-
-        .stat-icon.today {
-            background-color: var(--primary-color);
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        .stat-label {
-            color: var(--text-color);
-            font-size: 1rem;
-            font-weight: 500;
-        }
-
-        .stat-change {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: var(--success-color);
-            display: flex;
-            align-items: center;
-        }
-
-        .stat-change.negative {
-            color: var(--danger-color);
-        }
-
         .card {
             border-radius: var(--radius);
             box-shadow: var(--shadow);
@@ -393,18 +267,6 @@
             box-shadow: 0 5px 15px rgba(220, 53, 69, 0.2);
         }
 
-        .btn-outline-primary {
-            color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .btn-outline-primary:hover {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(210, 63, 114, 0.2);
-        }
-
         /* Tables */
         .table {
             margin-bottom: 0;
@@ -421,18 +283,6 @@
         .table td {
             padding: 15px;
             vertical-align: middle;
-        }
-
-        .table img {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .table .btn-group .btn {
-            padding: 5px 10px;
         }
 
         .status-badge {
@@ -468,91 +318,24 @@
             border: 1px solid rgba(23, 162, 184, 0.2);
         }
 
-        /* Recent orders table */
-        .recent-orders img {
-            width: 40px;
-            height: 40px;
-        }
-
-        /* Search */
-        .search-wrapper {
-            position: relative;
-        }
-
-        .search-input {
-            border: 1px solid var(--border-color);
-            border-radius: 25px;
-            padding: 10px 20px;
-            padding-right: 50px;
-            width: 100%;
-            transition: all 0.3s;
-        }
-
-        .search-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(210, 63, 114, 0.25);
-            outline: none;
-        }
-
-        .search-btn {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--primary-color);
-            cursor: pointer;
-        }
-
-        /* Quick actions */
-        .quick-actions {
-            margin-bottom: 30px;
-        }
-
-        .quick-action-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            background-color: var(--container-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            transition: all 0.3s;
-            height: 100%;
-            text-align: center;
-        }
-
-        .quick-action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(210, 63, 114, 0.12);
-        }
-
-        .quick-action-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-
-        .quick-action-title {
-            font-weight: 600;
+        /* Filter buttons */
+        .btn-filter {
+            border-radius: 30px;
+            padding: 8px 16px;
+            margin-right: 10px;
             margin-bottom: 10px;
-            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
         }
 
-        .quick-action-desc {
-            font-size: 0.9rem;
-            color: #6c757d;
-            margin-bottom: 15px;
+        .btn-filter:hover, .btn-filter.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--light-text);
         }
 
-        /* Alert messages */
-        .alert {
-            border-radius: var(--radius);
-            border: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 15px 20px;
-            margin-bottom: 25px;
+        .btn-filter i {
+            margin-right: 5px;
         }
 
         /* Responsive */
@@ -597,66 +380,6 @@
             }
         }
 
-        /* Timeline */
-        .timeline {
-            position: relative;
-            padding-left: 30px;
-            margin-bottom: 20px;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 2px;
-            height: 100%;
-            background-color: var(--border-color);
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-bottom: 25px;
-        }
-
-        .timeline-item:last-child {
-            padding-bottom: 0;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -34px;
-            top: 0;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            border: 2px solid var(--light-text);
-        }
-
-        .timeline-date {
-            font-size: 0.8rem;
-            color: #6c757d;
-            margin-bottom: 5px;
-        }
-
-        .timeline-content {
-            background-color: rgba(210, 63, 114, 0.05);
-            padding: 15px;
-            border-radius: var(--radius);
-        }
-
-        .timeline-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .timeline-desc {
-            margin-bottom: 0;
-            font-size: 0.9rem;
-        }
-
         /* Footer */
         .admin-footer {
             text-align: center;
@@ -666,59 +389,43 @@
             font-size: 0.9rem;
             color: #6c757d;
         }
-        .text-white {
-    --bs-text-opacity: 1;
-    color: #d23f72 !important;
-}
 
-        /* Pagination */
-        .pagination {
-            margin-bottom: 0;
+        .text-white {
+            --bs-text-opacity: 1;
+            color: #d23f72 !important;
         }
         
-        .page-link {
-            color: var(--primary-color);
-            border-color: var(--border-color);
-            background-color: var(--container-bg);
-            padding: 0.5rem 1rem;
+        /* Adicionado para pedidos */
+        .badge-pendente {
+            background-color: var(--warning-color);
+            color: #000;
         }
         
-        .page-link:hover {
-            color: var(--primary-dark);
-            background-color: rgba(210, 63, 114, 0.05);
-        }
-        
-        .page-item.active .page-link {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
+        .badge-preparo {
+            background-color: var(--info-color);
             color: var(--light-text);
         }
         
-        .page-item.disabled .page-link {
-            color: #6c757d;
-            background-color: var(--container-bg);
-            border-color: var(--border-color);
+        .badge-pronto {
+            background-color: var(--success-color);
+            color: var(--light-text);
         }
-
-        /* Admin avatar */
-        .admin-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid var(--border-color);
+        
+        .badge-entregue {
+            background-color: var(--secondary-dark);
+            color: var(--light-text);
         }
-
-        .avatar-placeholder {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--secondary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-color);
-            font-size: 1.2rem;
+        
+        .badge-cancelado {
+            background-color: var(--danger-color);
+            color: var(--light-text);
+        }
+        
+        .badge {
+            padding: 0.5rem 0.8rem;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.8rem;
         }
     </style>
 </head>
@@ -752,44 +459,36 @@
             <div class="sidebar-menu">
                 <p class="menu-header">Principal</p>
                 <ul>
-                    <li>
-                        <a href="{{ url_for('admin.admin_produtos') }}">
-                            <i class="bi bi-box-seam"></i> Produtos
-                        </a>
-                    </li>
                    
                     <li>
-                        <a href="{{ url_for('admin.admin_pedidos') }}">
+                        <a href="{{ url_for('funcionario.dashboard') }}" >
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('funcionario.pedidos') }}"class="active">
                             <i class="bi bi-bag"></i> Pedidos
                         </a>
                     </li>
-                   
+                    <li>
+                        <a href="{{ url_for('funcionario.produtos') }}">
+                            <i class="bi bi-box-seam"></i> Produtos
+                        </a>
+                    </li>            
                 </ul>
-                <p class="menu-header">Usuários</p>
+                <p class="menu-header">Conta</p>
                 <ul>
                     <li>
-                        <a href="{{ url_for('admin.admin_clientes') }}">
-                            <i class="bi bi-people"></i> Clientes
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('admin.admin_usuarios') }}" class="active">
-                            <i class="bi bi-person-badge"></i> Administradores
+                        <a href="{{ url_for('auth.logout') }}">
+                            <i class="bi bi-box-arrow-right"></i> Sair
                         </a>
                     </li>
                 </ul>
-                <p class="menu-header">Relatórios</p>
-                <ul>
-                   
-                    <li>
-                        <a href="{{ url_for('admin.admin_logs') }}">
-                            <i class="bi bi-journal-text"></i> Logs do Sistema
-                        </a>
-                    </li>
-                </ul>
+              
             </div>
             <div class="sidebar-profile">
                 <div class="profile-info">
+                    <!-- Área do perfil do usuário -->
                 </div>
             </div>
         </aside>
@@ -797,66 +496,93 @@
         <!-- Main content -->
         <div class="main-content">
             <!-- Page header -->
-            <div class="page-header">
-                <h1 class="page-title">Administradores</h1>
-                
-                <div>
-                    <form class="d-flex gap-2" method="GET" action="{{ url_for('admin.admin_usuarios') }}">
-                        <input class="form-control" type="search" placeholder="Buscar administrador..." name="busca" value="{{ request.args.get('busca', '') }}">
-                        <button class="btn btn-outline-primary" type="submit">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
+           <!-- Substitua a seção "Page header" no documento original por esta versão -->
+<div class="page-header">
+    <h1 class="page-title">Pedidos</h1>
+    <a href="{{ url_for('funcionario.novo_pedido') }}" class="btn btn-success">
+        <i class="bi bi-plus-circle me-2"></i>Criar Pedido Manual
+    </a>
+</div>
 
-            <!-- Administradores section -->
-            <div id="administradores-section" class="card">
+            <!-- Seção de Filtros -->
+        <div class="card">
+    <div class="card-header">
+        <h5><i class="bi bi-funnel me-2"></i>Filtrar por Status</h5>
+        <span class="badge bg-light text-dark">{{ pedidos.total }} pedidos encontrados</span>
+    </div>
+    <div class="card-body">
+        <div class="d-flex flex-wrap">
+            <a href="{{ url_for('funcionario.pedidos') }}" class="btn btn-filter {% if status_atual == '' %}active{% endif %}">
+                <i class="bi bi-grid-3x3-gap"></i> Todos
+            </a>
+            <a href="{{ url_for('funcionario.pedidos', status='Pendente') }}" class="btn btn-filter {% if status_atual == 'Pendente' %}active{% endif %}">
+                <i class="bi bi-clock"></i> Pendentes
+            </a>
+            <a href="{{ url_for('funcionario.pedidos', status='Em Preparo') }}" class="btn btn-filter {% if status_atual == 'Em Preparo' %}active{% endif %}">
+                <i class="bi bi-hourglass-split"></i> Em Preparo
+            </a>
+            <a href="{{ url_for('funcionario.pedidos', status='Pronto para Entrega') }}" class="btn btn-filter {% if status_atual == 'Pronto para Entrega' %}active{% endif %}">
+                <i class="bi bi-check2-circle"></i> Prontos para Entrega
+            </a>
+            <a href="{{ url_for('funcionario.pedidos', status='Entregue') }}" class="btn btn-filter {% if status_atual == 'Entregue' %}active{% endif %}">
+                <i class="bi bi-truck"></i> Entregues
+            </a>
+            <a href="{{ url_for('funcionario.pedidos', status='Cancelado') }}" class="btn btn-filter {% if status_atual == 'Cancelado' %}active{% endif %}">
+                <i class="bi bi-x-circle"></i> Cancelados
+            </a>
+        </div>
+    </div>
+</div>
+
+            <!-- Lista de Pedidos -->
+            <div class="card">
                 <div class="card-header">
-                    <h5><i class="bi bi-person-badge me-2"></i>Gerenciamento de Administradores</h5>
-                    
+                    <h5><i class="bi bi-list-ul me-2"></i>Lista de Pedidos</h5>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Foto</th>
-                                    <th>Nome</th>
-                                    <th>Email</th>
-                                    <th>Data de Registro</th>
-                                    <th>Último Acesso</th>
-                                    <th>Status</th>
-                                    
+                                    <th><i class="bi bi-hash me-1"></i>ID</th>
+                                    <th><i class="bi bi-calendar3 me-1"></i>Data</th>
+                                    <th><i class="bi bi-person me-1"></i>Cliente</th>
+                                    <th><i class="bi bi-currency-dollar me-1"></i>Total</th>
+                                    <th><i class="bi bi-tag me-1"></i>Status</th>
+                                    <th class="text-center"><i class="bi bi-gear me-1"></i>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for usuario in usuarios %}
+                                {% for pedido in pedidos.items %}
+                                {% set cliente = pedido.cliente %}
                                 <tr>
-                                    <td>{{ usuario.id }}</td>
+                                    <td># {{ pedido.id }}</td>
+                                    <td>{{ pedido.data.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>{{ cliente.nome }}</td>
+                                    <td>R$ {{ "%.2f"|format(pedido.total) }}</td>
                                     <td>
-                                        {% if usuario.foto_perfil %}
-                                        <img src="{{ usuario.foto_perfil }}" alt="{{ usuario.nome }}" class="admin-avatar">
+                                        {% if pedido.status == 'Pendente' %}
+                                            <span class="badge badge-pendente"><i class="bi bi-clock me-1"></i>Pendente</span>
+                                        {% elif pedido.status == 'Em Preparo' %}
+                                            <span class="badge badge-preparo"><i class="bi bi-hourglass-split me-1"></i>Em Preparo</span>
+                                        {% elif pedido.status == 'Pronto para Entrega' %}
+                                            <span class="badge badge-pronto"><i class="bi bi-check2-circle me-1"></i>Pronto</span>
+                                        {% elif pedido.status == 'Entregue' %}
+                                            <span class="badge badge-entregue"><i class="bi bi-truck me-1"></i>Entregue</span>
+                                        {% elif pedido.status == 'Cancelado' %}
+                                            <span class="badge badge-cancelado"><i class="bi bi-x-circle me-1"></i>Cancelado</span>
                                         {% else %}
-                                        <div class="avatar-placeholder">
-                                            <i class="bi bi-person"></i>
-                                        </div>
+                                            <span class="badge bg-secondary">{{ pedido.status }}</span>
                                         {% endif %}
                                     </td>
-                                    <td>{{ usuario.nome }}</td>
-                                    <td>{{ usuario.email }}</td>
-                                    <td>{{ usuario.data_registro.strftime('%d/%m/%Y') }}</td>
-                                    <td>{% if usuario.ultimo_acesso %}{{ usuario.ultimo_acesso.strftime('%d/%m/%Y %H:%M') }}{% else %}-{% endif %}</td>
-                                    <td>
-                                        <span class="status-badge {{ 'success' if usuario.status == 'ativo' else 'danger' }}">
-                                            {{ usuario.status }}
-                                        </span>
-                                    </td>
-                                    <td>
+                                    <td class="text-center">
                                         <div class="btn-group" role="group">
-                                            
-                                           
+                                           <a href="{{ url_for('funcionario.detalhes_pedido', pedido_id=pedido.id) }}" class="btn btn-sm btn-primary">
+    <i class="bi bi-eye"></i>
+</a>
+                                            <a href="{{ url_for('funcionario.atualizar_pedido', pedido_id=pedido.id) }}" class="btn btn-sm btn-success">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
@@ -866,19 +592,57 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            Mostrando <b>{{ usuarios|length }}</b> administradores
-                        </div>
-                        
-                    </div>
+                    <nav aria-label="Navegação de pedidos">
+                        <ul class="pagination justify-content-center mb-0">
+                            {% if pedidos.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.admin_pedidos', page=pedidos.prev_num, status=status_atual) }}">
+                                    <i class="bi bi-chevron-left"></i> Anterior
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link"><i class="bi bi-chevron-left"></i> Anterior</span>
+                            </li>
+                            {% endif %}
+
+                            {% for page_num in pedidos.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2) %}
+                                {% if page_num %}
+                                    {% if page_num == pedidos.page %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ page_num }}</span>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('admin.admin_pedidos', page=page_num, status=status_atual) }}">{{ page_num }}</a>
+                                    </li>
+                                    {% endif %}
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if pedidos.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.admin_pedidos', page=pedidos.next_num, status=status_atual) }}">
+                                    Próxima <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Próxima <i class="bi bi-chevron-right"></i></span>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
                 </div>
             </div>
 
             <!-- Footer -->
             <div class="admin-footer">
                 <p>&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
-                
             </div>
         </div>
     </div>
@@ -898,18 +662,6 @@
             document.querySelector('.sidebar').classList.toggle('active');
             document.querySelector('.main-content').classList.toggle('active');
         });
-
-        // Confirmation dialog for status change
-        function confirmarAlteracaoStatus(botao) {
-            const novoStatus = botao.closest('form').querySelector('input[name="novo_status"]').value;
-            const mensagem = novoStatus === 'ativo' 
-                ? 'Tem certeza que deseja ativar este administrador?' 
-                : 'Tem certeza que deseja desativar este administrador?';
-                
-            if (confirm(mensagem)) {
-                botao.closest('form').submit();
-            }
-        }
 
         // Initialize tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))

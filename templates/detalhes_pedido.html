@@ -589,9 +589,30 @@
                                 {% endfor %}
                             </tbody>
                             <tfoot>
+                                <!-- Subtotal dos Produtos (total já inclui o frete, então subtraímos aqui) -->
                                 <tr>
-                                    <td colspan="3" class="text-end fw-bold">Total:</td>
-                                    <td class="text-end fw-bold fs-5 text-primary">R$ {{ "%.2f"|format(pedido.total) }}</td>
+                                    <td colspan="3" class="text-end">Subtotal:</td>
+                                    <td class="text-end fw-bold">
+                                        R$ {{ "%.2f"|format(pedido.total - (pedido.valor_frete if pedido.valor_frete else 0)) }}
+                                    </td>
+                                </tr>
+                                
+                                <!-- Linha da Taxa de Entrega (somente se tipo_entrega for 'frete') -->
+                                {% if pedido.tipo_entrega == 'frete' and pedido.valor_frete %}
+                                <tr>
+                                    <td colspan="3" class="text-end">
+                                        <i class="bi bi-truck"></i> Taxa de Entrega:
+                                    </td>
+                                    <td class="text-end fw-bold">R$ {{ "%.2f"|format(pedido.valor_frete) }}</td>
+                                </tr>
+                                {% endif %}
+                                
+                                <!-- Total Final -->
+                                <tr class="table-light">
+                                    <td colspan="3" class="text-end fw-bold fs-5">Total:</td>
+                                    <td class="text-end fw-bold fs-5 text-primary">
+                                        R$ {{ "%.2f"|format(pedido.total) }}
+                                    </td>
                                 </tr>
                             </tfoot>
                         </table>

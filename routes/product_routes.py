@@ -6,12 +6,14 @@ import os
 from werkzeug.utils import secure_filename
 from sqlalchemy import desc
 import json
+from utils.helpers import funcionario_bloqueado
 
 product_bp = Blueprint('product', __name__)
 
 # No arquivo product_bp.py (ou onde estiver a rota 'todos_produtos')
 
 @product_bp.route('/produtos')
+@funcionario_bloqueado
 def todos_produtos():
     # Modificar a consulta para buscar apenas produtos ativos
     produtos = Produto.query.filter_by(ativo=True).all()
@@ -22,6 +24,7 @@ def todos_produtos():
     return render_template('todos_produtos.html', produtos=produtos, categorias=categorias)
 
 @product_bp.route('/produto/<int:produto_id>')
+@funcionario_bloqueado
 def detalhes_produto(produto_id):
     # Buscar produto e verificar se está ativo
     produto = Produto.query.filter_by(id=produto_id, ativo=True).first_or_404()
@@ -30,6 +33,7 @@ def detalhes_produto(produto_id):
 
 
 @product_bp.route('/montar-bolo')
+@funcionario_bloqueado
 def montar_bolo():
     # Verificar se o usuário está logado
     if 'usuario_id' not in session:

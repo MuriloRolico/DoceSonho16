@@ -621,49 +621,97 @@
     font-size: 0.9rem;
     line-height: 1.6;
 }
-<style>
-/* Alerta de pedido cancelado - versão admin */
+/* Adicione estes estilos ao seu CSS */
+
+/* Estilo para cards de pedidos cancelados */
+.pedido-cancelado {
+    opacity: 0.7;
+    border-left: 4px solid var(--danger-color) !important;
+    background-color: rgba(220, 53, 69, 0.02);
+}
+
+/* Estilo para badge de cancelado com mais destaque */
+.badge-cancelado {
+    background-color: var(--danger-color);
+    color: var(--light-text);
+    font-weight: 600;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+}
+
+/* Alerta de pedido cancelado */
 .alert-pedido-cancelado {
     background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     color: white;
     border: none;
-    border-radius: 0;
-    margin-bottom: 0;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
     box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
 }
 
 .alert-pedido-cancelado i {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
 }
 
 .alert-pedido-cancelado .alert-heading {
     font-size: 1.1rem;
     margin-bottom: 0.5rem;
+}
+
+/* Desabilitar opções de status cancelado no formulário */
+.status-option[data-status="Cancelado"] {
+    position: relative;
+}
+
+.status-option[data-status="Cancelado"]::after {
+    content: '⚠️ IRREVERSÍVEL';
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #dc3545;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
     letter-spacing: 0.5px;
 }
 
-/* Card com pedido cancelado */
-.pedido-cancelado-card {
-    opacity: 0.85;
-    border-left: 5px solid #dc3545 !important;
+.status-option[data-status="Cancelado"]:hover {
+    border-color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.08);
 }
 
-/* Botão bloqueado */
+.status-option[data-status="Cancelado"].selected {
+    border-color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.1);
+    border-width: 3px;
+}
+
+/* Botão bloqueado para pedidos cancelados */
 .btn-bloqueado {
     cursor: not-allowed;
-    opacity: 0.65;
+    opacity: 0.6;
 }
 
-/* Badge de cancelado mais destacado */
-.badge-cancelado {
-    background-color: #dc3545;
-    color: white;
-    font-weight: 600;
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
-    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+/* Timeline item para cancelamento */
+.timeline-item.cancelamento {
+    border-left: 3px solid #dc3545;
+    padding-left: 20px;
 }
-</style>
+
+.timeline-item.cancelamento .timeline-dot {
+    background-color: #dc3545;
+    width: 24px;
+    height: 24px;
+}
+
+.timeline-item.cancelamento .timeline-content {
+    background-color: rgba(220, 53, 69, 0.05);
+    border-left: 3px solid #dc3545;
+}
     </style>
 </head>
 <body>
@@ -696,37 +744,28 @@
             <div class="sidebar-menu">
                 <p class="menu-header">Principal</p>
                 <ul>
-                    <li>
-                        <a href="{{ url_for('admin.admin_produtos') }}">
-                           <i class="bi bi-box-seam"></i> Produtos
-                        </a>
-                    </li>
                    
                     <li>
-                        <a href="{{ url_for('admin.admin_pedidos') }}" class="active">
+                        <a href="{{ url_for('funcionario.dashboard') }}" >
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('funcionario.pedidos') }}"class="active">
                             <i class="bi bi-bag"></i> Pedidos
                         </a>
                     </li>
-                   
+                    <li>
+                        <a href="{{ url_for('funcionario.produtos') }}">
+                            <i class="bi bi-box-seam"></i> Produtos
+                        </a>
+                    </li>            
                 </ul>
-                <p class="menu-header">Usuários</p>
+                <p class="menu-header">Conta</p>
                 <ul>
                     <li>
-                        <a href="{{ url_for('admin.admin_clientes') }}">
-                            <i class="bi bi-people"></i> Clientes
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('admin.admin_usuarios') }}">
-                            <i class="bi bi-person-badge"></i> Administradores
-                        </a>
-                    </li>
-                </ul>
-                <p class="menu-header">Relatórios</p>
-                <ul>
-                    <li>
-                        <a href="{{ url_for('admin.admin_logs') }}">
-                            <i class="bi bi-journal-text"></i> Logs do Sistema
+                        <a href="{{ url_for('auth.logout') }}">
+                            <i class="bi bi-box-arrow-right"></i> Sair
                         </a>
                     </li>
                 </ul>
@@ -746,22 +785,16 @@
                     <h1 class="page-title">Detalhes do Pedido #{{ pedido.id }}</h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="{{ url_for('admin.admin_pedidos') }}" class="text-decoration-none">Pedidos</a></li>
+                            <li class="breadcrumb-item"><a href="{{ url_for('funcionario.pedidos') }}" class="text-decoration-none">Pedidos</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Detalhes do Pedido #{{ pedido.id }}</li>
                         </ol>
                     </nav>
                 </div>
                 <div class="d-flex gap-2">
-                    {% if pedido.status != 'Cancelado' %}
-<a href="{{ url_for('admin.admin_atualizar_pedido', pedido_id=pedido.id) }}" class="btn btn-primary">
-    <i class="bi bi-pencil-square me-1"></i> Atualizar Status
-</a>
-{% else %}
-<button class="btn btn-secondary" disabled title="Pedidos cancelados não podem ser alterados">
-    <i class="bi bi-lock-fill me-1"></i> Status Bloqueado
-</button>
+                   {% if pedido.status == 'Cancelado' %}
+
 {% endif %}
-                    <a href="{{ url_for('admin.admin_pedidos') }}" class="btn btn-outline-secondary">
+                    <a href="{{ url_for('funcionario.pedidos') }}" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left me-1"></i> Voltar
                     </a>
                 </div>
@@ -773,6 +806,21 @@
                     <!-- Card de Status do Pedido -->
                     <div class="card mb-4">
                         <div class="card-header">
+                            {% if pedido.status == 'Cancelado' %}
+<div class="alert alert-danger mb-0 border-0 rounded-0" style="border-left: 4px solid #dc3545 !important;">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-exclamation-octagon-fill me-3" style="font-size: 2rem;"></i>
+        <div>
+            <h6 class="alert-heading mb-1">
+                <strong>PEDIDO CANCELADO - AÇÃO IRREVERSÍVEL</strong>
+            </h6>
+            <p class="mb-0">
+                Este pedido foi cancelado e não pode mais ser alterado. Nenhuma modificação pode ser feita neste pedido.
+            </p>
+        </div>
+    </div>
+</div>
+{% endif %}
                             <h5><i class="bi bi-info-circle me-2"></i>Status do Pedido</h5>
                             <div>
                                 {% if pedido.status == 'Pendente' %}
@@ -790,21 +838,6 @@
                                 {% endif %}
                             </div>
                         </div>
-                        {% if pedido.status == 'Cancelado' %}
-<div class="alert alert-danger mb-0 border-0 rounded-0" style="border-left: 4px solid #dc3545 !important;">
-    <div class="d-flex align-items-center">
-        <i class="bi bi-exclamation-octagon-fill me-3" style="font-size: 2rem;"></i>
-        <div>
-            <h6 class="alert-heading mb-1">
-                <strong>PEDIDO CANCELADO - AÇÃO IRREVERSÍVEL</strong>
-            </h6>
-            <p class="mb-0">
-                Este pedido foi cancelado e não pode mais ser alterado. Nenhuma modificação pode ser feita neste pedido.
-            </p>
-        </div>
-    </div>
-</div>
-{% endif %}
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-6 mb-3">

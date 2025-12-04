@@ -152,7 +152,6 @@ def registro():
         confirmar_senha = request.form.get('confirmar_senha')
         concordo_politica = 'concordo_politica' in request.form or request.form.get('concordo_politica')
         
-        # Novos campos
         cpf = request.form.get('cpf')
         endereco_cep = request.form.get('endereco_cep')
         endereco_rua = request.form.get('endereco_rua')
@@ -162,6 +161,27 @@ def registro():
         endereco_cidade = request.form.get('endereco_cidade')
         endereco_estado = request.form.get('endereco_estado')
         
+        # Criar dicionário com os dados do formulário para reenviar em caso de erro
+        dados_formulario = {
+            'nome': nome,
+            'email': email,
+            'cpf': cpf,
+            'endereco_cep': endereco_cep,
+            'endereco_rua': endereco_rua,
+            'endereco_numero': endereco_numero,
+            'endereco_complemento': endereco_complemento,
+            'endereco_bairro': endereco_bairro,
+            'endereco_cidade': endereco_cidade,
+            'endereco_estado': endereco_estado
+        }
+        
+        # Validar CPF se fornecido
+        if cpf:
+            cpf_limpo = cpf.replace('.', '').replace('-', '')
+            if not validar_cpf(cpf_limpo):
+                flash('CPF inválido. Por favor, verifique os números digitados.', 'danger')
+                return render_template('registro.html', dados=dados_formulario)
+        
         # Debug
         print(f"Nome: {nome}, Email: {email}, Senha fornecida: {len(senha) if senha else 'Nenhuma'}")
         print(f"Confirmação de senha: {len(confirmar_senha) if confirmar_senha else 'Nenhuma'}")
@@ -170,43 +190,42 @@ def registro():
         # Validações
         if not nome or not email or not senha or not confirmar_senha:
             flash('Todos os campos obrigatórios devem ser preenchidos', 'danger')
-            return render_template('registro.html')
+            return render_template('registro.html', dados=dados_formulario)
         
         if not concordo_politica:
             flash('Você precisa concordar com a política de privacidade', 'danger')
-            return render_template('registro.html')
+            return render_template('registro.html', dados=dados_formulario)
         
         if senha != confirmar_senha:
             flash('As senhas não coincidem', 'danger')
-            return render_template('registro.html')
+            return render_template('registro.html', dados=dados_formulario)
         
         # Verificar requisitos de segurança da senha
         if len(senha) < 8:
             flash('A senha deve ter pelo menos 8 caracteres', 'danger')
-            return render_template('registro.html')
+            return render_template('registro.html', dados=dados_formulario)
         if not re.search("[a-z]", senha):
             flash('A senha deve conter pelo menos uma letra minúscula', 'danger')
-            return render_template('registro.html')
+            return render_template('registro.html', dados=dados_formulario)
         if not re.search("[A-Z]", senha):
             flash('A senha deve conter pelo menos uma letra maiúscula', 'danger')
-            return render_template('registro.html')
+            return render_template('registro.html', dados=dados_formulario)
         if not re.search("[0-9]", senha):
             flash('A senha deve conter pelo menos um número', 'danger')
-            return render_template('registro.html')
+            return render_template('registro.html', dados=dados_formulario)
         if not re.search("[_@$!%*?&]", senha):
             flash('A senha deve conter pelo menos um caractere especial', 'danger')
-            return render_template('registro.html')
+            return render_template('registro.html', dados=dados_formulario)
         
         # Verificar se o email já existe
         usuario_existente = Usuario.query.filter_by(email=email).first()
         if usuario_existente:
             flash('Este e-mail já está cadastrado', 'danger')
-            return render_template('registro.html')
+            return render_template('registro.html', dados=dados_formulario)
         
         # Criar novo usuário
         try:
             senha_hash = generate_password_hash(senha)
-            print(f"Hash gerado: {senha_hash}")
             
             novo_usuario = Usuario(
                 nome=nome,
@@ -223,9 +242,9 @@ def registro():
                 status='ativo'
             )
             
-            # Criptografar o CPF se fornecido
+            # Salvar CPF formatado se fornecido
             if cpf:
-                novo_usuario.set_cpf(cpf.replace('.', '').replace('-', ''))
+                novo_usuario.cpf = cpf  # Salva com a formatação (000.000.000-00)
             
             db.session.add(novo_usuario)
             db.session.commit()
@@ -261,13 +280,16 @@ def registro():
             
             flash('Cadastro realizado com sucesso! Faça login para continuar.', 'success')
             return redirect(url_for('auth.login'))
+            
         except Exception as e:
             db.session.rollback()
             flash(f'Erro ao cadastrar usuário: {str(e)}', 'danger')
             print(f"Erro no cadastro: {str(e)}")
-            return render_template('registro.html')
+            return render_template('registro.html', dados=dados_formulario)
     
     return render_template('registro.html')
+
+
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -277,6 +299,29 @@ def login():
         lembrar = 'lembrar' in request.form
         
         usuario = Usuario.query.filter_by(email=email).first()
+        
+        # Verificar se o usuário existe e está bloqueado
+        if usuario:
+            bloqueado, tempo_restante = usuario.esta_bloqueado()
+            
+            if bloqueado:
+                tempo_formatado = usuario.obter_tempo_bloqueio_formatado()
+                flash(f'Muitas tentativas de login falhas. Sua conta está temporariamente bloqueada. Tente novamente em {tempo_formatado}.', 'danger')
+                
+                # Registrar tentativa de login em conta bloqueada
+                try:
+                    log = Log(
+                        tipo='login_bloqueado',
+                        descricao=f'Tentativa de login em conta bloqueada: {email}',
+                        usuario_id=usuario.id,
+                        ip=request.remote_addr
+                    )
+                    db.session.add(log)
+                    db.session.commit()
+                except:
+                    pass
+                
+                return render_template('login.html', email=email)
         
         # Verificar senha com múltiplos formatos
         senha_valida = False
@@ -292,29 +337,52 @@ def login():
                     senha_valida = True
         
         if not usuario or not senha_valida:
-            # Registrar tentativa de login falha usando ambos os métodos
+            # Registrar tentativa falha
+            if usuario:
+                usuario.registrar_tentativa_falha()
+                
+                # Verificar se acabou de ser bloqueado
+                bloqueado, tempo_restante = usuario.esta_bloqueado()
+                if bloqueado:
+                    tempo_formatado = usuario.obter_tempo_bloqueio_formatado()
+                    
+                    if usuario.tentativas_login == 5:
+                        flash(f'Você excedeu o limite de tentativas. Sua conta foi bloqueada por 15 minutos.', 'warning')
+                    elif usuario.tentativas_login == 10:
+                        flash(f'Você excedeu novamente o limite de tentativas. Sua conta foi bloqueada por 1 hora.', 'warning')
+                    elif usuario.tentativas_login >= 15:
+                        flash(f'Sua conta foi bloqueada por 24 horas devido a múltiplas tentativas falhas.', 'danger')
+                else:
+                    flash('Email ou senha incorretos', 'danger')
+            else:
+                flash('Email ou senha incorretos', 'danger')
+            
+            # Registrar tentativa de login falha
             try:
                 log = Log(
                     tipo='login_falha',
                     descricao=f'Tentativa de login falha para: {email}',
+                    usuario_id=usuario.id if usuario else None,
                     ip=request.remote_addr
                 )
                 db.session.add(log)
                 db.session.commit()
             except:
-                # Fallback para registrar_log
                 registrar_log(
                     tipo='login_falha',
                     descricao=f'Tentativa de login falha para o email {email}',
                     usuario_id=None
                 )
             
-            flash('Email ou senha incorretos', 'danger')
-            return render_template('login.html')
+            return render_template('login.html', email=email)
         
+        # Verificar status da conta
         if hasattr(usuario, 'status') and usuario.status != 'ativo':
             flash('Esta conta está desativada. Entre em contato com o suporte.', 'warning')
             return render_template('login.html')
+        
+        # Login bem-sucedido - resetar tentativas
+        usuario.resetar_tentativas_login()
         
         # Tentar gerar token JWT (se disponível)
         token = None
@@ -329,7 +397,6 @@ def login():
                         usuario_id=usuario.id,
                         token=token,
                         device_info=request.user_agent.string,
-                        ip=request.remote_addr,
                         data_expiracao=datetime.utcnow() + timedelta(days=expira_em if lembrar else 0, hours=0 if lembrar else expira_em)
                     )
                     db.session.add(novo_token)
@@ -342,7 +409,7 @@ def login():
         if hasattr(usuario, 'ultimo_acesso'):
             usuario.ultimo_acesso = datetime.utcnow()
         
-        # Registrar login bem-sucedido usando ambos os métodos
+        # Registrar login bem-sucedido
         try:
             log = Log(
                 tipo='login_sucesso',
@@ -353,7 +420,6 @@ def login():
             db.session.add(log)
             db.session.commit()
         except:
-            # Fallback para registrar_log
             registrar_log(
                 tipo='login',
                 descricao=f'Login bem-sucedido para o usuário {usuario.nome}',
@@ -365,10 +431,17 @@ def login():
         if token:
             session['auth_token'] = token
         
+        # Determinar redirecionamento baseado no tipo de usuário
+        if hasattr(usuario, 'is_funcionario') and usuario.is_funcionario:
+            proxima_pagina = url_for('funcionario.dashboard')
+        else:
+            # Admin e usuários comuns vão para a index
+            proxima_pagina = url_for('index')
+                
         # Configurar cookie de autenticação se "lembrar" estiver marcado
-        resposta = redirect(url_for('index'))
+        resposta = redirect(proxima_pagina)
+        
         if lembrar and token:
-            # Configurar cookie seguro para autenticação
             resposta.set_cookie(
                 'auth_token',
                 token,
@@ -566,3 +639,40 @@ def redefinir_senha(token):
 @auth_bp.route('/politica-privacidade')
 def politica_privacidade():
     return render_template('politica_privacidade.html')
+
+def validar_cpf(cpf):
+    """Valida se o CPF é válido usando o algoritmo oficial"""
+    # Remove caracteres não numéricos
+    cpf = re.sub(r'[^0-9]', '', cpf)
+    
+    # Verifica se tem 11 dígitos
+    if len(cpf) != 11:
+        return False
+    
+    # Verifica se todos os dígitos são iguais (ex: 111.111.111-11)
+    if cpf == cpf[0] * 11:
+        return False
+    
+    # Validação do primeiro dígito verificador
+    soma = 0
+    for i in range(9):
+        soma += int(cpf[i]) * (10 - i)
+    
+    resto = (soma * 10) % 11
+    if resto == 10 or resto == 11:
+        resto = 0
+    if resto != int(cpf[9]):
+        return False
+    
+    # Validação do segundo dígito verificador
+    soma = 0
+    for i in range(10):
+        soma += int(cpf[i]) * (11 - i)
+    
+    resto = (soma * 10) % 11
+    if resto == 10 or resto == 11:
+        resto = 0
+    if resto != int(cpf[10]):
+        return False
+    
+    return True

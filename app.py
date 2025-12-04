@@ -1,9 +1,10 @@
-from flask import Flask, render_template, session, g
+from flask import Flask, render_template, session, g, flash, redirect, url_for, request
 from database import db
 import os
 from datetime import timedelta
 from routes.auth_routes import auth_bp
 from dotenv import load_dotenv
+from utils.helpers import funcionario_bloqueado
 
 
 load_dotenv() 
@@ -61,6 +62,34 @@ def create_app():
             'get_usuario': get_usuario
         }
 
+
+    @app.before_request
+    def verificar_acesso_funcionario():
+        """Bloqueia funcionários de acessarem rotas de clientes"""
+        if 'usuario_id' in session:
+            usuario = Usuario.query.get(session['usuario_id'])
+            
+            if usuario and usuario.is_funcionario:
+                # Lista de rotas que funcionários NÃO podem acessar
+                rotas_bloqueadas = [
+                    'index',
+                    'product.todos_produtos',
+                    'product.detalhes_produto',
+                    'product.montar_bolo',
+                    'product.meus_bolos',
+                    'cart.carrinho',
+                    'cart.adicionar_ao_carrinho',
+                    'order.finalizar_compra',
+                    'order.pedidos',
+                    'user.perfil',
+                    'user.dados_pessoais'
+                ]
+                
+                # Verificar se está tentando acessar uma rota bloqueada
+                if request.endpoint in rotas_bloqueadas:
+                    flash('Funcionários não têm acesso a esta área.', 'warning')
+                    return redirect(url_for('funcionario.dashboard'))
+
     # Middleware para verificar tokens JWT
     @app.before_request
     def verificar_token():
@@ -78,6 +107,7 @@ def create_app():
     from routes.user_routes import user_bp
     from routes.admin_routes import admin_bp
     from routes.sobrenos_routes import sobrenos_bp
+    from routes.funcionario_routes import funcionario_bp
    
 
     
@@ -89,6 +119,46 @@ def create_app():
     app.register_blueprint(user_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(sobrenos_bp)
+    app.register_blueprint(funcionario_bp)
+    
+    
+    print("\n" + "="*70)
+    print("📍 TODAS AS ROTAS REGISTRADAS NO FLASK:")
+    print("="*70)
+
+    print("\n" + "="*70)
+    print("📍 TODAS AS ROTAS REGISTRADAS NO FLASK:")
+    print("="*70)
+
+    # Organizar por blueprint
+    rotas_por_blueprint = {}
+    for rule in app.url_map.iter_rules():
+        endpoint = rule.endpoint
+        blueprint = endpoint.split('.')[0] if '.' in endpoint else 'main'
+        
+        if blueprint not in rotas_por_blueprint:
+            rotas_por_blueprint[blueprint] = []
+        
+        rotas_por_blueprint[blueprint].append({
+            'endpoint': endpoint,
+            'url': rule.rule,
+            'methods': ', '.join(rule.methods - {'HEAD', 'OPTIONS'})
+        })
+
+    # Imprimir organizadamente
+    for blueprint, rotas in sorted(rotas_por_blueprint.items()):
+        print(f"\n🔹 Blueprint: {blueprint}")
+        print("-" * 70)
+        for rota in rotas:
+            print(f"  {rota['endpoint']:35s} -> {rota['url']:25s} [{rota['methods']}]")
+
+    print("\n" + "="*70)
+    print("📦 BLUEPRINTS REGISTRADOS:")
+    print("="*70)
+    for bp_name in app.blueprints.keys():
+        print(f"  ✓ {bp_name}")
+    print("="*70 + "\n")
+    
     
     
     # Tentar registrar novos blueprints se existirem
@@ -109,11 +179,32 @@ def create_app():
         # Se os novos blueprints não existirem, continua com os antigos
         pass
 
+
+
+
+
+
+
+
     # Rota principal
     @app.route('/')
+    @funcionario_bloqueado
     def index():
         produtos = Produto.query.all()
         return render_template('index.html', produtos=produtos)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     return app
 

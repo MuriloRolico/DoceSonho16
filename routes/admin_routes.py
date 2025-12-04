@@ -316,7 +316,7 @@ def admin_pedidos():
 @admin_bp.route('/admin/pedido/<int:pedido_id>')
 def admin_detalhes_pedido(pedido_id):
     if not is_admin():
-        flash('Acesso negado. Apenas administradores podem acessar esta área.', 'danger')
+        
         return redirect(url_for('index'))
     
     pedido = Pedido.query.get_or_404(pedido_id)
@@ -387,6 +387,11 @@ def admin_atualizar_pedido(pedido_id):
     pedido = Pedido.query.get_or_404(pedido_id)
     usuario = Usuario.query.get(pedido.usuario_id)
     
+    # PROTEÇÃO: Verificar se o pedido está cancelado
+    if pedido.status == 'Cancelado':
+        flash('Este pedido está cancelado e não pode mais ser alterado. Esta é uma ação irreversível.', 'danger')
+        return redirect(url_for('admin.admin_detalhes_pedido', pedido_id=pedido.id))
+    
     if request.method == 'POST':
         status_anterior = pedido.status
         novo_status = request.form.get('status')
@@ -405,9 +410,13 @@ def admin_atualizar_pedido(pedido_id):
             db.session.commit()
             
             # Registrar o log de atualização
-            descricao = f'Pedido #{pedido.id} atualizado de "{status_anterior}" para "{novo_status}"'
+            descricao = f'Pedido #{pedido.id} atualizado de "{status_anterior}" para "{novo_status}" por administrador'
             if observacoes:
                 descricao += f' com observação: "{observacoes}"'
+            
+            # Se o pedido foi cancelado, adicionar aviso no log
+            if novo_status == 'Cancelado':
+                descricao += ' - AÇÃO IRREVERSÍVEL'
                 
             registrar_log(
                 tipo='pedido_atualizado',
@@ -415,7 +424,12 @@ def admin_atualizar_pedido(pedido_id):
                 usuario_id=session.get('usuario_id')
             )
             
-            flash(f'Status do pedido atualizado para: {novo_status}', 'success')
+            # Mensagem especial se cancelado
+            if novo_status == 'Cancelado':
+                flash(f'Pedido #{pedido.id} foi CANCELADO. Esta é uma ação IRREVERSÍVEL e o pedido não poderá mais ser alterado.', 'warning')
+            else:
+                flash(f'Status do pedido atualizado para: {novo_status}', 'success')
+            
             return redirect(url_for('admin.admin_detalhes_pedido', pedido_id=pedido.id))
     
     # Se for GET ou se ocorrer algum erro no POST, mostrar a página de atualização
@@ -471,9 +485,6 @@ def admin_atualizar_pedido(pedido_id):
                           itens=todos_itens,
                           usuario=usuario,
                           historico_status=historico_status)
-
-# ROTAS DE PRODUTOS - SEÇÃO COMPLETA COM SOFT DELETE
-
 @admin_bp.route('/admin/produtos')
 def admin_produtos():
     if not is_admin():

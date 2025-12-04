@@ -11,6 +11,7 @@ import io
 import uuid
 import re
 from functools import wraps
+from utils.helpers import funcionario_bloqueado
 
 user_bp = Blueprint('user', __name__)
 
@@ -21,16 +22,31 @@ def login_required(f):
         if 'usuario_id' not in session:
             flash('Você precisa fazer login para acessar esta página', 'warning')
             return redirect(url_for('auth.login'))
+        
+        # Bloquear funcionários de acessar perfil de usuário
+        usuario = Usuario.query.get(session['usuario_id'])
+        if usuario and usuario.is_funcionario:
+            flash('Funcionários não têm acesso ao perfil de usuário.', 'warning')
+            return redirect(url_for('funcionario.dashboard'))
+        
         return f(*args, **kwargs)
     return decorated_function
+
+# routes/user.py - MODIFICAÇÃO NA ROTA /perfil
 
 @user_bp.route('/perfil')
 @login_required
 def perfil():
     usuario = db.session.get(Usuario, session['usuario_id'])
-    # Buscar tokens ativos para exibir nas sessões
     tokens = Token.query.filter_by(usuario_id=usuario.id, is_revogado=False).all()
-    return render_template('perfil.html', usuario=usuario, tokens=tokens)
+    
+    # ADICIONE APENAS ESTAS 2 LINHAS:
+    pedidos_pendentes = Pedido.query.filter(
+        Pedido.usuario_id == usuario.id,
+        Pedido.status.in_(['Pendente', 'Em Preparação', 'Aprovado', 'Pronto para Retirada', 'Em Transporte'])
+    ).all()
+    
+    return render_template('perfil.html', usuario=usuario, tokens=tokens, pedidos_pendentes=pedidos_pendentes)
 
 @user_bp.route('/perfil/atualizar', methods=['POST'])
 @login_required
@@ -160,11 +176,8 @@ def atualizar_perfil():
             
             # Validar CPF (básico - 11 dígitos)
             if len(cpf_limpo) == 11 and cpf_limpo.isdigit():
-                if hasattr(usuario, 'set_cpf'):
-                    usuario.set_cpf(cpf_limpo)
-                else:
-                    # Se não tiver o método set_cpf, definir diretamente
-                    usuario.cpf_hash = generate_password_hash(cpf_limpo)
+                # Salvar CPF diretamente no campo correto
+                usuario.cpf = cpf_limpo
             else:
                 flash('CPF inválido. Por favor, insira um CPF válido', 'danger')
                 return redirect(url_for('user.perfil'))
@@ -184,57 +197,71 @@ def atualizar_perfil():
 @user_bp.route('/perfil/foto', methods=['POST'])
 @login_required
 def atualizar_foto():
-    usuario = db.session.get(Usuario, session['usuario_id'])
-    
-    # Verificar se há um arquivo de foto no formulário
-    if 'foto_perfil' not in request.files:
-        flash('Nenhuma foto foi enviada', 'danger')
-        return redirect(url_for('user.perfil'))
-    
-    arquivo = request.files['foto_perfil']
-    
-    if arquivo.filename == '':
-        flash('Nenhuma foto foi selecionada', 'danger')
-        return redirect(url_for('user.perfil'))
-    
-    if not allowed_file(arquivo.filename):
-        flash('Formato de arquivo não permitido. Use JPG, JPEG, PNG ou GIF', 'danger')
-        return redirect(url_for('user.perfil'))
-    
-    # Limitar tamanho do arquivo (5MB)
-    if len(arquivo.read()) > 5 * 1024 * 1024:
-        flash('O arquivo é muito grande. O tamanho máximo permitido é 5MB', 'danger')
-        return redirect(url_for('user.perfil'))
-    
-    # Resetar o ponteiro do arquivo
-    arquivo.seek(0)
-    
-    # Criar uma pasta para fotos de perfil se não existir
-    diretorio_uploads = os.path.join(current_app.config['UPLOAD_FOLDER'], 'profile_pics')
-    os.makedirs(diretorio_uploads, exist_ok=True)
-    
-    # Salvar a foto com um nome seguro que inclui o ID do usuário e um UUID para evitar colisões
-    filename = f"user_{usuario.id}_{uuid.uuid4()}_{secure_filename(arquivo.filename)}"
-    arquivo.save(os.path.join(diretorio_uploads, filename))
-    
-    # Excluir foto antiga se existir
-    if usuario.foto_perfil and usuario.foto_perfil.startswith('/static/uploads/profile_pics/'):
-        try:
-            caminho_foto_antiga = os.path.join(current_app.root_path, usuario.foto_perfil.lstrip('/'))
-            if os.path.exists(caminho_foto_antiga):
-                os.remove(caminho_foto_antiga)
-        except Exception as e:
-            print(f"Erro ao excluir foto antiga: {e}")
-    
-    # Atualizar o caminho da foto no banco de dados
-    usuario.foto_perfil = f'/static/uploads/profile_pics/{filename}'
-    
     try:
+        usuario = db.session.get(Usuario, session['usuario_id'])
+        
+        # Verificar se há um arquivo de foto no formulário
+        if 'foto_perfil' not in request.files:
+            flash('Nenhuma foto foi enviada', 'danger')
+            return redirect(url_for('user.perfil'))
+        
+        arquivo = request.files['foto_perfil']
+        
+        if arquivo.filename == '':
+            flash('Nenhuma foto foi selecionada', 'danger')
+            return redirect(url_for('user.perfil'))
+        
+        if not allowed_file(arquivo.filename):
+            flash('Formato de arquivo não permitido. Use JPG, JPEG, PNG ou GIF', 'danger')
+            return redirect(url_for('user.perfil'))
+        
+        # Limitar tamanho do arquivo (5MB)
+        arquivo.seek(0, os.SEEK_END)
+        tamanho = arquivo.tell()
+        arquivo.seek(0)
+        
+        if tamanho > 5 * 1024 * 1024:
+            flash('O arquivo é muito grande. O tamanho máximo permitido é 5MB', 'danger')
+            return redirect(url_for('user.perfil'))
+        
+        # Criar uma pasta para fotos de perfil se não existir
+        diretorio_uploads = os.path.join(current_app.config['UPLOAD_FOLDER'], 'profile_pics')
+        os.makedirs(diretorio_uploads, exist_ok=True)
+        
+        # Salvar a foto com um nome mais curto
+        extensao = secure_filename(arquivo.filename).rsplit('.', 1)[1].lower()
+        filename = f"user_{usuario.id}_{uuid.uuid4().hex[:12]}.{extensao}"
+        caminho_completo = os.path.join(diretorio_uploads, filename)
+        arquivo.save(caminho_completo)
+        
+        # Excluir foto antiga se existir
+        if usuario.foto_perfil and usuario.foto_perfil != 'default.jpg':
+            try:
+                if usuario.foto_perfil.startswith('/static/'):
+                    caminho_foto_antiga = os.path.join(current_app.root_path, usuario.foto_perfil.lstrip('/'))
+                else:
+                    caminho_foto_antiga = os.path.join(diretorio_uploads, usuario.foto_perfil)
+                
+                if os.path.exists(caminho_foto_antiga):
+                    os.remove(caminho_foto_antiga)
+            except Exception as e:
+                print(f"Erro ao excluir foto antiga: {e}")
+        
+        # Atualizar o caminho da foto no banco de dados
+        usuario.foto_perfil = f'/static/uploads/profile_pics/{filename}'
+        
         db.session.commit()
         flash('Foto de perfil atualizada com sucesso!', 'success')
+        
     except Exception as e:
         db.session.rollback()
-        flash(f'Erro ao atualizar foto: {str(e)}', 'danger')
+        # Log do erro completo para debug (não mostrar ao usuário)
+        print(f"Erro ao atualizar foto: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        
+        # Mensagem amigável para o usuário
+        flash('Ocorreu um erro ao atualizar sua foto. Por favor, tente novamente com uma imagem menor ou com nome mais curto.', 'danger')
     
     return redirect(url_for('user.perfil'))
 
@@ -347,6 +374,8 @@ def revogar_token(token_id):
     
     return redirect(url_for('user.perfil'))
 
+# routes/user.py - MODIFICAÇÃO NA FUNÇÃO excluir_conta
+
 @user_bp.route('/perfil/excluir', methods=['POST'])
 @login_required
 def excluir_conta():
@@ -368,6 +397,36 @@ def excluir_conta():
         flash('Senha incorreta', 'danger')
         return redirect(url_for('user.perfil'))
     
+    # VALIDAÇÃO: Verificar se há pedidos não entregues
+    pedidos_pendentes = Pedido.query.filter(
+        Pedido.usuario_id == usuario.id,
+        Pedido.status.in_(['Pendente', 'Em Preparação', 'Aprovado', 'Pronto para Retirada', 'Em Transporte'])
+    ).all()
+    
+    if pedidos_pendentes:
+        # Construir mensagem detalhada sobre os pedidos pendentes
+        status_pedidos = {}
+        for pedido in pedidos_pendentes:
+            status = pedido.status
+            if status not in status_pedidos:
+                status_pedidos[status] = []
+            status_pedidos[status].append(pedido.id)
+        
+        mensagem_detalhes = []
+        for status, ids in status_pedidos.items():
+            if len(ids) == 1:
+                mensagem_detalhes.append(f"1 pedido com status '{status}' (#{ids[0]})")
+            else:
+                mensagem_detalhes.append(f"{len(ids)} pedidos com status '{status}' (#{', #'.join(map(str, ids))})")
+        
+        flash(
+            f'Não é possível excluir sua conta pois você possui {len(pedidos_pendentes)} '
+            f'pedido(s) pendente(s): {"; ".join(mensagem_detalhes)}. '
+            f'Aguarde a conclusão de todos os pedidos (status "Entregue" ou "Cancelado") antes de excluir sua conta.',
+            'danger'
+        )
+        return redirect(url_for('user.perfil'))
+    
     # Excluir foto de perfil se existir
     if usuario.foto_perfil and usuario.foto_perfil.startswith('/static/uploads/profile_pics/'):
         try:
@@ -384,7 +443,7 @@ def excluir_conta():
         usuario.email = f"excluido_{uuid.uuid4()}@anonimo.com"
         usuario.senha = generate_password_hash(str(uuid.uuid4()))
         usuario.foto_perfil = None
-        usuario.cpf_hash = None
+        usuario.cpf = None
         usuario.endereco_cep = None
         usuario.endereco_rua = None
         usuario.endereco_numero = None
@@ -435,118 +494,147 @@ def dados_pessoais():
 @user_bp.route('/perfil/exportar-dados')
 @login_required
 def exportar_dados():
+    import csv
+    
     usuario = db.session.get(Usuario, session['usuario_id'])
     
-    # Preparar dados do usuário (excluindo a senha por segurança)
-    dados_usuario = {
-        'id': usuario.id,
-        'nome': usuario.nome,
-        'email': usuario.email,
-        'data_registro': usuario.data_registro.strftime('%Y-%m-%d %H:%M:%S'),
-        'is_admin': usuario.is_admin
-    }
+    # Criar CSV único em memória
+    csv_buffer = io.StringIO()
+    csv_writer = csv.writer(csv_buffer)
     
-    # Adicionar endereço de forma segura
-    if usuario.endereco_cep:
-        dados_usuario['endereco'] = {
-            'cep': usuario.endereco_cep,
-            'rua': usuario.endereco_rua,
-            'numero': usuario.endereco_numero,
-            'complemento': usuario.endereco_complemento,
-            'bairro': usuario.endereco_bairro,
-            'cidade': usuario.endereco_cidade,
-            'estado': usuario.endereco_estado
-        }
+    # ===== SEÇÃO 1: DADOS DO USUÁRIO =====
+    csv_writer.writerow(['===== DADOS DO USUÁRIO =====', '', '', '', ''])
+    csv_writer.writerow([])
     
-    # CPF mascarado
+    csv_writer.writerow(['ID:', usuario.id, '', '', ''])
+    csv_writer.writerow(['Nome:', usuario.nome, '', '', ''])
+    csv_writer.writerow(['Email:', usuario.email, '', '', ''])
+    csv_writer.writerow(['Data de Registro:', usuario.data_registro.strftime('%Y-%m-%d %H:%M:%S'), '', '', ''])
+  
+    
+    # CPF
     if usuario.cpf_hash:
         if hasattr(usuario, 'get_cpf_masked'):
-            dados_usuario['cpf'] = usuario.get_cpf_masked()
+            csv_writer.writerow(['CPF:', usuario.get_cpf_masked(), '', '', ''])
         else:
-            dados_usuario['cpf'] = "***.***.***-**"
+            csv_writer.writerow(['CPF:', '***.***.***-**', '', '', ''])
     
-    # Buscar pedidos do usuário
-    pedidos_usuario = []
+    # Endereço
+    if usuario.endereco_cep:
+        csv_writer.writerow([])
+        csv_writer.writerow(['ENDEREÇO:', '', '', '', ''])
+        csv_writer.writerow(['CEP:', usuario.endereco_cep, '', '', ''])
+        csv_writer.writerow(['Rua:', usuario.endereco_rua, '', '', ''])
+        csv_writer.writerow(['Número:', usuario.endereco_numero, '', '', ''])
+        if usuario.endereco_complemento:
+            csv_writer.writerow(['Complemento:', usuario.endereco_complemento, '', '', ''])
+        csv_writer.writerow(['Bairro:', usuario.endereco_bairro, '', '', ''])
+        csv_writer.writerow(['Cidade:', usuario.endereco_cidade, '', '', ''])
+        csv_writer.writerow(['Estado:', usuario.endereco_estado, '', '', ''])
+    
+    # ===== SEÇÃO 2: PEDIDOS =====
+    csv_writer.writerow([])
+    csv_writer.writerow([])
+    csv_writer.writerow(['===== PEDIDOS =====', '', '', '', ''])
+    csv_writer.writerow([])
+    
     pedidos = Pedido.query.filter_by(usuario_id=usuario.id).all()
     
-    for pedido in pedidos:
-        itens_regulares = []
-        for item in ItemPedido.query.filter_by(pedido_id=pedido.id).all():
-            produto = Produto.query.get(item.produto_id)
-            if produto:
-                itens_regulares.append({
-                    'produto': produto.nome,
-                    'quantidade': item.quantidade,
-                    'preco_unitario': float(item.preco_unitario),
-                    'subtotal': float(item.preco_unitario * item.quantidade)
-                })
-        
-        itens_personalizados = []
-        for item in ItemPedidoPersonalizado.query.filter_by(pedido_id=pedido.id).all():
-            bolo = BoloPersonalizado.query.get(item.bolo_personalizado_id)
-            if bolo:
-                itens_personalizados.append({
-                    'tipo': 'Bolo Personalizado',
-                    'nome': bolo.nome,
-                    'massa': bolo.massa,
-                    'quantidade': item.quantidade,
-                    'preco_unitario': float(item.preco_unitario),
-                    'subtotal': float(item.preco_unitario * item.quantidade)
-                })
-        
-        pedidos_usuario.append({
-            'id': pedido.id,
-            'data': pedido.data.strftime('%Y-%m-%d %H:%M:%S'),
-            'status': pedido.status,
-            'total': float(pedido.total),
-            'itens_regulares': itens_regulares,
-            'itens_personalizados': itens_personalizados
-        })
+    if pedidos:
+        for idx, pedido in enumerate(pedidos, 1):
+            csv_writer.writerow([f'--- PEDIDO #{pedido.id} ---', '', '', '', ''])
+            csv_writer.writerow(['Data:', pedido.data.strftime('%Y-%m-%d %H:%M:%S'), '', '', ''])
+            csv_writer.writerow(['Status:', pedido.status, '', '', ''])
+            csv_writer.writerow(['Total:', f'R$ {float(pedido.total):.2f}', '', '', ''])
+            csv_writer.writerow([])
+            
+            # Itens regulares
+            itens_regulares = ItemPedido.query.filter_by(pedido_id=pedido.id).all()
+            if itens_regulares:
+                csv_writer.writerow(['Produto', 'Quantidade', 'Preço Unitário', 'Subtotal', ''])
+                for item in itens_regulares:
+                    produto = Produto.query.get(item.produto_id)
+                    if produto:
+                        csv_writer.writerow([
+                            produto.nome,
+                            item.quantidade,
+                            f'R$ {float(item.preco_unitario):.2f}',
+                            f'R$ {float(item.preco_unitario * item.quantidade):.2f}',
+                            ''
+                        ])
+                csv_writer.writerow([])
+            
+            # Itens personalizados
+            itens_personalizados = ItemPedidoPersonalizado.query.filter_by(pedido_id=pedido.id).all()
+            if itens_personalizados:
+                csv_writer.writerow(['Bolo Personalizado', 'Massa', 'Quantidade', 'Preço Unitário', 'Subtotal'])
+                for item in itens_personalizados:
+                    bolo = BoloPersonalizado.query.get(item.bolo_personalizado_id)
+                    if bolo:
+                        csv_writer.writerow([
+                            bolo.nome,
+                            bolo.massa,
+                            item.quantidade,
+                            f'R$ {float(item.preco_unitario):.2f}',
+                            f'R$ {float(item.preco_unitario * item.quantidade):.2f}'
+                        ])
+                csv_writer.writerow([])
+            
+            csv_writer.writerow([])
+    else:
+        csv_writer.writerow(['Nenhum pedido encontrado', '', '', '', ''])
+        csv_writer.writerow([])
     
-    # Buscar bolos personalizados do usuário
-    bolos_personalizados_usuario = []
+    # ===== SEÇÃO 3: BOLOS PERSONALIZADOS =====
+    csv_writer.writerow([])
+    csv_writer.writerow(['===== BOLOS PERSONALIZADOS CRIADOS =====', '', '', '', '', '', '', '', ''])
+    csv_writer.writerow([])
+    
     bolos = BoloPersonalizado.query.filter_by(usuario_id=usuario.id).all()
     
-    for bolo in bolos:
-        try:
-            recheios = json.loads(bolo.recheios) if bolo.recheios else []
-            finalizacao = json.loads(bolo.finalizacao) if bolo.finalizacao else []
-        except json.JSONDecodeError:
-            recheios = []
-            finalizacao = []
+    if bolos:
+        csv_writer.writerow(['ID', 'Nome', 'Massa', 'Recheios', 'Cobertura', 'Finalização', 'Observações', 'Preço', 'Data Criação', 'Ativo'])
         
-        bolos_personalizados_usuario.append({
-            'id': bolo.id,
-            'nome': bolo.nome,
-            'massa': bolo.massa,
-            'recheios': recheios,
-            'cobertura': bolo.cobertura,
-            'finalizacao': finalizacao,
-            'observacoes': bolo.observacoes,
-            'preco': float(bolo.preco),
-            'data_criacao': bolo.data_criacao.strftime('%Y-%m-%d %H:%M:%S'),
-            'ativo': bolo.ativo
-        })
+        for bolo in bolos:
+            try:
+                recheios = json.loads(bolo.recheios) if bolo.recheios else []
+                finalizacao = json.loads(bolo.finalizacao) if bolo.finalizacao else []
+            except json.JSONDecodeError:
+                recheios = []
+                finalizacao = []
+            
+            csv_writer.writerow([
+                bolo.id,
+                bolo.nome,
+                bolo.massa,
+                ', '.join(recheios) if recheios else 'Nenhum',
+                bolo.cobertura,
+                ', '.join(finalizacao) if finalizacao else 'Nenhuma',
+                bolo.observacoes or 'Sem observações',
+                f'R$ {float(bolo.preco):.2f}',
+                bolo.data_criacao.strftime('%Y-%m-%d %H:%M:%S'),
+                'Sim' if bolo.ativo else 'Não'
+            ])
+    else:
+        csv_writer.writerow(['Nenhum bolo personalizado encontrado', '', '', '', '', '', '', '', '', ''])
     
-    # Agrupar todos os dados
-    dados_completos = {
-        'usuario': dados_usuario,
-        'pedidos': pedidos_usuario,
-        'bolos_personalizados': bolos_personalizados_usuario,
-        'data_exportacao': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-    }
+    # Rodapé
+    csv_writer.writerow([])
+    csv_writer.writerow([])
+    csv_writer.writerow(['===== FIM DO RELATÓRIO =====', '', '', '', ''])
+    csv_writer.writerow(['Data de Exportação:', datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'), '', '', ''])
+    
+    # Converter para bytes
+    csv_bytes = io.BytesIO()
+    csv_bytes.write(csv_buffer.getvalue().encode('utf-8-sig'))
+    csv_bytes.seek(0)
     
     try:
-        # Retornar como um download de arquivo JSON
-        arquivo_json = io.BytesIO()
-        arquivo_json.write(json.dumps(dados_completos, indent=4, ensure_ascii=False).encode('utf-8'))
-        arquivo_json.seek(0)
-        
         return send_file(
-            arquivo_json,
+            csv_bytes,
             as_attachment=True,
-            download_name=f'dados_doce_sonho_usuario_{usuario.id}.json',
-            mimetype='application/json'
+            download_name=f'dados_doce_sonho_usuario_{usuario.id}.csv',
+            mimetype='text/csv'
         )
     except Exception as e:
         flash(f'Erro ao exportar dados: {str(e)}', 'danger')

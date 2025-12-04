@@ -3,6 +3,7 @@ from database import db
 from models.models import Produto, BoloPersonalizado, Usuario, CarrinhoItem, CarrinhoBoloPersonalizado
 from utils.helpers import registrar_log
 import json
+from utils.helpers import funcionario_bloqueado
 
 cart_bp = Blueprint('cart', __name__)
 
@@ -208,6 +209,7 @@ def calcular_totais_carrinho(usuario_id=None):
     return itens_regulares, itens_personalizados, total, erros
 
 @cart_bp.route('/carrinho')
+@funcionario_bloqueado
 def carrinho():
     usuario_id = session.get('usuario_id')
     

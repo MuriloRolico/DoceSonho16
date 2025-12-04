@@ -531,36 +531,6 @@
         .timeline-body {
             font-size: 0.95rem;
         }
-        /* Estilo para opção de cancelamento com aviso */
-.status-option[data-status="Cancelado"] {
-    position: relative;
-}
-
-.status-option[data-status="Cancelado"]::after {
-    content: '⚠️ IRREVERSÍVEL';
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: #dc3545;
-    color: white;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
-
-.status-option[data-status="Cancelado"]:hover {
-    border-color: #dc3545;
-    background-color: rgba(220, 53, 69, 0.08);
-}
-
-.status-option[data-status="Cancelado"].selected {
-    border-color: #dc3545;
-    background-color: rgba(220, 53, 69, 0.1);
-    border-width: 3px;
-}
     </style>
 </head>
 <body>
@@ -587,43 +557,38 @@
             <div class="sidebar-brand">
                 <i class="bi bi-cake2"></i>
                 <a href="{{ url_for('index') }}" class="text-white text-decoration-none">
-    <h2>Doce Sonho</h2>
-</a>
+                    <h2>Doce Sonho</h2>
+                </a>
             </div>
             <div class="sidebar-menu">
                 <p class="menu-header">Principal</p>
                 <ul>
                     <li>
-                        <a href="{{ url_for('admin.admin_produtos') }}">
+                        <a href="{{ url_for('funcionario.dashboard') }}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('funcionario.produtos') }}">
                            <i class="bi bi-box-seam"></i> Produtos
                         </a>
                     </li>
-                   
                     <li>
-                        <a href="{{ url_for('admin.admin_pedidos') }}" class="active">
+                        <a href="{{ url_for('funcionario.pedidos') }}" class="active">
                             <i class="bi bi-bag"></i> Pedidos
                         </a>
                     </li>
-                   
-                </ul>
-                <p class="menu-header">Usuários</p>
-                <ul>
                     <li>
-                        <a href="{{ url_for('admin.admin_clientes') }}">
+                        <a href="{{ url_for('funcionario.clientes') }}">
                             <i class="bi bi-people"></i> Clientes
                         </a>
                     </li>
-                    <li>
-                        <a href="{{ url_for('admin.admin_usuarios') }}">
-                            <i class="bi bi-person-badge"></i> Administradores
-                        </a>
-                    </li>
                 </ul>
-                <p class="menu-header">Relatórios</p>
+                <p class="menu-header">Conta</p>
                 <ul>
                     <li>
-                        <a href="{{ url_for('admin.admin_logs') }}">
-                            <i class="bi bi-journal-text"></i> Logs do Sistema
+                        <a href="{{ url_for('auth.logout') }}">
+                            <i class="bi bi-box-arrow-right"></i> Sair
                         </a>
                     </li>
                 </ul>
@@ -643,14 +608,14 @@
                     <h1 class="page-title">Atualizar Pedido #{{ pedido.id }}</h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="{{ url_for('admin.admin_pedidos') }}" class="text-decoration-none">Pedidos</a></li>
-                            <li class="breadcrumb-item"><a href="{{ url_for('admin.admin_detalhes_pedido', pedido_id=pedido.id) }}" class="text-decoration-none">Detalhes do Pedido #{{ pedido.id }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ url_for('funcionario.pedidos') }}" class="text-decoration-none">Pedidos</a></li>
+                            <li class="breadcrumb-item"><a href="{{ url_for('funcionario.detalhes_pedido', pedido_id=pedido.id) }}" class="text-decoration-none">Detalhes do Pedido #{{ pedido.id }}</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Atualizar Status</li>
                         </ol>
                     </nav>
                 </div>
                 <div>
-                    <a href="{{ url_for('admin.admin_pedidos', pedido_id=pedido.id) }}" class="btn btn-outline-secondary">
+                    <a href="{{ url_for('funcionario.pedidos') }}" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left me-1"></i> Voltar
                     </a>
                 </div>
@@ -680,16 +645,10 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            {% if pedido.status == 'Cancelado' %}
-<div class="alert alert-danger">
-    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-    <strong>Pedido Cancelado:</strong> Este pedido foi cancelado e não pode mais ser alterado. Esta é uma ação irreversível.
-</div>
-{% else %}
-<form action="{{ url_for('admin.admin_atualizar_pedido', pedido_id=pedido.id) }}" method="POST">
-    <!-- Opções de status com cards -->
-    <div class="mb-4">
-        <label class="form-label fw-bold">Selecione o novo status:</label>
+                            <form action="{{ url_for('funcionario.atualizar_pedido', pedido_id=pedido.id) }}" method="POST">
+                                <!-- Opções de status com cards -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Selecione o novo status:</label>
                                     
                                     <div class="status-option {% if pedido.status == 'Pendente' %}selected{% endif %}" data-status="Pendente">
                                         <div class="status-header">
@@ -758,17 +717,16 @@
                             
                                 <!-- Botões de ação -->
                                 <div class="d-flex justify-content-end gap-2">
-                                    <a href="{{ url_for('admin.admin_detalhes_pedido', pedido_id=pedido.id) }}" class="btn btn-outline-secondary">
+                                    <a href="{{ url_for('funcionario.detalhes_pedido', pedido_id=pedido.id) }}" class="btn btn-outline-secondary">
                                         Cancelar
                                     </a>
                                     <button type="submit" class="btn btn-primary">
                                         <i class="bi bi-check2 me-1"></i> Salvar Alterações
                                     </button>
                                 </div>
-                </form>
-                {% endif %}
-            </div>
-        </div>
+                            </form>
+                        </div>
+                    </div>
 
                     <!-- Resumo do Pedido -->
                     <div class="card mb-4">
@@ -841,7 +799,7 @@
                             </div>
                             {% endif %}
                             
-                            <a href="{{ url_for('admin.admin_ver_cliente', cliente_id=usuario.id) }}" class="btn btn-outline-primary btn-sm w-100">
+                            <a href="{{ url_for('funcionario.ver_cliente', cliente_id=usuario.id) }}" class="btn btn-outline-primary btn-sm w-100">
                                 <i class="bi bi-eye me-1"></i> Ver Perfil Completo
                             </a>
                         </div>
@@ -949,9 +907,9 @@
                 });
             });
         });
-    </script>
-    <script>
-// Confirmação extra para cancelamento
+
+        // Adicione este script na página atualizar_pedido.html
+
 document.addEventListener('DOMContentLoaded', function() {
     const statusOptions = document.querySelectorAll('.status-option');
     const selectedStatusInput = document.getElementById('selectedStatus');
@@ -979,7 +937,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (statusSelecionado === 'Cancelado') {
                 e.preventDefault();
                 
-                // Primeira confirmação
+                // Modal de confirmação customizado com SweetAlert2 ou confirmação nativa
                 const confirmar = confirm(
                     '⚠️ ATENÇÃO: AÇÃO IRREVERSÍVEL!\n\n' +
                     'Você está prestes a CANCELAR este pedido.\n\n' +
@@ -1003,6 +961,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             }
+            // Se não for cancelamento, enviar normalmente
         });
     }
     
@@ -1018,6 +977,34 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-</script>
+
+// Função auxiliar para mostrar alerta customizado (opcional - requer Bootstrap)
+function mostrarAlertaCancelamento() {
+    const alertHtml = `
+        <div class="alert alert-danger alert-dismissible fade show position-fixed" 
+             style="top: 20px; right: 20px; z-index: 9999; max-width: 400px;" 
+             role="alert">
+            <h5 class="alert-heading">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                Ação Irreversível!
+            </h5>
+            <p class="mb-0">
+                Pedidos cancelados não podem mais ser alterados.
+            </p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', alertHtml);
+    
+    // Remover após 5 segundos
+    setTimeout(() => {
+        const alert = document.querySelector('.alert-danger');
+        if (alert) {
+            alert.remove();
+        }
+    }, 5000);
+}
+    </script>
 </body>
 </html>

@@ -1,8 +1,75 @@
 CREATE DATABASE IF NOT EXISTS doce_sonho;
 USE doce_sonho;
 
--- Tabela de Usuários
-CREATE TABLE IF NOT EXISTS usuario (
+-- ================================================
+-- SCHEMA COMPLETO - DOCE SONHO
+-- Sincronizado com models.py
+-- ================================================
+
+
+ALTER TABLE pedido ADD COLUMN criado_manualmente BOOLEAN DEFAULT FALSE;
+ALTER TABLE pedido ADD COLUMN criado_por_funcionario_id INTEGER;
+ALTER TABLE pedido ADD COLUMN observacoes_admin TEXT;
+
+ALTER TABLE usuario MODIFY COLUMN foto_perfil VARCHAR(255);
+ALTER TABLE usuario ADD COLUMN cpf VARCHAR(14) NULL;
+select * from usuario;
+ALTER TABLE usuario DROP COLUMN cpf_hash;
+-- Script SQL para adicionar os novos campos na tabela usuario
+
+-- Adicionar campo para contar tentativas de login
+ALTER TABLE usuario 
+ADD COLUMN tentativas_login INT DEFAULT 0;
+
+-- Adicionar campo para data/hora do bloqueio
+ALTER TABLE usuario 
+ADD COLUMN bloqueado_ate DATETIME NULL;
+
+-- Adicionar campo para registrar última tentativa
+ALTER TABLE usuario 
+ADD COLUMN ultima_tentativa_login DATETIME NULL;
+
+-- Atualizar usuários existentes para garantir que não tenham valores NULL problemáticos
+UPDATE usuario 
+SET tentativas_login = 0 
+WHERE tentativas_login IS NULL;
+
+
+
+
+
+CREATE DATABASE IF NOT EXISTS doce_sonho;
+USE doce_sonho;
+
+-- Desabilitar verificação de chaves estrangeiras temporariamente
+SET FOREIGN_KEY_CHECKS = 0;
+
+
+select	* from bolo_personalizado;
+select	* from carrinho_personalizado;
+
+
+select	* from produto;
+select	* from usuario;
+select	* from pedido;
+
+
+-- Remover tabelas existentes (caso queira recriar do zero)
+DROP TABLE IF EXISTS item_pedido_personalizado;
+DROP TABLE IF EXISTS item_pedido;
+DROP TABLE IF EXISTS carrinho_personalizado;
+DROP TABLE IF EXISTS carrinho;
+DROP TABLE IF EXISTS log;
+DROP TABLE IF EXISTS token;
+DROP TABLE IF EXISTS pedido;
+DROP TABLE IF EXISTS bolo_personalizado;
+DROP TABLE IF EXISTS produto;
+DROP TABLE IF EXISTS usuario;
+
+-- ================================================
+-- TABELA: usuario
+-- ================================================
+CREATE TABLE usuario (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -11,6 +78,8 @@ CREATE TABLE IF NOT EXISTS usuario (
     foto_perfil VARCHAR(100) NULL,
     data_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
     concordou_politica BOOLEAN DEFAULT FALSE,
+    
+    -- Campos de endereço e segurança
     cpf_hash VARCHAR(200) NULL,
     endereco_cep VARCHAR(10) NULL,
     endereco_rua VARCHAR(200) NULL,
@@ -19,20 +88,26 @@ CREATE TABLE IF NOT EXISTS usuario (
     endereco_bairro VARCHAR(100) NULL,
     endereco_cidade VARCHAR(100) NULL,
     endereco_estado VARCHAR(2) NULL,
+    
+    -- Campos para recuperação de senha
     reset_token VARCHAR(100) NULL,
     reset_token_expiracao DATETIME NULL,
     ultimo_acesso DATETIME NULL,
     status VARCHAR(20) DEFAULT 'ativo',
+    
+    -- Campos de privacidade
     mascarar_email BOOLEAN DEFAULT TRUE,
     mascarar_cpf BOOLEAN DEFAULT TRUE,
     mascarar_endereco BOOLEAN DEFAULT TRUE,
-    receber_newsletter BOOLEAN DEFAULT FALSE,
-    receber_sms BOOLEAN DEFAULT FALSE,
-    receber_whatsapp BOOLEAN DEFAULT TRUE
-);
+    
+    INDEX idx_usuario_email (email),
+    INDEX idx_usuario_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabela de Tokens
-CREATE TABLE IF NOT EXISTS token (
+-- ================================================
+-- TABELA: token
+-- ================================================
+CREATE TABLE token (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     token VARCHAR(500) NOT NULL,
@@ -41,44 +116,64 @@ CREATE TABLE IF NOT EXISTS token (
     data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
     data_expiracao DATETIME NOT NULL,
     is_revogado BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (usuario_id) REFERENCES usuario(id)
-);
+    
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE,
+    INDEX idx_token_token (token(255)),
+    INDEX idx_token_usuario_id (usuario_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabela de Produtos
-CREATE TABLE IF NOT EXISTS produto (
+-- ================================================
+-- TABELA: produto
+-- ================================================
+CREATE TABLE produto (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    descricao TEXT,
+    descricao TEXT NULL,
     preco FLOAT NOT NULL,
     categoria VARCHAR(50) NOT NULL,
-    imagem VARCHAR(100),
-    peso FLOAT,
-    ingredientes TEXT,
-    data_validade DATETIME,
-    informacoes_nutricionais TEXT,
+    imagem VARCHAR(100) NULL,
+    peso FLOAT NULL,
+    ingredientes TEXT NULL,
+    data_validade DATETIME NULL,
+    informacoes_nutricionais TEXT NULL,
+    
+    -- Campos para soft delete
     ativo BOOLEAN DEFAULT TRUE NOT NULL,
     data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
-    data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+    data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX idx_produto_categoria (categoria),
+    INDEX idx_produto_ativo (ativo)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabela de Bolos Personalizados
-CREATE TABLE IF NOT EXISTS bolo_personalizado (
+-- ================================================
+-- TABELA: bolo_personalizado
+-- ================================================
+
+
+select * from bolo_personalizado;
+CREATE TABLE bolo_personalizado (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
-    nome VARCHAR(100) NOT NULL DEFAULT "Bolo Personalizado",
+    nome VARCHAR(100) NOT NULL DEFAULT 'Bolo Personalizado',
     massa VARCHAR(50) NOT NULL,
     recheios TEXT NOT NULL,
     cobertura VARCHAR(50) NOT NULL,
-    finalizacao TEXT,
-    observacoes TEXT,
+    finalizacao TEXT NULL,
+    observacoes TEXT NULL,
     preco FLOAT NOT NULL,
     data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
     ativo BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (usuario_id) REFERENCES usuario(id)
-);
+    
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE,
+    INDEX idx_bolo_usuario_id (usuario_id),
+    INDEX idx_bolo_ativo (ativo)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabela de Pedidos
-CREATE TABLE IF NOT EXISTS pedido (
+-- ================================================
+-- TABELA: pedido
+-- ================================================
+CREATE TABLE pedido (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     data DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -88,65 +183,109 @@ CREATE TABLE IF NOT EXISTS pedido (
     valor_frete FLOAT DEFAULT 0.0,
     endereco_entrega TEXT NULL,
     observacoes TEXT NULL,
-    mercado_pago_transaction_id VARCHAR(255),
-    FOREIGN KEY (usuario_id) REFERENCES usuario(id)
-);
+    mercado_pago_transaction_id VARCHAR(255) NULL,
+    
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE,
+    INDEX idx_pedido_usuario_id (usuario_id),
+    INDEX idx_pedido_status (status),
+    INDEX idx_pedido_data (data)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabela de Itens do Pedido
-CREATE TABLE IF NOT EXISTS item_pedido (
+-- ================================================
+-- TABELA: item_pedido
+-- ================================================
+CREATE TABLE item_pedido (
     id INT AUTO_INCREMENT PRIMARY KEY,
     pedido_id INT NOT NULL,
     produto_id INT NOT NULL,
     quantidade INT NOT NULL DEFAULT 1,
     preco_unitario FLOAT NOT NULL,
-    FOREIGN KEY (pedido_id) REFERENCES pedido(id),
-    FOREIGN KEY (produto_id) REFERENCES produto(id)
-);
+    
+    FOREIGN KEY (pedido_id) REFERENCES pedido(id) ON DELETE CASCADE,
+    FOREIGN KEY (produto_id) REFERENCES produto(id) ON DELETE RESTRICT,
+    INDEX idx_item_pedido_pedido_id (pedido_id),
+    INDEX idx_item_pedido_produto_id (produto_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabela de Itens do Pedido Personalizados
-CREATE TABLE IF NOT EXISTS item_pedido_personalizado (
+-- ================================================
+-- TABELA: item_pedido_personalizado
+-- ================================================
+CREATE TABLE item_pedido_personalizado (
     id INT AUTO_INCREMENT PRIMARY KEY,
     pedido_id INT NOT NULL,
     bolo_personalizado_id INT NOT NULL,
     quantidade INT NOT NULL DEFAULT 1,
     preco_unitario FLOAT NOT NULL,
-    FOREIGN KEY (pedido_id) REFERENCES pedido(id),
-    FOREIGN KEY (bolo_personalizado_id) REFERENCES bolo_personalizado(id)
-);
+    
+    FOREIGN KEY (pedido_id) REFERENCES pedido(id) ON DELETE CASCADE,
+    FOREIGN KEY (bolo_personalizado_id) REFERENCES bolo_personalizado(id) ON DELETE RESTRICT,
+    INDEX idx_item_pedido_pers_pedido_id (pedido_id),
+    INDEX idx_item_pedido_pers_bolo_id (bolo_personalizado_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabela de Carrinho
-CREATE TABLE IF NOT EXISTS carrinho (
+-- ================================================
+-- TABELA: log
+-- ================================================
+CREATE TABLE log (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tipo VARCHAR(50) NOT NULL,
+    descricao TEXT NOT NULL,
+    usuario_id INT NULL,
+    data DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE SET NULL,
+    INDEX idx_log_tipo (tipo),
+    INDEX idx_log_usuario_id (usuario_id),
+    INDEX idx_log_data (data)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ================================================
+-- TABELA: carrinho (CarrinhoItem no model)
+-- ================================================
+CREATE TABLE carrinho (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     produto_id INT NOT NULL,
     quantidade INT NOT NULL DEFAULT 1,
     data_adicao DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (usuario_id) REFERENCES usuario(id),
-    FOREIGN KEY (produto_id) REFERENCES produto(id)
-);
+    
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE,
+    FOREIGN KEY (produto_id) REFERENCES produto(id) ON DELETE CASCADE,
+    INDEX idx_carrinho_usuario_id (usuario_id),
+    INDEX idx_carrinho_produto_id (produto_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabela de Carrinho Personalizado
-CREATE TABLE IF NOT EXISTS carrinho_personalizado (
+-- ================================================
+-- TABELA: carrinho_personalizado (CarrinhoBoloPersonalizado no model)
+-- ================================================
+CREATE TABLE carrinho_personalizado (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     bolo_personalizado_id INT NOT NULL,
     quantidade INT NOT NULL DEFAULT 1,
     data_adicao DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (usuario_id) REFERENCES usuario(id),
-    FOREIGN KEY (bolo_personalizado_id) REFERENCES bolo_personalizado(id)
-);
+    
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE,
+    FOREIGN KEY (bolo_personalizado_id) REFERENCES bolo_personalizado(id) ON DELETE CASCADE,
+    INDEX idx_carrinho_pers_usuario_id (usuario_id),
+    INDEX idx_carrinho_pers_bolo_id (bolo_personalizado_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Índices para performance
-CREATE INDEX idx_usuario_email ON usuario(email);
-CREATE INDEX idx_usuario_status ON usuario(status);
-CREATE INDEX idx_token_token ON token(token);
-CREATE INDEX idx_token_usuario_id ON token(usuario_id);
+-- Reabilitar verificação de chaves estrangeiras
+SET FOREIGN_KEY_CHECKS = 1;
 
--- Inserção de usuário admin
+-- ================================================
+-- DADOS INICIAIS
+-- ================================================
+
+-- Usuário Admin
 INSERT INTO usuario (nome, email, senha, is_admin, concordou_politica) VALUES
 ('Admin', 'Rolico@gmail.com', CONCAT('mysql_hash:', SHA2('1234', 256)), TRUE, TRUE);
 
--- Inserção de produtos
+select * from usuario;
+
+
+-- Produtos
 INSERT INTO produto (nome, descricao, preco, categoria, peso, ingredientes, data_validade, informacoes_nutricionais) VALUES
 ('Bolo de Chocolate', 'Delicioso bolo de chocolate com cobertura de ganache', 45.90, 'Bolos', 1.2,
 'Farinha de trigo, açúcar, ovos, chocolate, leite, manteiga',
@@ -187,3 +326,36 @@ DATE_ADD(NOW(), INTERVAL 5 DAY),
 'Farinha, manteiga, ovos, creme de leite, queijo, bacon, alho-poró',
 DATE_ADD(NOW(), INTERVAL 2 DAY),
 'Porção de 50g: Calorias: 180, Carboidratos: 12g, Proteínas: 8g, Gorduras: 13g');
+
+-- ================================================
+-- COMANDOS ÚTEIS PARA MANUTENÇÃO
+-- ================================================
+
+-- Para limpar todas as tabelas (use com cuidado!)
+/*
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE item_pedido_personalizado;
+TRUNCATE TABLE item_pedido;
+TRUNCATE TABLE carrinho_personalizado;
+TRUNCATE TABLE carrinho;
+TRUNCATE TABLE log;
+TRUNCATE TABLE token;
+TRUNCATE TABLE pedido;
+TRUNCATE TABLE bolo_personalizado;
+TRUNCATE TABLE produto;
+TRUNCATE TABLE usuario;
+SET FOREIGN_KEY_CHECKS = 1;
+*/
+
+-- Para verificar estrutura das tabelas
+-- DESCRIBE usuario;
+-- DESCRIBE produto;
+select * from pedido;
+-- etc...
+select * from usuario;
+-- Para ver todas as tabelas
+-- SHOW TABLES;
+
+-- ================================================
+-- FIM DO SCHEMA
+-- ================================================

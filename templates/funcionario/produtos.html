@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo - Doce Sonho</title>
-     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Gerenciar Produtos - Doce Sonho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
     <style>
-        :root {
+                :root {
             --primary-color: #d23f72;
             --primary-dark: #b22d5d;
             --secondary-color: #ffd6e0;
@@ -37,9 +37,6 @@
             line-height: 1.8;
             color: var(--text-color);
         }
-                 .mt-3 {
-        margin-top: 0 !important
-            }
 
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Playfair Display', serif;
@@ -670,56 +667,6 @@
     --bs-text-opacity: 1;
     color: #d23f72 !important;
 }
-
-        /* Pagination */
-        .pagination {
-            margin-bottom: 0;
-        }
-        
-        .page-link {
-            color: var(--primary-color);
-            border-color: var(--border-color);
-            background-color: var(--container-bg);
-            padding: 0.5rem 1rem;
-        }
-        
-        .page-link:hover {
-            color: var(--primary-dark);
-            background-color: rgba(210, 63, 114, 0.05);
-        }
-        
-        .page-item.active .page-link {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            color: var(--light-text);
-        }
-        
-        .page-item.disabled .page-link {
-            color: #6c757d;
-            background-color: var(--container-bg);
-            border-color: var(--border-color);
-        }
-
-        /* Admin avatar */
-        .admin-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid var(--border-color);
-        }
-
-        .avatar-placeholder {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--secondary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-color);
-            font-size: 1.2rem;
-        }
     </style>
 </head>
 <body>
@@ -746,51 +693,37 @@
             <div class="sidebar-brand">
                 <i class="bi bi-cake2"></i>
                 <a href="{{ url_for('index') }}" class="text-white text-decoration-none">
-    <h2>Doce Sonho</h2>
-</a>
+                    <h2>Doce Sonho</h2>
+                </a>
             </div>
             <div class="sidebar-menu">
                 <p class="menu-header">Principal</p>
                 <ul>
-                    <li>
-                        <a href="{{ url_for('admin.admin_produtos') }}">
-                            <i class="bi bi-box-seam"></i> Produtos
-                        </a>
-                    </li>
                    
                     <li>
-                        <a href="{{ url_for('admin.admin_pedidos') }}">
+                        <a href="{{ url_for('funcionario.dashboard') }}" >
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('funcionario.pedidos') }}">
                             <i class="bi bi-bag"></i> Pedidos
                         </a>
                     </li>
-                   
+                    <li>
+                        <a href="{{ url_for('funcionario.produtos') }}" class="active">
+                            <i class="bi bi-box-seam"></i> Produtos
+                        </a>
+                    </li>            
                 </ul>
-                <p class="menu-header">Usuários</p>
+                <p class="menu-header">Conta</p>
                 <ul>
                     <li>
-                        <a href="{{ url_for('admin.admin_clientes') }}">
-                            <i class="bi bi-people"></i> Clientes
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('admin.admin_usuarios') }}" class="active">
-                            <i class="bi bi-person-badge"></i> Administradores
+                        <a href="{{ url_for('auth.logout') }}">
+                            <i class="bi bi-box-arrow-right"></i> Sair
                         </a>
                     </li>
                 </ul>
-                <p class="menu-header">Relatórios</p>
-                <ul>
-                   
-                    <li>
-                        <a href="{{ url_for('admin.admin_logs') }}">
-                            <i class="bi bi-journal-text"></i> Logs do Sistema
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="sidebar-profile">
-                <div class="profile-info">
-                </div>
             </div>
         </aside>
 
@@ -798,87 +731,169 @@
         <div class="main-content">
             <!-- Page header -->
             <div class="page-header">
-                <h1 class="page-title">Administradores</h1>
-                
-                <div>
-                    <form class="d-flex gap-2" method="GET" action="{{ url_for('admin.admin_usuarios') }}">
-                        <input class="form-control" type="search" placeholder="Buscar administrador..." name="busca" value="{{ request.args.get('busca', '') }}">
-                        <button class="btn btn-outline-primary" type="submit">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </form>
-                </div>
+                <h1 class="page-title">Produtos</h1>
             </div>
 
-            <!-- Administradores section -->
-            <div id="administradores-section" class="card">
+            <!-- Products section -->
+            <div id="produtos-section" class="card">
                 <div class="card-header">
-                    <h5><i class="bi bi-person-badge me-2"></i>Gerenciamento de Administradores</h5>
+                    <h5><i class="bi bi-box-seam me-2"></i>Gerenciamento de Produtos</h5>
                     
                 </div>
-                <div class="card-body p-0">
+                
+                <!-- Produtos Ativos -->
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="text-success mb-0">
+                            <i class="bi bi-check-circle me-1"></i>Produtos Ativos ({{ produtos_ativos|length }})
+                        </h6>
+                    </div>
+                    
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Foto</th>
+                                    <th>Imagem</th>
                                     <th>Nome</th>
-                                    <th>Email</th>
-                                    <th>Data de Registro</th>
-                                    <th>Último Acesso</th>
+                                    <th>Preço</th>
+                                    <th>Categoria</th>
+                                    <th>Peso</th>
+                                    <th>Validade</th>
                                     <th>Status</th>
-                                    
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for usuario in usuarios %}
+                                {% for produto in produtos_ativos %}
                                 <tr>
-                                    <td>{{ usuario.id }}</td>
+                                    <td>{{ produto.id }}</td>
                                     <td>
-                                        {% if usuario.foto_perfil %}
-                                        <img src="{{ usuario.foto_perfil }}" alt="{{ usuario.nome }}" class="admin-avatar">
+                                        {% if produto.imagem %}
+                                        <img src="{{ produto.imagem }}" alt="{{ produto.nome }}" 
+                                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
                                         {% else %}
-                                        <div class="avatar-placeholder">
-                                            <i class="bi bi-person"></i>
+                                        <div class="text-center p-2 bg-light rounded" style="width: 50px; height: 50px;">
+                                            <i class="bi bi-image text-secondary" style="font-size: 1.5rem;"></i>
                                         </div>
                                         {% endif %}
                                     </td>
-                                    <td>{{ usuario.nome }}</td>
-                                    <td>{{ usuario.email }}</td>
-                                    <td>{{ usuario.data_registro.strftime('%d/%m/%Y') }}</td>
-                                    <td>{% if usuario.ultimo_acesso %}{{ usuario.ultimo_acesso.strftime('%d/%m/%Y %H:%M') }}{% else %}-{% endif %}</td>
+                                    <td>{{ produto.nome }}</td>
+                                    <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
                                     <td>
-                                        <span class="status-badge {{ 'success' if usuario.status == 'ativo' else 'danger' }}">
-                                            {{ usuario.status }}
-                                        </span>
+                                        <span class="badge bg-info">{{ produto.categoria }}</span>
+                                    </td>
+                                    <td>{% if produto.peso %}{{ "%.2f"|format(produto.peso) }} kg{% else %}-{% endif %}</td>
+                                    <td>{% if produto.data_validade %}{{ produto.data_validade.strftime('%d/%m/%Y') }}{% else %}-{% endif %}</td>
+                                    <td>
+                                        <span class="badge bg-success">Ativo</span>
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            
-                                           
+                                            <a href="{{ url_for('funcionario.editar_produto', produto_id=produto.id) }}" 
+                                               class="btn btn-sm btn-primary" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <form action="{{ url_for('funcionario.deletar_produto', produto_id=produto.id) }}" 
+                                                  method="POST" style="display: inline-block;" 
+                                                  onsubmit="return confirm('Tem certeza que deseja desativar este produto? Ele não aparecerá mais na loja.')">
+                                                <button type="submit" class="btn btn-sm btn-warning" title="Desativar">
+                                                    <i class="bi bi-eye-slash"></i>
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
+                        
+                        {% if produtos_ativos|length == 0 %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-box text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-2">Nenhum produto ativo encontrado</p>
+                            <a href="{{ url_for('funcionario.novo_produto') }}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Adicionar Primeiro Produto
+                            </a>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
-                <div class="card-footer">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            Mostrando <b>{{ usuarios|length }}</b> administradores
-                        </div>
-                        
+                
+                <!-- Produtos Inativos -->
+                {% if produtos_inativos|length > 0 %}
+                <div class="card-body border-top">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="text-secondary mb-0">
+                            <i class="bi bi-eye-slash me-1"></i>Produtos Inativos ({{ produtos_inativos|length }})
+                        </h6>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" 
+                                data-bs-toggle="collapse" data-bs-target="#produtosInativos" 
+                                aria-expanded="false" aria-controls="produtosInativos">
+                            <i class="bi bi-chevron-down"></i> Mostrar/Ocultar
+                        </button>
                     </div>
+                    
+                    <div class="collapse" id="produtosInativos">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nome</th>
+                                        <th>Preço</th>
+                                        <th>Categoria</th>
+                                        <th>Data Desativação</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for produto in produtos_inativos %}
+                                    <tr class="table-light">
+                                        <td>{{ produto.id }}</td>
+                                        <td>
+                                            <span class="text-muted">{{ produto.nome }}</span>
+                                        </td>
+                                        <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
+                                        <td>
+                                            <span class="badge bg-secondary">{{ produto.categoria }}</span>
+                                        </td>
+                                        <td>{{ produto.data_atualizacao.strftime('%d/%m/%Y %H:%M') if produto.data_atualizacao else '-' }}</td>
+                                        <td>
+                                            <span class="badge bg-secondary">Inativo</span>
+                                        </td>
+                                        <td>
+                                            <form action="{{ url_for('funcionario.reativar_produto', produto_id=produto.id) }}" 
+                                                  method="POST" style="display: inline-block;">
+                                                <button type="submit" class="btn btn-sm btn-success" title="Reativar">
+                                                    <i class="bi bi-eye"></i> Reativar
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ produtos_ativos|length }}</strong> produtos ativos, 
+                        <strong>{{ produtos_inativos|length }}</strong> inativos
+                    </div>
+                    <a href="{{ url_for('funcionario.novo_produto') }}" class="btn btn-success">
+                        <i class="bi bi-plus-circle"></i> Adicionar Novo Produto
+                    </a>
                 </div>
             </div>
 
             <!-- Footer -->
             <div class="admin-footer">
                 <p>&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
-                
             </div>
         </div>
     </div>
@@ -898,18 +913,6 @@
             document.querySelector('.sidebar').classList.toggle('active');
             document.querySelector('.main-content').classList.toggle('active');
         });
-
-        // Confirmation dialog for status change
-        function confirmarAlteracaoStatus(botao) {
-            const novoStatus = botao.closest('form').querySelector('input[name="novo_status"]').value;
-            const mensagem = novoStatus === 'ativo' 
-                ? 'Tem certeza que deseja ativar este administrador?' 
-                : 'Tem certeza que deseja desativar este administrador?';
-                
-            if (confirm(mensagem)) {
-                botao.closest('form').submit();
-            }
-        }
 
         // Initialize tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))

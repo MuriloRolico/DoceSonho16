@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Funcionário - Doce Sonho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --primary-color: #d23f72;
+            --primary-dark: #b22d5d;
+            --secondary-color: #ffd6e0;
+            --accent-color: #ffb3c6;
+            --text-color: #2d2d2d;
+            --light-text: #ffffff;
+            --background-color: #fff8fa;
+            --container-bg: #ffffff;
+            --border-color: #f1c2ce;
+            --shadow: 0 8px 20px rgba(210, 63, 114, 0.08);
+            --radius: 10px;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --secondary-dark: #6c757d;
+        }
+
+        body, html {
+            scroll-behavior: smooth;
+            background-color: var(--background-color);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.8;
+            color: var(--text-color);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.5px;
+        }
+
+        .mt-3 {
+            margin-top: 0 !important
+        }
+
+        /* Sidebar */
+        .admin-wrapper {
+            display: flex;
+            min-height: calc(100vh - 76px);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(to bottom, var(--primary-color), var(--primary-dark));
+            color: var(--light-text);
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            z-index: 999;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar-brand {
+            padding: 25px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-brand h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--light-text);
+        }
+
+        .sidebar-brand i {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-header {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 15px 25px 5px;
+        }
+
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 12px 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-menu a i {
+            margin-right: 15px;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-menu a:hover, 
+        .sidebar-menu a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--light-text);
+            border-left-color: var(--accent-color);
+        }
+
+        .sidebar-menu a.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+        }
+
+        .sidebar-profile {
+            padding: 20px 25px;
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background-color: var(--container-bg);
+            padding: 20px 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .page-title {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        /* Cards */
+        .stat-card {
+            background-color: var(--container-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: all 0.3s;
+            border-top: 3px solid var(--primary-color);
+            height: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(210, 63, 114, 0.12);
+        }
+
+        .stat-card.pending {
+            border-top-color: var(--warning-color);
+        }
+
+        .stat-card.today {
+            border-top-color: var(--info-color);
+        }
+
+        .stat-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            color: var(--light-text);
+        }
+
+        .stat-icon.pending {
+            background-color: var(--warning-color);
+        }
+
+        .stat-icon.today {
+            background-color: var(--info-color);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .stat-label {
+            color: var(--text-color);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .card {
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: none;
+            margin-bottom: 25px;
+            overflow: hidden;
+            background-color: var(--container-bg);
+        }
+
+        .card-header {
+            padding: 18px 25px;
+            background-color: var(--container-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h5 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 5px;
+            padding: 8px 16px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(210, 63, 114, 0.2);
+        }
+
+        /* Tables */
+        .table th {
+            font-weight: 600;
+            color: var(--primary-color);
+            background-color: rgba(210, 63, 114, 0.05);
+            border-bottom: 2px solid var(--primary-color);
+            padding: 15px;
+        }
+
+        .table td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #d39e00;
+            border: 1px solid rgba(255, 193, 7, 0.2);
+        }
+
+        .status-badge.success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+
+        .status-badge.info {
+            background-color: rgba(23, 162, 184, 0.1);
+            color: var(--info-color);
+            border: 1px solid rgba(23, 162, 184, 0.2);
+        }
+
+        /* Footer */
+        .admin-footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 30px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .text-white {
+            color: var(--light-text) !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                margin-left: -280px;
+            }
+            .sidebar.active {
+                margin-left: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        .sidebar-toggle {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(210, 63, 114, 0.3);
+            display: none;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar-toggle {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mensagens Flash -->
+    <div class="container-fluid px-4 mt-3">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- Main container -->
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="bi bi-cake2"></i>
+                <a  class="text-white text-decoration-none">
+                    <h2>Doce Sonho</h2>
+                </a>
+            </div>
+            
+            <div class="sidebar-menu">
+                <p class="menu-header">Principal</p>
+                <ul>
+                   
+                    <li>
+                        <a href="{{ url_for('funcionario.dashboard') }}" class="active">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('funcionario.pedidos') }}">
+                            <i class="bi bi-bag"></i> Pedidos
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('funcionario.produtos') }}">
+                            <i class="bi bi-box-seam"></i> Produtos
+                        </a>
+                    </li>            
+                </ul>
+                <p class="menu-header">Conta</p>
+                <ul>
+                    <li>
+                        <a href="{{ url_for('auth.logout') }}">
+                            <i class="bi bi-box-arrow-right"></i> Sair
+                        </a>
+                    </li>
+                </ul>
+                
+            </div>
+            <div class="sidebar-profile">
+                <div class="profile-info">
+                    <div class="profile-pic">
+                        
+                    </div>
+                   
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <div class="main-content">
+            <!-- Page header -->
+            <div class="page-header">
+                <h1 class="page-title">Dashboard</h1>
+                <div>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger btn-sm">
+    <i class="bi bi-box-arrow-right"></i> Sair
+</a>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row">
+                <div class="col-md-6 col-lg-6">
+                    <div class="stat-card pending">
+                        <div class="stat-icon pending">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <div class="stat-value">{{ total_pedidos_pendentes }}</div>
+                        <div class="stat-label">Pedidos Pendentes</div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-6">
+                    <div class="stat-card today">
+                        <div class="stat-icon today">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                        <div class="stat-value">{{ total_pedidos_hoje }}</div>
+                        <div class="stat-label">Pedidos Hoje</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-bag me-2"></i>Pedidos Recentes</h5>
+                    <a href="{{ url_for('funcionario.pedidos') }}" class="btn btn-sm btn-primary">
+                        Ver Todos
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Cliente</th>
+                                    <th>Data</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pedido in pedidos_recentes %}
+                                <tr>
+                                    <td>#{{ pedido.id }}</td>
+                                    <td>{{ pedido.cliente.nome }}</td>
+                                    <td>{{ pedido.data.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>R$ {{ "%.2f"|format(pedido.total) }}</td>
+                                    <td>
+                                        {% if pedido.status == 'Pendente' %}
+                                            <span class="status-badge warning">{{ pedido.status }}</span>
+                                        {% elif pedido.status == 'Em Preparo' %}
+                                            <span class="status-badge info">{{ pedido.status }}</span>
+                                        {% elif pedido.status == 'Entregue' %}
+                                            <span class="status-badge success">{{ pedido.status }}</span>
+                                        {% else %}
+                                            <span class="status-badge">{{ pedido.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('funcionario.detalhes_pedido', pedido_id=pedido.id) }}" 
+                                           class="btn btn-sm btn-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        
+                        {% if pedidos_recentes|length == 0 %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-2">Nenhum pedido encontrado</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="admin-footer">
+                <p>&copy; 2025 Doce Sonho Confeitaria. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar toggle for mobile -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.main-content').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

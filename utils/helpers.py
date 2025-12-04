@@ -3,6 +3,9 @@ from werkzeug.security import generate_password_hash
 from datetime import datetime, timedelta
 import os
 from database import db
+from functools import wraps
+from flask import session, redirect, url_for, flash
+from models.models import Usuario
 
 def allowed_file(filename):
     from flask import current_app
@@ -16,6 +19,32 @@ def is_admin():
         usuario = Usuario.query.get(session['usuario_id'])
         return usuario and usuario.is_admin
     return False
+
+
+
+
+
+def funcionario_bloqueado(f):
+    """
+    Decorator para bloquear acesso de funcionários a rotas de clientes
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'usuario_id' in session:
+            usuario = Usuario.query.get(session['usuario_id'])
+            if usuario and usuario.is_funcionario:
+                flash('Funcionários não têm acesso a esta área.', 'warning')
+                return redirect(url_for('funcionario.dashboard'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+
+
+
+
+
+
 
 def registrar_log(tipo, descricao, usuario_id=None):
     """

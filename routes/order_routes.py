@@ -7,6 +7,7 @@ from models.models import Pedido, ItemPedido, ItemPedidoPersonalizado, Produto, 
 from utils.helpers import is_admin, registrar_log
 from utils.payment import create_mercadopago_preference, create_mercadopago_preference_simple, create_mercadopago_preference_minimal
 import json
+from utils.helpers import funcionario_bloqueado
 
 order_bp = Blueprint('order', __name__)
 
@@ -14,6 +15,7 @@ order_bp = Blueprint('order', __name__)
 # routes/order.py - Função finalizar_compra CORRIGIDA COMPLETA
 
 @order_bp.route('/finalizar_compra', methods=['GET', 'POST'])
+@funcionario_bloqueado
 def finalizar_compra():
     if 'usuario_id' not in session:
         flash('Faça login para finalizar a compra!', 'danger')
@@ -378,6 +380,7 @@ def pagamento_pendente():
 
 # ROTA PARA LISTAR PEDIDOS DO USUÁRIO
 @order_bp.route('/pedidos')
+@funcionario_bloqueado
 def pedidos():
     if 'usuario_id' not in session:
         flash('Faça login para ver seus pedidos!', 'danger')
@@ -385,11 +388,18 @@ def pedidos():
     
     usuario_id = session['usuario_id']
     
-    # Buscar apenas pedidos aprovados (já que só criamos pedidos após confirmação)
-    pedidos = Pedido.query.filter_by(usuario_id=usuario_id).order_by(Pedido.id.desc()).all()
+    # Buscar TODOS os pedidos do usuário (incluindo os criados manualmente)
+    pedidos = Pedido.query.filter_by(
+        usuario_id=usuario_id
+    ).order_by(Pedido.data.desc()).all()
+    
+    current_app.logger.info(f"Buscando pedidos para usuario_id={usuario_id}")
+    current_app.logger.info(f"Total de pedidos encontrados: {len(pedidos)}")
+    
+    for pedido in pedidos:
+        current_app.logger.info(f"Pedido ID={pedido.id}, Status={pedido.status}, Manual={pedido.criado_manualmente}")
     
     return render_template('pedidos.html', pedidos=pedidos)
-
 
 # ROTA PARA VER DETALHES DE UM PEDIDO ESPECÍFICO - CORRIGIDA
 @order_bp.route('/pedido/<int:pedido_id>')
