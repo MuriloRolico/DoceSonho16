@@ -209,23 +209,37 @@
             color: var(--text-color);
         }
 
-        /* Imagem do perfil */
-        .profile-img-container {
-            width: 150px;
-            height: 150px;
-            margin: 0 auto 20px;
-            position: relative;
-        }
+/* Substitua o CSS existente da foto de perfil por este: */
 
-        .profile-img {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 3px solid var(--primary-color);
-            padding: 3px;
-            transition: all 0.3s ease;
-        }
+/* Container da imagem do perfil */
+.profile-img-container {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 3px solid var(--primary-color);
+}
+
+.profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+    border: none;
+    padding: 20px;
+    transition: all 0.3s ease;
+    display: block;
+}
+
+/* Garantir que a imagem padrão também seja circular */
+.profile-img-container img {
+    aspect-ratio: 1 / 1;
+    object-position: center;
+}
 
                 /* Footer */
         footer {
@@ -708,12 +722,12 @@
                     <div class="card shadow">
                         <div class="card-body text-center py-4">
                             <div class="profile-img-container mb-4">
-                                {% if usuario.foto_perfil %}
-                                <img src="{{ usuario.foto_perfil }}" class="profile-img" alt="Foto de perfil">
-                                {% else %}
-                                <img src="{{ url_for('static', filename='img/default-profile.png') }}" class="profile-img" alt="Foto de perfil padrão">
-                                {% endif %}
-                            </div>
+    {% if usuario.foto_perfil %}
+    <img src="{{ usuario.foto_perfil }}" class="profile-img" alt="Foto de perfil">
+    {% else %}
+    <i class="bi bi-person-circle profile-icon"></i>
+    {% endif %}
+</div>
                             <h3 class="card-title mb-2">{{ usuario.nome }}</h3>
                             <p class="text-muted mb-1">
                                 <span class="data-field" data-type="email">{{ usuario.email }}</span>
